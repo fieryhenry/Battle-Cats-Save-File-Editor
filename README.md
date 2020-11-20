@@ -3,7 +3,7 @@
 To edit your save file first download u/1plus1equalswindow's save file editor https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
 Back up your save using BackupManagerEN.exe and rename the save file to save
-Replace the file named save in my save editor with your save
+Replace the file named REPLACETHIS in my save editor with your save
 
 Run my save editor
 Do what you want with it and close it
