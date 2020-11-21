@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
             Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
-                "\n9. Change platinum tickets");
+                "\n9. Change platinum tickets\n10. All cats from clearing stages");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -47,6 +47,9 @@ namespace Battle_Cats_save_editor
                     break;
                 case 9:
                     PlatTicketRare(path);
+                    break;
+                case 10:
+                    ClearStageCat(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -537,7 +540,7 @@ namespace Battle_Cats_save_editor
 
 
 
-            Console.WriteLine("How much leadership do you want(max 255)");
+            Console.WriteLine("How much leadership do you want(max 255 technicaly not the max but i cant be bothered lol(if you have more than 255 say you have 255)");
             byte leadership = Convert.ToByte(Console.ReadLine());
             Console.WriteLine("How much leadership do you have currently?");
             byte leadershipCurrent = Convert.ToByte(Console.ReadLine());
@@ -781,6 +784,33 @@ namespace Battle_Cats_save_editor
                     Console.WriteLine("Success");
                 }
             }
+        }
+
+        static void ClearStageCat(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length - 1503; j++)
+            {
+                if (allData[j] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(00) && allData[j + 10] == Convert.ToByte(00) && allData[j + 145] == Convert.ToByte(44) && allData[j + 146] == Convert.ToByte(01) && allData[j+1503] == 250)
+                {
+                    Console.WriteLine("Success");
+                    for (int i = 0; i <= j + 482; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                }
+            }
+
         }
     }
 }
