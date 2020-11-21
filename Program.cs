@@ -14,7 +14,7 @@ namespace Battle_Cats_save_editor
         static void Main()
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
-            Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP");
+            Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -37,6 +37,12 @@ namespace Battle_Cats_save_editor
                     break;
                 case 6:
                     NP(path);
+                    break;
+                case 7:
+                    CatTicket(path);
+                    break;
+                case 8:
+                    CatTicketRare(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -689,6 +695,58 @@ namespace Battle_Cats_save_editor
                         stream.Position = j - 4;
                         stream.WriteByte(CatFoodByte2);
                     }
+                }
+            }
+        }
+
+        static void CatTicket(string path)
+        {
+            Console.WriteLine("How much Cat Tickets do you want(max 255)");
+            byte catTickets = Convert.ToByte(Console.ReadLine());
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
+                {
+                    stream.Position = j + 24;
+                    stream.WriteByte(catTickets);
+                    Console.WriteLine("Success");
+                }
+            }
+
+        }
+        static void CatTicketRare(string path)
+        {
+            Console.WriteLine("How much Rare Cat Tickets do you want(max 255)");
+            byte rareCatTickets = Convert.ToByte(Console.ReadLine());
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
+                {
+                    stream.Position = j + 28;
+                    stream.WriteByte(rareCatTickets);
+                    Console.WriteLine("Success");
                 }
             }
         }
