@@ -14,7 +14,8 @@ namespace Battle_Cats_save_editor
         static void Main()
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
-            Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets");
+            Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
+                "\n9. Change platinum tickets");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -43,6 +44,9 @@ namespace Battle_Cats_save_editor
                     break;
                 case 8:
                     CatTicketRare(path);
+                    break;
+                case 9:
+                    PlatTicketRare(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -725,6 +729,7 @@ namespace Battle_Cats_save_editor
             }
 
         }
+
         static void CatTicketRare(string path)
         {
             Console.WriteLine("How much Rare Cat Tickets do you want(max 255)");
@@ -746,6 +751,33 @@ namespace Battle_Cats_save_editor
                 {
                     stream.Position = j + 28;
                     stream.WriteByte(rareCatTickets);
+                    Console.WriteLine("Success");
+                }
+            }
+        }
+
+        static void PlatTicketRare(string path)
+        {
+            Console.WriteLine("How much Platinum Cat Tickets do you want(max 9 any more and ban)");
+            byte platCatTickets = Convert.ToByte(Console.ReadLine());
+            if (platCatTickets > 9) platCatTickets = 9;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j + 2] == Convert.ToByte(255) && allData[j + 3] == Convert.ToByte(255) && allData[j + 4] == Convert.ToByte(255) && allData[j + 5] == Convert.ToByte(255) && allData[j + 6] == Convert.ToByte(255) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(54))
+                {
+                    stream.Position = j + 24;
+                    stream.WriteByte(platCatTickets);
                     Console.WriteLine("Success");
                 }
             }
