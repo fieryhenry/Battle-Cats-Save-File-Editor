@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
             Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
-                "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved");
+                "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -56,6 +56,9 @@ namespace Battle_Cats_save_editor
                     break;
                 case 12:
                     Evolve(path);
+                    break;
+                case 13:
+                    Items(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -1834,6 +1837,31 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine("Success");
                 }
             }
+        }
+
+        static void Items(string path)
+        {
+            Console.WriteLine("How much of each item do you want(max 255)");
+            byte catTickets = Convert.ToByte(Console.ReadLine());
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            
+            Console.WriteLine("Scan Complete");
+            stream.Position = 14474;
+            stream.WriteByte(catTickets);
+            stream.Position = 14478;
+            stream.WriteByte(catTickets);
+            stream.Position = 14482;
+            stream.WriteByte(catTickets);
+            stream.Position = 14486;
+            stream.WriteByte(catTickets);
+            stream.Position = 14490;
+            stream.WriteByte(catTickets);
+            stream.Position = 14494;
+            stream.WriteByte(catTickets);
         }
         
     }
