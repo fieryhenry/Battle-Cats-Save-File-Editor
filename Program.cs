@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
             Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
-                "\n9. Change platinum tickets\n10. All cats from clearing stages");
+                "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -50,6 +50,9 @@ namespace Battle_Cats_save_editor
                     break;
                 case 10:
                     ClearStageCat(path);
+                    break;
+                case 11:
+                    Seed(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -1503,6 +1506,303 @@ namespace Battle_Cats_save_editor
                 }
             }
 
+        }
+
+        static void Seed(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length - 1503; j++)
+            {
+                if (allData[j] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(228) && allData[j + 6] == Convert.ToByte(07) && allData[j + 9] == Convert.ToByte(11) && allData[j + 1] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00))
+                {
+                    Console.WriteLine("What seed do you want?(max 99999999)");
+                    int XP = (int)Convert.ToInt64(Console.ReadLine());
+                    if (XP > 99999999) XP = 99999999;
+
+                    string XPHex = Convert.ToString(XP, 16);
+                    //Console.WriteLine("Set XP to " + XP);
+
+                    int StrLength = XPHex.Length;
+
+                    char[] XPArr = { };
+                    char[] XPArr0 = { '0' };
+
+                    if (StrLength == 8)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 6, 2);
+                        string add2 = new string(XPArr, 4, 2);
+                        string add3 = new string(XPArr, 2, 2);
+                        string add4 = new string(XPArr, 0, 2);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+
+                    if (StrLength == 7)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 5, 2);
+                        string add2 = new string(XPArr, 3, 2);
+                        string add3 = new string(XPArr, 1, 2);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 6)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 4, 2);
+                        string add2 = new string(XPArr, 2, 2);
+                        string add3 = new string(XPArr, 0, 2);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 5)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 3, 2);
+                        string add2 = new string(XPArr, 1, 2);
+                        string add3 = new string(XPArr, 0, 1) + (XPArr0[0]);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 4)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 2, 2);
+                        string add2 = new string(XPArr, 0, 2);
+                        string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 3)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 1, 2);
+                        string add2 = new string(XPArr, 0, 1) + (XPArr0[0]);
+                        string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 2)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 0, 2);
+                        string add2 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                    if (StrLength == 1)
+                    {
+                        XPArr = XPHex.ToCharArray(0, StrLength);
+
+                        string add1 = new string(XPArr, 0, 1) + (XPArr0[0]);
+                        string add2 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+                        string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
+
+                        int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+                        int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
+                        int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
+
+                        string XPStrBase10 = Convert.ToString(XPint, 10);
+                        string XPStr2Base10 = Convert.ToString(XP2int, 10);
+                        string XPStr3Base10 = Convert.ToString(XP3int, 10);
+                        string XPStr4Base10 = Convert.ToString(XP4int, 10);
+
+                        byte XPByte = Convert.ToByte(XPStrBase10);
+                        byte XPByte2 = Convert.ToByte(XPStr2Base10);
+                        byte XPByte3 = Convert.ToByte(XPStr3Base10);
+                        byte XPByte4 = Convert.ToByte(XPStr4Base10);
+
+                        stream.Position = j - 16;
+                        stream.WriteByte(XPByte);
+                        stream.Position = j - 15;
+                        stream.WriteByte(XPByte2);
+                        stream.Position = j - 14;
+                        stream.WriteByte(XPByte3);
+                        stream.Position = j - 13;
+                        stream.WriteByte(XPByte4);
+                    }
+                }
+            }
         }
 
     }
