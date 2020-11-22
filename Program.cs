@@ -1835,7 +1835,6 @@ namespace Battle_Cats_save_editor
                 }
             }
         }
-
         
     }
 
