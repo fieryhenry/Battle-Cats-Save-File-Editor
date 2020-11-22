@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
         {
             string path = Path.Combine("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/My save editor/save");
             Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
-                "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed");
+                "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved");
             int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -53,6 +53,9 @@ namespace Battle_Cats_save_editor
                     break;
                 case 11:
                     Seed(path);
+                    break;
+                case 12:
+                    Evolve(path);
                     break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
@@ -159,6 +162,7 @@ namespace Battle_Cats_save_editor
             }
 
         }
+
         static void XP(string path)
         {
 
@@ -1418,7 +1422,7 @@ namespace Battle_Cats_save_editor
             for (int j = 0; j < length; j++)
             {
                 //Console.WriteLine(j);
-                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
+                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j -3] == Convert.ToByte(142))
                 {
                     stream.Position = j + 24;
                     stream.WriteByte(catTickets);
@@ -1805,7 +1809,36 @@ namespace Battle_Cats_save_editor
             }
         }
 
+        static void Evolve(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            for (int i = 0; i <= length; i++)
+            {
+
+            }
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00))
+                {
+                    for (int i = j + 60; i < j + 2710; i ++)
+                    {
+                        stream.Position = j;
+                        stream.WriteByte(02);
+                    }
+                    //Console.WriteLine("Success");
+                }
+            }
+        }
+
+        
     }
+
 }
     
 
