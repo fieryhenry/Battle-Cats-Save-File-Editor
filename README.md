@@ -1,5 +1,7 @@
 # Battle Cats Save File Editor
 
+I have a discord server:https://discord.gg/nPPuw3C7gp
+
 To edit your save file first download u/1plus1equalswindow's save file editor https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
 Back up your save using BackupManagerEN.exe and rename the save file to save
