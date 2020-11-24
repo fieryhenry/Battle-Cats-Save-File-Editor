@@ -1827,14 +1827,14 @@ namespace Battle_Cats_save_editor
             for (int j = 0; j < length; j++)
             {
                 //Console.WriteLine(j);
-                if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00))
+                if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00) && allData[j + 24] == Convert.ToByte(70) && allData[j + 25] == Convert.ToByte(02))
                 {
-                    for (int i = j + 60; i < j + 2710; i ++)
+                    for (int i = j + 60; i < j + 2710; i +=4)
                     {
                         stream.Position = j;
                         stream.WriteByte(02);
                     }
-                    //Console.WriteLine("Success");
+                    Console.WriteLine("Success");
                 }
             }
         }
