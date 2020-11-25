@@ -66,6 +66,9 @@ namespace Battle_Cats_save_editor
                 case 15:
                     BaseMats(path);
                     break;
+                case 16:
+                    Catseyes(path);
+                    break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
                     break;
@@ -1941,7 +1944,44 @@ namespace Battle_Cats_save_editor
                 }
             }
         }
-        
+
+        static void Catseyes(string path)
+        {
+            Console.WriteLine("How many Catseyes do you want(max 255)");
+            byte platCatTickets = Convert.ToByte(Console.ReadLine());
+            Console.WriteLine("How many Special cats eyes do you have");
+            byte catA = Convert.ToByte(Console.ReadLine());
+            Console.WriteLine("How many Rare Cats eyes do you have");
+            byte catB = Convert.ToByte(Console.ReadLine());
+            Console.WriteLine("How many super rare cats eyes do you have");
+            byte catC = Convert.ToByte(Console.ReadLine());
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == catA && allData[j + 4] == catB && allData[j + 8] == catC && allData[j + 12] == catC && allData[j -3] == Convert.ToByte(05) && allData[j + 20] == Convert.ToByte(03) && allData[j + 57] == Convert.ToByte(10) && allData[j + 71] == Convert.ToByte(27))
+                {
+                    stream.Position = j;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j + 4;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j + 8;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j + 12;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j + 16;
+                    stream.WriteByte(platCatTickets);
+                    Console.WriteLine("Success");
+                }
+            }
+        }
+
     }
 
 }
