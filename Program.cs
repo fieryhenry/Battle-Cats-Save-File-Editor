@@ -63,6 +63,9 @@ namespace Battle_Cats_save_editor
                 case 14:
                     Catamin(path);
                     break;
+                case 15:
+                    BaseMats(path);
+                    break;
                 default:
                     Console.WriteLine("Please input a number that is recognised");
                     break;
@@ -1877,7 +1880,6 @@ namespace Battle_Cats_save_editor
             byte catB = Convert.ToByte(Console.ReadLine());
             Console.WriteLine("How many Catimin C do you have");
             byte catC = Convert.ToByte(Console.ReadLine());
-            if (platCatTickets > 9) platCatTickets = 9;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -1895,6 +1897,45 @@ namespace Battle_Cats_save_editor
                     stream.Position = j + 8;
                     stream.WriteByte(platCatTickets);
                     stream.Position = j + 12;
+                    stream.WriteByte(platCatTickets);
+                    Console.WriteLine("Success");
+                }
+            }
+        }
+
+        static void BaseMats(string path)
+        {
+            Console.WriteLine("How many Base Materials do you want(max 255)");
+            byte platCatTickets = Convert.ToByte(Console.ReadLine());
+            Console.WriteLine("How many bricks do you have");
+            byte catA = Convert.ToByte(Console.ReadLine());
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            Console.WriteLine("Scan Complete");
+            for (int j = 0; j < length; j++)
+            {
+                //Console.WriteLine(j);
+                if (allData[j] == Convert.ToByte(02) && allData[j + 4] == Convert.ToByte(03) && allData[j + 12] == Convert.ToByte(01) && allData[j + 16] == Convert.ToByte(02) && allData[j + 178] == Convert.ToByte(64) && allData[j + 194] == Convert.ToByte(65) && allData[j + -61] == Convert.ToByte(08) && allData[j -57] == catA)
+                {
+                    stream.Position = j -57;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j -53;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 49;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 45;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 42;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 39;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 36;
+                    stream.WriteByte(platCatTickets);
+                    stream.Position = j - 33;
                     stream.WriteByte(platCatTickets);
                     Console.WriteLine("Success");
                 }
