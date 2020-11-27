@@ -97,7 +97,7 @@ namespace Battle_Cats_save_editor
                 string add1 = new string(CatArr, 2, 2);
                 string add2 = new string(CatArr, 0, 2);
 
-                
+
                 int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -115,10 +115,10 @@ namespace Battle_Cats_save_editor
             }
             else if (StrLength == 3)
             {
-                
+
                 string add1 = new string(CatArr, 1, 2);
                 string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                
+
 
                 int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -470,7 +470,7 @@ namespace Battle_Cats_save_editor
             stream.Read(allData, 0, length);
 
             string LeaderShipHex = Convert.ToString(leadershipCurrent, 16);
-            
+
 
             int StrLengthL = LeaderShipHex.Length;
 
@@ -483,14 +483,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 2, 2);
                 string add2L = new string(CatArrL, 0, 2);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -500,7 +500,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -513,7 +513,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -534,7 +534,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -597,14 +597,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 1, 2);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArrL[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -614,7 +614,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -627,7 +627,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -648,7 +648,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -711,14 +711,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 0, 2);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArr0L[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -728,7 +728,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -741,7 +741,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -762,7 +762,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -825,14 +825,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 0, 1) + (CatArr0L[0]);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArr0L[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -842,7 +842,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -855,7 +855,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -876,7 +876,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -935,7 +935,7 @@ namespace Battle_Cats_save_editor
                 }
             }
 
-            
+
         }
 
         static void NP(string path)
@@ -951,7 +951,7 @@ namespace Battle_Cats_save_editor
             stream.Read(allData, 0, length);
 
             string LeaderShipHex = Convert.ToString(leadershipCurrent, 16);
-            
+
 
             int StrLengthL = LeaderShipHex.Length;
 
@@ -964,14 +964,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 2, 2);
                 string add2L = new string(CatArrL, 0, 2);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -981,7 +981,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -994,7 +994,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -1015,7 +1015,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -1078,14 +1078,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 1, 2);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArrL[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -1095,7 +1095,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -1108,7 +1108,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -1129,7 +1129,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -1192,14 +1192,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 0, 2);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArr0L[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -1209,7 +1209,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -1222,7 +1222,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -1243,7 +1243,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -1306,14 +1306,14 @@ namespace Battle_Cats_save_editor
                 string add1L = new string(CatArrL, 0, 1) + (CatArr0L[0]);
                 string add2L = new string(CatArr0L, 0, 1) + (CatArr0L[0]);
 
-                
+
                 int CatFoodintL = int.Parse(add1L, System.Globalization.NumberStyles.HexNumber);
                 int CatFood2intL = int.Parse(add2L, System.Globalization.NumberStyles.HexNumber);
 
                 string CatFoodStrBase10L = Convert.ToString(CatFoodintL, 10);
                 string CatFoodStr2Base10L = Convert.ToString(CatFood2intL, 10);
 
-                
+
                 byte CatFoodByteL = Convert.ToByte(CatFoodStrBase10L);
                 byte CatFoodByte2L = Convert.ToByte(CatFoodStr2Base10L);
                 Console.WriteLine("Scan Complete");
@@ -1323,7 +1323,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == CatFoodByte2L && allData[j + 5] == CatFoodByteL && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
                         string CatFoodHex = Convert.ToString(CatFood, 16);
-                        
+
 
                         int StrLength = CatFoodHex.Length;
 
@@ -1336,7 +1336,7 @@ namespace Battle_Cats_save_editor
                             string add1 = new string(CatArr, 2, 2);
                             string add2 = new string(CatArr, 0, 2);
 
-                            
+
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
 
@@ -1357,7 +1357,7 @@ namespace Battle_Cats_save_editor
 
                             string add1 = new string(CatArr, 1, 2);
                             string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-                            
+
 
                             int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
                             int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
@@ -1434,7 +1434,7 @@ namespace Battle_Cats_save_editor
             for (int j = 0; j < length; j++)
             {
                 //Console.WriteLine(j);
-                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j -3] == Convert.ToByte(142))
+                if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
                 {
                     stream.Position = j + 24;
                     stream.WriteByte(catTickets);
@@ -1511,7 +1511,7 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("Scan Complete");
             for (int j = 0; j < length - 1503; j++)
             {
-                if (allData[j] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(00) && allData[j + 10] == Convert.ToByte(00) && allData[j + 145] == Convert.ToByte(44) && allData[j + 146] == Convert.ToByte(01) && allData[j+1503] == 250)
+                if (allData[j] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(00) && allData[j + 10] == Convert.ToByte(00) && allData[j + 145] == Convert.ToByte(44) && allData[j + 146] == Convert.ToByte(01) && allData[j + 1503] == 250)
                 {
                     Console.WriteLine("Success");
                     for (int i = 0; i <= j + 482; i += 4)
@@ -1838,7 +1838,7 @@ namespace Battle_Cats_save_editor
                 //Console.WriteLine(j);
                 if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00) && allData[j + 24] == Convert.ToByte(70) && allData[j + 25] == Convert.ToByte(02))
                 {
-                    for (int i = j + 60; i < j + 2710; i +=4)
+                    for (int i = j + 60; i < j + 2710; i += 4)
                     {
                         stream.Position = j;
                         stream.WriteByte(02);
@@ -1857,7 +1857,7 @@ namespace Battle_Cats_save_editor
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            
+
             Console.WriteLine("Scan Complete");
             stream.Position = 14474;
             stream.WriteByte(catTickets);
@@ -1888,7 +1888,7 @@ namespace Battle_Cats_save_editor
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            
+
             Console.WriteLine("Scan Complete");
             for (int j = 0; j < length; j++)
             {
@@ -1922,11 +1922,11 @@ namespace Battle_Cats_save_editor
             for (int j = 0; j < length; j++)
             {
                 //Console.WriteLine(j);
-                if (allData[j] == Convert.ToByte(02) && allData[j + 4] == Convert.ToByte(03) && allData[j + 12] == Convert.ToByte(01) && allData[j + 16] == Convert.ToByte(02) && allData[j + 178] == Convert.ToByte(64) && allData[j + 194] == Convert.ToByte(65) && allData[j + -61] == Convert.ToByte(08) && allData[j -57] == catA)
+                if (allData[j] == Convert.ToByte(02) && allData[j + 4] == Convert.ToByte(03) && allData[j + 12] == Convert.ToByte(01) && allData[j + 16] == Convert.ToByte(02) && allData[j + 178] == Convert.ToByte(64) && allData[j + 194] == Convert.ToByte(65) && allData[j + -61] == Convert.ToByte(08) && allData[j - 57] == catA)
                 {
-                    stream.Position = j -57;
+                    stream.Position = j - 57;
                     stream.WriteByte(platCatTickets);
-                    stream.Position = j -53;
+                    stream.Position = j - 53;
                     stream.WriteByte(platCatTickets);
                     stream.Position = j - 49;
                     stream.WriteByte(platCatTickets);
@@ -1947,14 +1947,8 @@ namespace Battle_Cats_save_editor
 
         static void Catseyes(string path)
         {
-            Console.WriteLine("How many Catseyes do you want(max 255)");
-            byte platCatTickets = Convert.ToByte(Console.ReadLine());
-            Console.WriteLine("How many Special cats eyes do you have");
-            byte catA = Convert.ToByte(Console.ReadLine());
-            Console.WriteLine("How many Rare Cats eyes do you have");
-            byte catB = Convert.ToByte(Console.ReadLine());
-            Console.WriteLine("How many super rare cats eyes do you have");
-            byte catC = Convert.ToByte(Console.ReadLine());
+            Console.WriteLine("How many Catseyes do you want(max 65535)");
+            int platCatTickets = Convert.ToByte(Console.ReadLine());
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -1965,25 +1959,169 @@ namespace Battle_Cats_save_editor
             for (int j = 0; j < length; j++)
             {
                 //Console.WriteLine(j);
-                if (allData[j] == catA && allData[j + 4] == catB && allData[j + 8] == catC && allData[j + 12] == catC && allData[j -3] == Convert.ToByte(05) && allData[j + 20] == Convert.ToByte(03) && allData[j + 57] == Convert.ToByte(10) && allData[j + 71] == Convert.ToByte(27))
+                if (allData[j - 3] == Convert.ToByte(05) && allData[j + 20] == Convert.ToByte(03) && allData[j + 57] == Convert.ToByte(10) && allData[j + 71] == Convert.ToByte(27))
                 {
-                    stream.Position = j;
-                    stream.WriteByte(platCatTickets);
-                    stream.Position = j + 4;
-                    stream.WriteByte(platCatTickets);
-                    stream.Position = j + 8;
-                    stream.WriteByte(platCatTickets);
-                    stream.Position = j + 12;
-                    stream.WriteByte(platCatTickets);
-                    stream.Position = j + 16;
-                    stream.WriteByte(platCatTickets);
-                    Console.WriteLine("Success");
+                    string CatFoodHex = Convert.ToString(platCatTickets, 16);
+
+
+                    int StrLength = CatFoodHex.Length;
+
+                    char[] CatArr = { };
+                    char[] CatArr0 = { '0' };
+                    CatArr = CatFoodHex.ToCharArray(0, StrLength);
+
+                    if (StrLength == 4)
+                    {
+                        string add1 = new string(CatArr, 2, 2);
+                        string add2 = new string(CatArr, 0, 2);
+
+
+                        int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+
+                        string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
+                        string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
+
+
+                        byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
+                        byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
+
+                        stream.Position = j;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 1;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 4;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 5;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 8;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 9;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 12;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 13;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte2);
+                    }
+                    else if (StrLength == 3)
+                    {
+
+                        string add1 = new string(CatArr, 1, 2);
+                        string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
+
+
+                        int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+
+                        string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
+                        string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
+
+                        byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
+                        byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
+
+                        stream.Position = j;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 1;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 4;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 5;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 8;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 9;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 12;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 13;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte2);
+                    }
+                    else if (StrLength == 2)
+                    {
+                        string add1 = new string(CatArr, 0, 2);
+                        string add2 = new string(CatArr0, 0, 1) + (CatArr0[0]);
+
+                        int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+
+                        string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
+                        string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
+
+                        byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
+                        byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
+
+                        stream.Position = j;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 1;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 4;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 5;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 8;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 9;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 12;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 13;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte2);
+                    }
+                    else if (StrLength == 1)
+                    {
+                        string add1 = new string(CatArr, 0, 1) + (CatArr0[0]);
+                        string add2 = new string(CatArr0, 0, 1) + (CatArr0[0]);
+
+                        int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
+                        int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
+
+                        string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
+                        string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
+
+                        byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
+                        byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
+
+                        stream.Position = j;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 1;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 4;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 5;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 8;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 9;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 12;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 13;
+                        stream.WriteByte(CatFoodByte2);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte);
+                        stream.Position = j + 16;
+                        stream.WriteByte(CatFoodByte2);
+
+                        Console.WriteLine("Success");
+                    }
                 }
             }
+
         }
 
     }
-
 }
     
 
