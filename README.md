@@ -1,6 +1,6 @@
 # Battle Cats Save File Editor
 
-I have a discord server:https://discord.gg/nPPuw3C7gp You can become a dev there and give me your pre-backed up save files
+I have a discord server:https://discord.gg/nPPuw3C7gp You can become a developer there and give me your pre-backed up save files
 
 To edit your save file first download u/1plus1equalswindow's save file editor https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
