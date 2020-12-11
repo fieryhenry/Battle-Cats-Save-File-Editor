@@ -4,10 +4,10 @@ I have a discord server:https://discord.gg/nPPuw3C7gp You can become a developer
 
 To edit your save file first download u/1plus1equalswindow's save file editor https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
-Back up your save using BackupManagerEN.exe and rename the save file to save
-Replace the file named REPLACETHIS in my save editor with your save
+Back up your save using BackupManagerEN.exe
 
 Run my save editor
+Locate to your save a browse window shoul pop-up
 Do what you want with it and close it
 
 Place the edited save in the saves folder that u/1plus1equalswindow's editor made
