@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,6 +16,23 @@ namespace Battle_Cats_save_editor
         [STAThreadAttribute]
         static void Main()
         {
+            string folderName = @"newversion.txt";
+
+
+
+            WebClient webClient = new WebClient();
+            webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
+
+            string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
+            if (lines[0] == "2.8.1")
+            {
+                Console.WriteLine("Program is updated");
+            }
+            else
+            {
+                Console.WriteLine("Please update to the newest version \nhttps://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases/tag/{0}", lines[0]);
+            }
+
             var FD = new System.Windows.Forms.OpenFileDialog();
             if (FD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
