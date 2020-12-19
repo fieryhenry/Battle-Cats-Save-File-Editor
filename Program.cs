@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
                 string path = Path.Combine(fileToOpen);
                 Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
-                    "\n15. Change base materials\n16. Change catseyes\n17. All cats");
+                    "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level");
                 int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -81,6 +81,12 @@ namespace Battle_Cats_save_editor
                         break;
                     case 17:
                         Cats(path);
+                        break;
+                    case 18:
+                        SpecifiCat(path);
+                        break;
+                    case 19:
+                        SpecifUpgrade(path);
                         break;
                     default:
                         Console.WriteLine("Please input a number that is recognised");
@@ -168,16 +174,16 @@ namespace Battle_Cats_save_editor
             static void CatUpgrades(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                for (int i = 9650; i <= 11878; i += 4)
+                for (int i = 9694; i <= 11878; i += 4)
                 {
                     stream.Position = i;
                     stream.WriteByte(Convert.ToByte(80));
                     Console.WriteLine("All cats +80");
                 }
-                for (int i = 9688; i <= 11880; i += 4)
+                for (int i = 9686; i <= 11880; i += 4)
                 {
                     stream.Position = i;
-                    stream.WriteByte(Convert.ToByte(28));
+                    stream.WriteByte(Convert.ToByte(40));
                     Console.WriteLine("All cats level 40+80");
                 }
             }
@@ -727,6 +733,43 @@ namespace Battle_Cats_save_editor
                     stream.WriteByte(Convert.ToByte(01));
                 }
 
+            }
+
+            static void SpecifiCat(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                Console.WriteLine("What is the cat ID?");
+                int catID = Convert.ToInt32(Console.ReadLine());
+
+                int startPos = 7362;
+                stream.Position = startPos + catID * 4;
+                stream.WriteByte(01);
+
+            }
+
+            static void SpecifUpgrade(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                Console.WriteLine("What is the cat ID?");
+                int catID = Convert.ToInt32(Console.ReadLine());
+                int startPosID = 9694 + catID * 4;
+                Console.WriteLine("What base level do you want?(max 40)");
+                byte Levelbase = Convert.ToByte(Console.ReadLine());
+                if (Levelbase > 40) Levelbase = 40;
+                Console.WriteLine("What plus level do you want?(max +80)");
+                byte Levelplus = Convert.ToByte(Console.ReadLine());
+                if (Levelplus > 80) Levelplus = 80;
+
+                stream.Position = startPosID;
+                stream.WriteByte(Levelplus);
+                Console.WriteLine("cat +" + Levelplus);
+                
+                stream.Position = startPosID + 2;
+                stream.WriteByte(Levelbase);
+                Console.WriteLine("cat level " + Levelbase);
+                
             }
 
             static (byte, byte, byte, byte) ConvertByte(int input)
