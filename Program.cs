@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
                 string path = Path.Combine(fileToOpen);
                 Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
-                    "\n15. Change base materials\n16. Change catseyes");
+                    "\n15. Change base materials\n16. Change catseyes\n17. All cats");
                 int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -78,6 +78,9 @@ namespace Battle_Cats_save_editor
                         break;
                     case 16:
                         Catseyes(path);
+                        break;
+                    case 17:
+                        Cats(path);
                         break;
                     default:
                         Console.WriteLine("Please input a number that is recognised");
@@ -718,6 +721,12 @@ namespace Battle_Cats_save_editor
             static void Cats(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                for (int i = 7362; i <= 9686; i += 4)
+                {
+                    stream.Position = i;
+                    stream.WriteByte(Convert.ToByte(01));
+                }
+
             }
 
             static (byte, byte, byte, byte) ConvertByte(int input)
