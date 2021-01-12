@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace Battle_Cats_save_editor
 {
+
     class Editor
     {
 
@@ -25,13 +26,12 @@ namespace Battle_Cats_save_editor
 
             string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.1")
+            if (lines[0] == "2.8.4")
             {
                 Console.WriteLine("Application up to date");
             }
             else
             {
-                Console.WriteLine("bry");
                 System.Diagnostics.Process.Start(@"Updater.exe");
                 System.Environment.Exit(1);
 
@@ -41,8 +41,6 @@ namespace Battle_Cats_save_editor
             if (FD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string fileToOpen = FD.FileName;
-
-                System.IO.FileInfo File = new System.IO.FileInfo(FD.FileName);
 
                 string path = Path.Combine(fileToOpen);
                 Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
@@ -117,13 +115,14 @@ namespace Battle_Cats_save_editor
                 }
                 Console.WriteLine("Are you finished with the editor?");
                 bool ChoiceExit = OnAskUser();
-                if (ChoiceExit == true)
+                if (ChoiceExit == false)
                 {
-                    
+                    Main();
                 }
                 else
                 {
-                    Main();
+                    Console.WriteLine("\n\nIMPORTANT: remember to patch the save file after editing\nfor instructions look at readme.md on the github \nhttps://github.com/fieryhenry/Battle-Cats-Save-File-Editor/blob/main/README.md\npress enter to exit");
+                    Console.ReadLine();
                 }
             }
 
@@ -134,25 +133,14 @@ namespace Battle_Cats_save_editor
                 if (CatFood > 45000) CatFood = 45000;
 
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                string CatFoodHex = Convert.ToString(CatFood, 16);
                 Console.WriteLine("Set Cat food to " + CatFood);
 
-                int StrLength = CatFoodHex.Length;
-
-                char[] CatArr = { };
-                char[] CatArr0 = { '0' };
-                CatArr = CatFoodHex.ToCharArray(0, StrLength);
-
-                var bytes = ConvertByte(CatFood);
-                byte byte1 = bytes.Item1;
-                byte byte2 = bytes.Item2;
-                byte byte3 = bytes.Item3;
-                byte byte4 = bytes.Item4;
+                byte[] bytes = Test(CatFood);
 
                 stream.Position = 7;
-                stream.WriteByte(byte1);
+                stream.WriteByte(bytes[0]);
                 stream.Position = 8;
-                stream.WriteByte(byte2);
+                stream.WriteByte(bytes[1]);
             }
 
             static void XP(string path)
@@ -165,29 +153,22 @@ namespace Battle_Cats_save_editor
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 Console.WriteLine("Set XP to " + XP);
 
-                char[] XPArr = { };
-                char[] XPArr0 = { '0' };
-
-                var bytes = ConvertByte(XP);
-                byte byte1 = bytes.Item1;
-                byte byte2 = bytes.Item2;
-                byte byte3 = bytes.Item3;
-                byte byte4 = bytes.Item4;
+                byte[] bytes = Test(XP);
 
                 stream.Position = 76;
-                stream.WriteByte(byte1);
+                stream.WriteByte(bytes[0]);
                 stream.Position = 77;
-                stream.WriteByte(byte2);
+                stream.WriteByte(bytes[1]);
                 stream.Position = 78;
-                stream.WriteByte(byte3);
+                stream.WriteByte(bytes[2]);
                 stream.Position = 79;
-                stream.WriteByte(byte4);
+                stream.WriteByte(bytes[3]);
 
             }
 
             static void Treasure(string path)
             {
-                using var stream = new FileStream("C:/Users/henry_5ufuxnx/Downloads/LethaL-EN/test/test", FileMode.Open, FileAccess.ReadWrite);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 for (int i = 2986; i <= 3566; i += 4)
                 {
                     stream.Position = i;
@@ -237,26 +218,14 @@ namespace Battle_Cats_save_editor
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
-                    {
-                        string CatFoodHex = Convert.ToString(CatFood, 16);
-
-
-                        int StrLength = CatFoodHex.Length;
-
-                        char[] CatArr = { };
-                        char[] CatArr0 = { '0' };
-                        CatArr = CatFoodHex.ToCharArray(0, StrLength);
-
-                        var bytes = ConvertByte(CatFood);
-                        byte byte1 = bytes.Item1;
-                        byte byte2 = bytes.Item2;
-                        byte byte3 = bytes.Item3;
-                        byte byte4 = bytes.Item4;
+                    { 
+                        byte[] bytes = Test(CatFood);
 
                         stream.Position = j + 5;
-                        stream.WriteByte(byte1);
+                        stream.WriteByte(bytes[0]);
                         stream.Position = j + 6;
-                        stream.WriteByte(byte2);
+                        stream.WriteByte(bytes[1]);
+
 
                         Console.WriteLine("Success");
                     }
@@ -283,32 +252,22 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
-                        string CatFoodHex = Convert.ToString(CatFood, 16);
-
-
-                        char[] CatArr = { };
-                        char[] CatArr0 = { '0' };
-
-                        var bytes = ConvertByte(CatFood);
-                        byte byte1 = bytes.Item1;
-                        byte byte2 = bytes.Item2;
-                        byte byte3 = bytes.Item3;
-                        byte byte4 = bytes.Item4;
+                        byte[] bytes = Test(CatFood);
 
                         stream.Position = j - 5;
-                        stream.WriteByte(byte1);
+                        stream.WriteByte(bytes[0]);
                         stream.Position = j - 4;
-                        stream.WriteByte(byte2);
-                        
+                        stream.WriteByte(bytes[1]);
+
                         Console.WriteLine("Success");
                     }
                 }
             }
-        
+
             static void CatTicket(string path)
             {
-                Console.WriteLine("How much Cat Tickets do you want(max 255)");
-                byte catTickets = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How much Cat Tickets do you want(max 65565)");
+                int catTickets = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -324,8 +283,12 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
                     {
+                        byte[] bytes = Test(catTickets);
+
                         stream.Position = j + 24;
-                        stream.WriteByte(catTickets);
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 23;
+                        stream.WriteByte(bytes[1]);
                         Console.WriteLine("Success");
                     }
                 }
@@ -334,8 +297,8 @@ namespace Battle_Cats_save_editor
 
             static void CatTicketRare(string path)
             {
-                Console.WriteLine("How much Rare Cat Tickets do you want(max 255)");
-                byte rareCatTickets = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How much Rare Cat Tickets do you want(max 65535)");
+                int rareCatTickets = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -351,8 +314,13 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
                     {
+
+                        byte[] bytes = Test(rareCatTickets);
+
                         stream.Position = j + 28;
-                        stream.WriteByte(rareCatTickets);
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 27;
+                        stream.WriteByte(bytes[1]);
                         Console.WriteLine("Success");
                     }
                 }
@@ -435,21 +403,17 @@ namespace Battle_Cats_save_editor
                         char[] XPArr = { };
                         char[] XPArr0 = { '0' };
 
-                        var bytes = ConvertByte(XP);
-                        byte byte1 = bytes.Item1;
-                        byte byte2 = bytes.Item2;
-                        byte byte3 = bytes.Item3;
-                        byte byte4 = bytes.Item4;
+                        byte[] bytes = Test(XP);
 
                         stream.Position = j - 16;
-                        stream.WriteByte(byte1);
+                        stream.WriteByte(bytes[0]);
                         stream.Position = j - 15;
-                        stream.WriteByte(byte2);
+                        stream.WriteByte(bytes[1]);
                         stream.Position = j - 14;
-                        stream.WriteByte(byte3);
+                        stream.WriteByte(bytes[2]);
                         stream.Position = j - 13;
-                        stream.WriteByte(byte4);
-                        
+                        stream.WriteByte(bytes[3]);
+
                     }
                 }
             }
@@ -581,7 +545,7 @@ namespace Battle_Cats_save_editor
             static void Catseyes(string path)
             {
                 Console.WriteLine("How many Catseyes do you want(max 65535)");
-                int platCatTickets = Convert.ToByte(Console.ReadLine());
+                int platCatTickets = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -597,161 +561,34 @@ namespace Battle_Cats_save_editor
                         string CatFoodHex = Convert.ToString(platCatTickets, 16);
 
 
-                        int StrLength = CatFoodHex.Length;
 
                         char[] CatArr = { };
                         char[] CatArr0 = { '0' };
-                        CatArr = CatFoodHex.ToCharArray(0, StrLength);
 
-                        if (StrLength == 4)
-                        {
-                            string add1 = new string(CatArr, 2, 2);
-                            string add2 = new string(CatArr, 0, 2);
+                        byte[] bytes = Test(platCatTickets);
 
-
-                            int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                            int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-
-                            string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
-                            string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
-
-
-                            byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
-                            byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
-
-                            stream.Position = j;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 1;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 4;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 5;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 8;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 9;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 12;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 13;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte2);
-                        }
-                        else if (StrLength == 3)
-                        {
-
-                            string add1 = new string(CatArr, 1, 2);
-                            string add2 = new string(CatArr0, 0, 1) + (CatArr[0]);
-
-
-                            int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                            int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-
-                            string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
-                            string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
-
-                            byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
-                            byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
-
-                            stream.Position = j;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 1;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 4;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 5;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 8;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 9;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 12;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 13;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte2);
-                        }
-                        else if (StrLength == 2)
-                        {
-                            string add1 = new string(CatArr, 0, 2);
-                            string add2 = new string(CatArr0, 0, 1) + (CatArr0[0]);
-
-                            int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                            int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-
-                            string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
-                            string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
-
-                            byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
-                            byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
-
-                            stream.Position = j;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 1;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 4;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 5;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 8;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 9;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 12;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 13;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte2);
-                        }
-                        else if (StrLength == 1)
-                        {
-                            string add1 = new string(CatArr, 0, 1) + (CatArr0[0]);
-                            string add2 = new string(CatArr0, 0, 1) + (CatArr0[0]);
-
-                            int CatFoodint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                            int CatFood2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-
-                            string CatFoodStrBase10 = Convert.ToString(CatFoodint, 10);
-                            string CatFoodStr2Base10 = Convert.ToString(CatFood2int, 10);
-
-                            byte CatFoodByte = Convert.ToByte(CatFoodStrBase10);
-                            byte CatFoodByte2 = Convert.ToByte(CatFoodStr2Base10);
-
-                            stream.Position = j;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 1;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 4;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 5;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 8;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 9;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 12;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 13;
-                            stream.WriteByte(CatFoodByte2);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte);
-                            stream.Position = j + 16;
-                            stream.WriteByte(CatFoodByte2);
-
-                            Console.WriteLine("Success");
-                        }
+                        stream.Position = j;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 1;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 4;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 5;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 8;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 9;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 12;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 13;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 16;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 16;
+                        stream.WriteByte(bytes[1]);
                     }
                 }
-
             }
 
             static void Cats(string path)
@@ -795,245 +632,66 @@ namespace Battle_Cats_save_editor
                 stream.Position = startPosID;
                 stream.WriteByte(Levelplus);
                 Console.WriteLine("cat +" + Levelplus);
-                
+
                 stream.Position = startPosID + 2;
                 stream.WriteByte(Levelbase);
                 Console.WriteLine("cat level " + Levelbase);
-                
-            }
 
-            static (byte, byte, byte, byte) ConvertByte(int input)
-            {
-                string XPHex = Convert.ToString(input, 16);
-                int StrLength = XPHex.Length;
-
-                char[] XPArr = { };
-                char[] XPArr0 = { '0' };
-
-                if (StrLength == 8)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 6, 2);
-                    string add2 = new string(XPArr, 4, 2);
-                    string add3 = new string(XPArr, 2, 2);
-                    string add4 = new string(XPArr, 0, 2);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-
-                if (StrLength == 7)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 5, 2);
-                    string add2 = new string(XPArr, 3, 2);
-                    string add3 = new string(XPArr, 1, 2);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 6)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 4, 2);
-                    string add2 = new string(XPArr, 2, 2);
-                    string add3 = new string(XPArr, 0, 2);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 5)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 3, 2);
-                    string add2 = new string(XPArr, 1, 2);
-                    string add3 = new string(XPArr, 0, 1) + (XPArr0[0]);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 4)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 2, 2);
-                    string add2 = new string(XPArr, 0, 2);
-                    string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 3)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 1, 2);
-                    string add2 = new string(XPArr, 0, 1) + (XPArr0[0]);
-                    string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 2)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 0, 2);
-                    string add2 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-                if (StrLength == 1)
-                {
-                    XPArr = XPHex.ToCharArray(0, StrLength);
-
-                    string add1 = new string(XPArr, 0, 1) + (XPArr0[0]);
-                    string add2 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add3 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-                    string add4 = new string(XPArr0, 0, 1) + (XPArr0[0]);
-
-                    int XPint = int.Parse(add1, System.Globalization.NumberStyles.HexNumber);
-                    int XP2int = int.Parse(add2, System.Globalization.NumberStyles.HexNumber);
-                    int XP3int = int.Parse(add3, System.Globalization.NumberStyles.HexNumber);
-                    int XP4int = int.Parse(add4, System.Globalization.NumberStyles.HexNumber);
-
-                    string XPStrBase10 = Convert.ToString(XPint, 10);
-                    string XPStr2Base10 = Convert.ToString(XP2int, 10);
-                    string XPStr3Base10 = Convert.ToString(XP3int, 10);
-                    string XPStr4Base10 = Convert.ToString(XP4int, 10);
-
-                    byte XPByte = Convert.ToByte(XPStrBase10);
-                    byte XPByte2 = Convert.ToByte(XPStr2Base10);
-                    byte XPByte3 = Convert.ToByte(XPStr3Base10);
-                    byte XPByte4 = Convert.ToByte(XPStr4Base10);
-
-                    return (XPByte, XPByte2, XPByte3, XPByte4);
-                }
-
-                return (00, 00, 00, 00);
             }
 
             static bool OnAskUser()
             {
-                
                 return DialogResult.Yes == MessageBox.Show(
-                 "FInished with editor?", "Check for updates",
+                 "Finished with editor?", "Check for updates",
                  MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
 
+            static byte[] Test(int input)
+            {
+                string Input = Convert.ToString(input, 16);                                         //converts input int to hex
+                int odd;
+
+                if (Input.Length % 2 != 0)                                                          //If the remainder of dividing by 2 is not 0 then it must be odd
+                    odd = 0;
+                else
+                    odd = 1;                                                                        //otherwise it's even
+
+                char[] SplitString = Input.ToCharArray();                                           //Splits hex into an array of characters
+                char[] oddString = new char[SplitString.Length + 1];                                //For oddnumbers +1 because I need 1 more address to add a 0
+
+                if (Input.Length % 2 != 0)                                                          //Another odd check to make the input string length even so it can be turned into chunks of 2
+                {
+                    for (int i = 0; i < SplitString.Length; i++)
+                        oddString[i + 1] = SplitString[i];                                          //moves all values in the array 1 address forward e.g [1] [2] [3] [4] [null] --> [0] [1] [2] [3] [4]
+                    oddString[0] = '0';                                                             //inserts a 0 in the empty address
+                }
+                else
+                    SplitString.CopyTo(oddString, 0);                                               //if not odd then just copy the current even string into the same array
+
+                string[] ChunkedInput = new string[oddString.Length / 2];                           // array for grouped up chars e.g 12, 34, 56, 78
+                string[] ReChunkedInput = new string[oddString.Length / 2];                         //array for rearranged chunks
+                int[] Base10Rearranged = new int[oddString.Length / 2];                             //Array for storing rearranged chunks as an int
+                string[] Base10RearrangedStr = new string[oddString.Length / 2];                    //Array for storing rearranged chunks as a hex string
+                byte[] Base10Rearrangedbyte = new byte[oddString.Length / 2];                       //Array for storing rearranged chunks as a byte
+
+                for (int i = 0; i < oddString.Length - odd; i += 2)
+                    ChunkedInput[i / 2] = oddString[i] + "" + oddString[i + 1];                     //Clumping 2 chars together to make a chunk e.g 1 2 3 4 --> 12 34
+
+                for (int i = 0; i < ChunkedInput.Length; i++)
+                {
+                    int neg = i + 1;
+                    ReChunkedInput[i] = ChunkedInput[ChunkedInput.Length - neg];                    //Does the rearranging using the loop
+                    Base10Rearranged[i] = int.Parse(ReChunkedInput[i], NumberStyles.HexNumber);     //Converts hex string to correct form of hex
+                    Base10RearrangedStr[i] = Convert.ToString(Base10Rearranged[i], 10);             //Converts that back into an int
+                    Base10Rearrangedbyte[i] = Convert.ToByte(Base10RearrangedStr[i]);               //Converts that into bytes
+                }
+                return Base10Rearrangedbyte;                                                        //Returns the final product
+            }
+            
         }
     }
 }
+
 
     
 
