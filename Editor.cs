@@ -135,7 +135,7 @@ namespace Battle_Cats_save_editor
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 Console.WriteLine("Set Cat food to " + CatFood);
 
-                byte[] bytes = Test(CatFood);
+                byte[] bytes = Endian(CatFood);
 
                 stream.Position = 7;
                 stream.WriteByte(bytes[0]);
@@ -153,7 +153,7 @@ namespace Battle_Cats_save_editor
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 Console.WriteLine("Set XP to " + XP);
 
-                byte[] bytes = Test(XP);
+                byte[] bytes = Endian(XP);
 
                 stream.Position = 76;
                 stream.WriteByte(bytes[0]);
@@ -219,7 +219,7 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     { 
-                        byte[] bytes = Test(CatFood);
+                        byte[] bytes = Endian(CatFood);
 
                         stream.Position = j + 5;
                         stream.WriteByte(bytes[0]);
@@ -252,7 +252,7 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
-                        byte[] bytes = Test(CatFood);
+                        byte[] bytes = Endian(CatFood);
 
                         stream.Position = j - 5;
                         stream.WriteByte(bytes[0]);
@@ -283,7 +283,7 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
                     {
-                        byte[] bytes = Test(catTickets);
+                        byte[] bytes = Endian(catTickets);
 
                         stream.Position = j + 24;
                         stream.WriteByte(bytes[0]);
@@ -315,7 +315,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
                     {
 
-                        byte[] bytes = Test(rareCatTickets);
+                        byte[] bytes = Endian(rareCatTickets);
 
                         stream.Position = j + 28;
                         stream.WriteByte(bytes[0]);
@@ -403,7 +403,7 @@ namespace Battle_Cats_save_editor
                         char[] XPArr = { };
                         char[] XPArr0 = { '0' };
 
-                        byte[] bytes = Test(XP);
+                        byte[] bytes = Endian(XP);
 
                         stream.Position = j - 16;
                         stream.WriteByte(bytes[0]);
@@ -565,7 +565,7 @@ namespace Battle_Cats_save_editor
                         char[] CatArr = { };
                         char[] CatArr0 = { '0' };
 
-                        byte[] bytes = Test(platCatTickets);
+                        byte[] bytes = Endian(platCatTickets);
 
                         stream.Position = j;
                         stream.WriteByte(bytes[0]);
@@ -646,52 +646,16 @@ namespace Battle_Cats_save_editor
                  MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
 
-            static byte[] Test(int input)
+            static byte[] Endian(long num)
             {
-                string Input = Convert.ToString(input, 16);                                         //converts input int to hex
-                int odd;
+                byte[] bytes = BitConverter.GetBytes(num);
 
-                if (Input.Length % 2 != 0)                                                          //If the remainder of dividing by 2 is not 0 then it must be odd
-                    odd = 0;
-                else
-                    odd = 1;                                                                        //otherwise it's even
-
-                char[] SplitString = Input.ToCharArray();                                           //Splits hex into an array of characters
-                char[] oddString = new char[SplitString.Length + 1];                                //For oddnumbers +1 because I need 1 more address to add a 0
-
-                if (Input.Length % 2 != 0)                                                          //Another odd check to make the input string length even so it can be turned into chunks of 2
-                {
-                    for (int i = 0; i < SplitString.Length; i++)
-                        oddString[i + 1] = SplitString[i];                                          //moves all values in the array 1 address forward e.g [1] [2] [3] [4] [null] --> [0] [1] [2] [3] [4]
-                    oddString[0] = '0';                                                             //inserts a 0 in the empty address
-                }
-                else
-                    SplitString.CopyTo(oddString, 0);                                               //if not odd then just copy the current even string into the same array
-
-                string[] ChunkedInput = new string[oddString.Length / 2];                           // array for grouped up chars e.g 12, 34, 56, 78
-                string[] ReChunkedInput = new string[oddString.Length / 2];                         //array for rearranged chunks
-                int[] Base10Rearranged = new int[oddString.Length / 2];                             //Array for storing rearranged chunks as an int
-                string[] Base10RearrangedStr = new string[oddString.Length / 2];                    //Array for storing rearranged chunks as a hex string
-                byte[] Base10Rearrangedbyte = new byte[oddString.Length / 2];                       //Array for storing rearranged chunks as a byte
-
-                for (int i = 0; i < oddString.Length - odd; i += 2)
-                    ChunkedInput[i / 2] = oddString[i] + "" + oddString[i + 1];                     //Clumping 2 chars together to make a chunk e.g 1 2 3 4 --> 12 34
-
-                for (int i = 0; i < ChunkedInput.Length; i++)
-                {
-                    int neg = i + 1;
-                    ReChunkedInput[i] = ChunkedInput[ChunkedInput.Length - neg];                    //Does the rearranging using the loop
-                    Base10Rearranged[i] = int.Parse(ReChunkedInput[i], NumberStyles.HexNumber);     //Converts hex string to correct form of hex
-                    Base10RearrangedStr[i] = Convert.ToString(Base10Rearranged[i], 10);             //Converts that back into an int
-                    Base10Rearrangedbyte[i] = Convert.ToByte(Base10RearrangedStr[i]);               //Converts that into bytes
-                }
-                return Base10Rearrangedbyte;                                                        //Returns the final product
+                return bytes;
             }
-            
         }
+
     }
 }
-
 
     
 
