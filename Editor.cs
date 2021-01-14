@@ -214,7 +214,7 @@ namespace Battle_Cats_save_editor
                 char[] CatArr0L = { '0' };
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length -12; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
@@ -247,7 +247,7 @@ namespace Battle_Cats_save_editor
 
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length -12; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
@@ -278,7 +278,7 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length - 3; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
@@ -309,7 +309,7 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length -3; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
@@ -341,7 +341,7 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length - 8; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j + 2] == Convert.ToByte(255) && allData[j + 3] == Convert.ToByte(255) && allData[j + 4] == Convert.ToByte(255) && allData[j + 5] == Convert.ToByte(255) && allData[j + 6] == Convert.ToByte(255) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(54))
@@ -430,7 +430,7 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length - 25; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00) && allData[j + 24] == Convert.ToByte(70) && allData[j + 25] == Convert.ToByte(02))
@@ -487,7 +487,7 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length - 59; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(03) && allData[j + 4] == catA && allData[j + 8] == catB && allData[j + 12] == catC && allData[j + 45] == Convert.ToByte(10) && allData[j + 49] == Convert.ToByte(01) && allData[j + 50] == Convert.ToByte(01) && allData[j + 59] == Convert.ToByte(27))
@@ -516,7 +516,7 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length -194; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(02) && allData[j + 4] == Convert.ToByte(03) && allData[j + 12] == Convert.ToByte(01) && allData[j + 16] == Convert.ToByte(02) && allData[j + 178] == Convert.ToByte(64) && allData[j + 194] == Convert.ToByte(65) && allData[j + -61] == Convert.ToByte(08) && allData[j - 57] == catA)
@@ -553,7 +553,7 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < length - 71; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j - 3] == Convert.ToByte(05) && allData[j + 20] == Convert.ToByte(03) && allData[j + 57] == Convert.ToByte(10) && allData[j + 71] == Convert.ToByte(27))
