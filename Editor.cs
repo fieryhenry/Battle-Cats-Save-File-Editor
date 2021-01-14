@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.5")
+            if (lines[0] == "2.8.6")
             {
                 Console.WriteLine("Application up to date");
             }
