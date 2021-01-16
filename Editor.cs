@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,6 +44,7 @@ namespace Battle_Cats_save_editor
                 string fileToOpen = FD.FileName;
 
                 string path = Path.Combine(fileToOpen);
+                Console.WriteLine("Backup your save before using this editor!\n");
                 Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
                     "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level");
@@ -107,6 +109,10 @@ namespace Battle_Cats_save_editor
                         break;
                     case 19:
                         SpecifUpgrade(path);
+                        break;
+                    //case 20:
+                        //Encrypt(path);
+                        //Encrypt2(path);
                         break;
                     default:
                         Console.WriteLine("Please input a number that is recognised");
@@ -213,21 +219,47 @@ namespace Battle_Cats_save_editor
                 char[] CatArrL = { };
                 char[] CatArr0L = { '0' };
 
+                bool found = false;
+
                 Console.WriteLine("Scan Complete");
+                byte[] bytes = Endian(CatFood);
                 for (int j = 0; j < length -12; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     { 
-                        byte[] bytes = Endian(CatFood);
 
                         stream.Position = j + 5;
                         stream.WriteByte(bytes[0]);
                         stream.Position = j + 6;
                         stream.WriteByte(bytes[1]);
 
+                        found = true;
+
 
                         Console.WriteLine("Success");
+                    }
+                    
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your current leadership amount(backup before doing this):");
+                    int Current = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentBytes = Endian(Current);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
                     }
                 }
             }
@@ -245,6 +277,8 @@ namespace Battle_Cats_save_editor
                 char[] CatArrL = { };
                 char[] CatArr0L = { '0' };
 
+                bool found = false;
+                byte[] bytes = Endian(CatFood);
 
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length -12; j++)
@@ -252,14 +286,35 @@ namespace Battle_Cats_save_editor
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 11] == Convert.ToByte(72) && allData[j + 12] == Convert.ToByte(57))
                     {
-                        byte[] bytes = Endian(CatFood);
 
                         stream.Position = j - 5;
                         stream.WriteByte(bytes[0]);
                         stream.Position = j - 4;
                         stream.WriteByte(bytes[1]);
 
+                        found = true;
                         Console.WriteLine("Success");
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your current NP amount(backup before doing this):");
+                    int Current = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentBytes = Endian(Current);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
                     }
                 }
             }
@@ -278,13 +333,15 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
+                bool found = false;
+                byte[] bytes = Endian(catTickets);
                 for (int j = 0; j < length - 3; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
                     {
-                        byte[] bytes = Endian(catTickets);
 
+                        found = true;
                         stream.Position = j + 24;
                         stream.WriteByte(bytes[0]);
                         stream.Position = j + 23;
@@ -292,6 +349,28 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("Success");
                     }
                 }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your current Catticket amount(backup before doing this):");
+                    int Current = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentBytes = Endian(Current);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
+                    }
+                }
+
 
             }
 
@@ -309,19 +388,42 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
+
+                byte[] bytes = Endian(rareCatTickets);
+                bool found = false;
                 for (int j = 0; j < length -3; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
                     {
 
-                        byte[] bytes = Endian(rareCatTickets);
-
+                        found = true;
                         stream.Position = j + 28;
                         stream.WriteByte(bytes[0]);
                         stream.Position = j + 27;
                         stream.WriteByte(bytes[1]);
                         Console.WriteLine("Success");
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your current Rare caticket amount (backup before doing this):");
+                    int Current = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentBytes = Endian(Current);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
                     }
                 }
             }
@@ -351,6 +453,7 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("Success");
                     }
                 }
+                
             }
 
             static void ClearStageCat(string path)
@@ -392,18 +495,22 @@ namespace Battle_Cats_save_editor
 
                 }
                 Console.WriteLine("Scan Complete");
+                bool found = false;
+                Console.WriteLine("What seed do you want?(max 99999999)");
+                int XP = (int)Convert.ToInt64(Console.ReadLine());
+                if (XP > 99999999) XP = 99999999;
+                byte[] bytes = Endian(XP);
+
                 for (int j = 0; j < length - 1503; j++)
                 {
                     if (allData[j] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(228) && allData[j + 6] == Convert.ToByte(07) && allData[j + 9] == Convert.ToByte(11) && allData[j + 1] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00))
                     {
-                        Console.WriteLine("What seed do you want?(max 99999999)");
-                        int XP = (int)Convert.ToInt64(Console.ReadLine());
-                        if (XP > 99999999) XP = 99999999;
+
 
                         char[] XPArr = { };
                         char[] XPArr0 = { '0' };
 
-                        byte[] bytes = Endian(XP);
+                        found = true;
 
                         stream.Position = j - 16;
                         stream.WriteByte(bytes[0]);
@@ -414,6 +521,27 @@ namespace Battle_Cats_save_editor
                         stream.Position = j - 13;
                         stream.WriteByte(bytes[3]);
 
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your current seed (backup before doing this):");
+                    int Current = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentBytes = Endian(Current);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
                     }
                 }
             }
@@ -472,7 +600,7 @@ namespace Battle_Cats_save_editor
 
             static void Catamin(string path)
             {
-                Console.WriteLine("How many Catimins do you want(max 255)");
+                Console.WriteLine("How many Catimins do you want(Backup before doing this)(max 255)");
                 byte platCatTickets = Convert.ToByte(Console.ReadLine());
                 Console.WriteLine("How many Catimin A do you have");
                 byte catA = Convert.ToByte(Console.ReadLine());
@@ -490,7 +618,7 @@ namespace Battle_Cats_save_editor
                 for (int j = 0; j < length - 59; j++)
                 {
                     //Console.WriteLine(j);
-                    if (allData[j] == Convert.ToByte(03) && allData[j + 4] == catA && allData[j + 8] == catB && allData[j + 12] == catC && allData[j + 45] == Convert.ToByte(10) && allData[j + 49] == Convert.ToByte(01) && allData[j + 50] == Convert.ToByte(01) && allData[j + 59] == Convert.ToByte(27))
+                    if (allData[j] == Convert.ToByte(03) && allData[j + 4] == catA && allData[j + 8] == catB && allData[j + 12] == catC)
                     {
                         stream.Position = j + 4;
                         stream.WriteByte(platCatTickets);
@@ -553,7 +681,9 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length - 71; j++)
+                bool found = false;
+                byte[] bytes = Endian(platCatTickets);
+                for (int j = 3; j < length - 80; j++)
                 {
                     //Console.WriteLine(j);
                     if (allData[j - 3] == Convert.ToByte(05) && allData[j + 20] == Convert.ToByte(03) && allData[j + 57] == Convert.ToByte(10) && allData[j + 71] == Convert.ToByte(27))
@@ -564,8 +694,8 @@ namespace Battle_Cats_save_editor
 
                         char[] CatArr = { };
                         char[] CatArr0 = { '0' };
+                        found = true;
 
-                        byte[] bytes = Endian(platCatTickets);
 
                         stream.Position = j;
                         stream.WriteByte(bytes[0]);
@@ -585,8 +715,57 @@ namespace Battle_Cats_save_editor
                         stream.WriteByte(bytes[1]);
                         stream.Position = j + 16;
                         stream.WriteByte(bytes[0]);
-                        stream.Position = j + 16;
+                        stream.Position = j + 17;
                         stream.WriteByte(bytes[1]);
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Couldn't find value please enter your special catseye amount(backup before doing this):");
+                    int CurrentSpec = (int)Convert.ToInt64(Console.ReadLine());
+                    Console.WriteLine("Couldn't find value please enter your rare catseye amount(backup before doing this):");
+                    int Currentrare = (int)Convert.ToInt64(Console.ReadLine());
+                    Console.WriteLine("Couldn't find value please enter your super rare catseye amount(backup before doing this):");
+                    int CurrentSuprare = (int)Convert.ToInt64(Console.ReadLine());
+                    Console.WriteLine("Couldn't find value please enter your uber rare catseye amount(backup before doing this):");
+                    int CurrentUberrare = (int)Convert.ToInt64(Console.ReadLine());
+                    Console.WriteLine("Couldn't find value please enter your legend rare catseye amount(backup before doing this):");
+                    int Currentlegrare = (int)Convert.ToInt64(Console.ReadLine());
+
+                    byte[] currentspecBytes = Endian(CurrentSpec);
+                    byte[] currentRareBytes = Endian(Currentrare);
+                    byte[] currentSupRareBytes = Endian(CurrentSuprare);
+                    byte[] currentUberRareBytes = Endian(CurrentUberrare);
+                    byte[] currentlegBytes = Endian(Currentlegrare);
+
+
+                    for (int j = 0; j < length - 3; j++)
+                    {
+                        if (allData[j] == currentspecBytes[0] && allData[j + 1] == currentspecBytes[1] && allData[j + 4] == currentRareBytes[0] && allData[j + 5] == currentRareBytes[1] && allData[j + 8] == currentSupRareBytes[0] && allData[j + 9] == currentSupRareBytes[1] && allData[j + 12] == currentUberRareBytes[0] && allData[j + 13] == currentUberRareBytes[1] && allData[j + 16] == currentlegBytes[0] && allData[j + 17] == currentlegBytes[1])
+                        {
+                            stream.Position = j;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 1;
+                            stream.WriteByte(bytes[1]);
+                            stream.Position = j + 4;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 5;
+                            stream.WriteByte(bytes[1]);
+                            stream.Position = j + 8;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 9;
+                            stream.WriteByte(bytes[1]);
+                            stream.Position = j + 12;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 13;
+                            stream.WriteByte(bytes[1]);
+                            stream.Position = j + 16;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 17;
+                            stream.WriteByte(bytes[1]);
+
+                            Console.WriteLine("Success");
+                        }
                     }
                 }
             }
@@ -652,6 +831,52 @@ namespace Battle_Cats_save_editor
 
                 return bytes;
             }
+
+            static void Encrypt(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                byte[] toBeUsed = new byte[allData.Length - 32];
+                for (int i = 0; i < allData.Length - 32; i++)
+                    toBeUsed[i] = allData[i];
+                byte[] bytes = Encoding.ASCII.GetBytes("battlecatsen");
+                int test = 32 - bytes.Length;
+
+                byte[] Usable = new byte[allData.Length - test];
+                bytes.CopyTo(Usable, 0);
+                toBeUsed.CopyTo(Usable, bytes.Length);
+
+                
+                var bruh = MD5.Create();
+
+                byte[] encrptedData = new byte[16];
+                encrptedData = bruh.ComputeHash(Usable);
+
+                string hex = ByteArrayToString(encrptedData);
+                Console.WriteLine(hex);
+
+                int[] norm = new int[32];
+
+                for (int i = 0; i <encrptedData.Length; i++)
+                {
+                    norm[i] = Convert.ToInt32(encrptedData[i]);
+                    int cool = 32 - i;
+
+                    stream.Position = allData.Length - cool;
+                    stream.WriteByte(encrptedData[i]);
+                    
+                }
+            }
+            static string ByteArrayToString(byte[] ba)
+            {
+                return BitConverter.ToString(ba).Replace("-", "");
+            }
+
+
         }
 
     }
