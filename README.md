@@ -6,22 +6,17 @@ To edit your save file first download u/1plus1equalswindow's save file editor ht
 
 Back up your save using BackupManagerEN.exe
 
-Run my save editor
+Unzip downloadthis.zip from the latest release
+
+Run the editor
 
 Locate to your save a browse window should pop-up
 
-Do what you want with it and close it
+At the end choose the patch option to patch it
 
+Run BackupManagerEN and restore the save
 
-Place the edited save in the saves folder that u/1plus1equalswindow's editor made
-
-Run the BackupManagerEN and restore the save
-
-Put the codes in u/1plus1equalswindow's EditorEN and choose the last option
 
 Take those codes and put them back into the game
-
-
-We have to do this so the save files can be patched otherwise the game won't recognise them
 
 And done have fun!
