@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.7")
+            if (lines[0] == "2.8.8")
             {
                 Console.WriteLine("Application up to date");
             }
@@ -126,7 +126,7 @@ namespace Battle_Cats_save_editor
                 }
                 else
                 {
-                    Console.WriteLine("\n\nIMPORTANT: remember to patch the save file after editing\nfor instructions look at readme.md on the github: \nhttps://github.com/fieryhenry/Battle-Cats-Save-File-Editor/blob/main/README.md\npress enter to exit");
+                    Encrypt(path);
                     Console.ReadLine();
                 }
             }
