@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.6")
+            if (lines[0] == "2.8.7")
             {
                 Console.WriteLine("Application up to date");
             }
@@ -47,7 +47,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Backup your save before using this editor!\n");
                 Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
-                    "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level");
+                    "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level\n20. Patch Data");
                 int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -110,9 +110,8 @@ namespace Battle_Cats_save_editor
                     case 19:
                         SpecifUpgrade(path);
                         break;
-                    //case 20:
-                        //Encrypt(path);
-                        //Encrypt2(path);
+                    case 20:
+                        Encrypt(path);
                         break;
                     default:
                         Console.WriteLine("Please input a number that is recognised");
@@ -195,14 +194,16 @@ namespace Battle_Cats_save_editor
                 {
                     stream.Position = i;
                     stream.WriteByte(Convert.ToByte(80));
-                    Console.WriteLine("All cats +80");
+                    //Console.WriteLine("All cats +80");
                 }
                 for (int i = 9686; i <= 11880; i += 4)
                 {
                     stream.Position = i;
                     stream.WriteByte(Convert.ToByte(40));
-                    Console.WriteLine("All cats level 40+80");
+                    //Console.WriteLine("All cats level 40+80");
                 }
+
+                Console.WriteLine("all cats max level");
             }
 
             static void Leadership(string path)
@@ -851,31 +852,29 @@ namespace Battle_Cats_save_editor
                 toBeUsed.CopyTo(Usable, bytes.Length);
 
                 
-                var bruh = MD5.Create();
+                var md5 = MD5.Create();
 
-                byte[] encrptedData = new byte[16];
-                encrptedData = bruh.ComputeHash(Usable);
+                byte[] Data = new byte[16];
+                Data = md5.ComputeHash(Usable);
 
-                string hex = ByteArrayToString(encrptedData);
+                string hex = ByteArrayToString(Data);
                 Console.WriteLine(hex);
 
-                int[] norm = new int[32];
 
-                for (int i = 0; i <encrptedData.Length; i++)
-                {
-                    norm[i] = Convert.ToInt32(encrptedData[i]);
-                    int cool = 32 - i;
 
-                    stream.Position = allData.Length - cool;
-                    stream.WriteByte(encrptedData[i]);
-                    
-                }
+                string EncyptedHex = ByteArrayToString(Data);
+
+                hex = hex.ToLower();
+
+                byte[] stuffs = Encoding.ASCII.GetBytes(hex);
+
+                stream.Position = allData.Length - 32;
+                stream.Write(stuffs, 0, stuffs.Length);
             }
             static string ByteArrayToString(byte[] ba)
             {
                 return BitConverter.ToString(ba).Replace("-", "");
             }
-
 
         }
 
