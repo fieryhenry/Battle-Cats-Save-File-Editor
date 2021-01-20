@@ -6,13 +6,13 @@ To edit your save file first download u/1plus1equalswindow's save file editor ht
 
 Back up your save using BackupManagerEN.exe
 
-Unzip downloadthis.zip from the latest release
+Unzip downloadthis.zip from the latest release https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases/latest
 
 Run the editor
 
 Locate to your save a browse window should pop-up
 
-At the end choose the patch option to patch it
+When you are done make sure to either select the patch save option or click "yes" when the dialog box opens asking you if you're finished with the editor
 
 Run BackupManagerEN and restore the save
 
