@@ -25,27 +25,27 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
 
-            string[] lines = System.IO.File.ReadAllLines(@"newversion.txt");
+            string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.8")
+            if (lines[0] == "2.8.9")
             {
                 Console.WriteLine("Application up to date");
             }
             else
             {
                 System.Diagnostics.Process.Start(@"Updater.exe");
-                System.Environment.Exit(1);
+                Environment.Exit(1);
 
             }
 
-            var FD = new System.Windows.Forms.OpenFileDialog();
-            if (FD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var FD = new OpenFileDialog();
+            if (FD.ShowDialog() == DialogResult.OK)
             {
                 string fileToOpen = FD.FileName;
 
                 string path = Path.Combine(fileToOpen);
                 Console.WriteLine("Backup your save before using this editor!\n");
-                Console.WriteLine("\nWhat do you want to do?\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
+                Console.WriteLine("\nWhat do you want to do?(Note many features are currently broken I am working on fixing them)\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
                     "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level\n20. Patch Data");
                 int Choice = Convert.ToInt32(Console.ReadLine());
@@ -324,108 +324,74 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How much Cat Tickets do you want(max 65565)");
                 int catTickets = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("How much Normal Cat Tickets do you have?");
+                int catTicketsCurrent = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
-                for (int i = 0; i <= length; i++)
-                {
 
-                }
-                Console.WriteLine("Scan Complete");
                 bool found = false;
+                Console.WriteLine("Scan Complete");
                 byte[] bytes = Endian(catTickets);
+                byte[] bytesCurrent = Endian(catTicketsCurrent);
                 for (int j = 0; j < length - 3; j++)
                 {
                     //Console.WriteLine(j);
-                    if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j - 3] == Convert.ToByte(142))
+                    if (allData[j] == Convert.ToByte(131) && allData[j + 3] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(131) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(131) && allData[j + 11] == Convert.ToByte(0) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
                     {
-
                         found = true;
-                        stream.Position = j + 24;
+                        stream.Position = j + 64;
                         stream.WriteByte(bytes[0]);
-                        stream.Position = j + 23;
+                        stream.Position = j + 65;
                         stream.WriteByte(bytes[1]);
                         Console.WriteLine("Success");
                     }
+                    
                 }
                 if (!found)
                 {
-                    Console.WriteLine("Couldn't find value please enter your current Catticket amount(backup before doing this):");
-                    int Current = (int)Convert.ToInt64(Console.ReadLine());
-
-                    byte[] currentBytes = Endian(Current);
-
-
-                    for (int j = 0; j < length - 3; j++)
-                    {
-                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
-                        {
-                            stream.Position = j;
-                            stream.WriteByte(bytes[0]);
-                            stream.Position = j + 1;
-                            stream.WriteByte(bytes[1]);
-
-                            Console.WriteLine("Success");
-                        }
-                    }
+                    Console.WriteLine("Sorry your cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
                 }
+                
 
 
             }
 
             static void CatTicketRare(string path)
             {
-                Console.WriteLine("How much Rare Cat Tickets do you want(max 65535)");
-                int rareCatTickets = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("How much Rare Cat Tickets do you want(max 65565)");
+                int catTickets = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("How much Normal Cat Tickets do you have?");
+                int catTicketsCurrent = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
-                for (int i = 0; i <= length; i++)
-                {
 
-                }
-                Console.WriteLine("Scan Complete");
-
-                byte[] bytes = Endian(rareCatTickets);
                 bool found = false;
-                for (int j = 0; j < length -3; j++)
+                Console.WriteLine("Scan Complete");
+                byte[] bytes = Endian(catTickets);
+                byte[] bytesCurrent = Endian(catTicketsCurrent);
+                for (int j = 0; j < length - 3; j++)
                 {
                     //Console.WriteLine(j);
-                    if (allData[j] == Convert.ToByte(131) && allData[j + 1] == Convert.ToByte(142) && allData[j + 2] == Convert.ToByte(123) && allData[j + 3] == Convert.ToByte(00) && allData[j - 2] == Convert.ToByte(122) && allData[j + -3] == Convert.ToByte(142))
+                    if (allData[j] == Convert.ToByte(131) && allData[j + 3] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(131) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(131) && allData[j + 11] == Convert.ToByte(0) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
                     {
-
                         found = true;
-                        stream.Position = j + 28;
+                        stream.Position = j + 68;
                         stream.WriteByte(bytes[0]);
-                        stream.Position = j + 27;
+                        stream.Position = j + 69;
                         stream.WriteByte(bytes[1]);
                         Console.WriteLine("Success");
                     }
+
                 }
                 if (!found)
                 {
-                    Console.WriteLine("Couldn't find value please enter your current Rare caticket amount (backup before doing this):");
-                    int Current = (int)Convert.ToInt64(Console.ReadLine());
-
-                    byte[] currentBytes = Endian(Current);
-
-
-                    for (int j = 0; j < length - 3; j++)
-                    {
-                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
-                        {
-                            stream.Position = j;
-                            stream.WriteByte(bytes[0]);
-                            stream.Position = j + 1;
-                            stream.WriteByte(bytes[1]);
-
-                            Console.WriteLine("Success");
-                        }
-                    }
+                    Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
                 }
             }
 
