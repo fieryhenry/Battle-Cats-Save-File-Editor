@@ -19,6 +19,7 @@ namespace Battle_Cats_save_editor
         [STAThreadAttribute]
         static void Main()
         {
+            Console.WindowWidth = 125;
             string folderName = @"newversion.txt";
 
             WebClient webClient = new WebClient();
@@ -27,7 +28,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.8.9")
+            if (lines[0] == "2.9.0")
             {
                 Console.WriteLine("Application up to date");
             }
@@ -47,7 +48,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Backup your save before using this editor!\n");
                 Console.WriteLine("\nWhat do you want to do?(Note many features are currently broken I am working on fixing them)\n1. Change Cat food\n2. Change XP\n3. All treasures\n4. All cats upgraded 40+80\n5. Change leadership\n6. Change NP\n7. Change cat tickets\n8. change rare cat tickets" +
                     "\n9. Change platinum tickets\n10. All cats from clearing stages\n11. Change gacha seed\n12. All cats evolved\n13. Change battle item count\n14. Change Catamins" +
-                    "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level\n20. Patch Data");
+                    "\n15. Change base materials\n16. Change catseyes\n17. All cats\n18. Get a specific cat\n19. Upgrade a specific cat to a specific level\n20. level 255 treasures (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n21. Patch Data");
                 int Choice = Convert.ToInt32(Console.ReadLine());
 
 
@@ -111,6 +112,9 @@ namespace Battle_Cats_save_editor
                         SpecifUpgrade(path);
                         break;
                     case 20:
+                        MaxTreasures(path);
+                        break;
+                    case 21:
                         Encrypt(path);
                         break;
                     default:
@@ -183,8 +187,24 @@ namespace Battle_Cats_save_editor
                 {
                     stream.Position = i;
                     stream.WriteByte(03);
-                    Console.WriteLine("All Treasures");
                 }
+                Console.WriteLine("All Treasures");
+            }
+
+            static void MaxTreasures(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                for (int i = 2986; i <= 3566; i += 4)
+                {
+                    stream.Position = i;
+                    stream.WriteByte(255);
+                }
+                for (int i = 3770; i <= 4942; i += 4)
+                {
+                    stream.Position = i;
+                    stream.WriteByte(255);
+                }
+                Console.WriteLine("All maxed Treasures");
             }
 
             static void CatUpgrades(string path)
