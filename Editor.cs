@@ -28,7 +28,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.9.0")
+            if (lines[0] == "2.9.1")
             {
                 Console.WriteLine("Application up to date");
             }
@@ -562,27 +562,35 @@ namespace Battle_Cats_save_editor
 
             static void Items(string path)
             {
-                Console.WriteLine("How much of each item do you want(max 255)");
-                byte catTickets = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How much of each item do you want(max 65535)");
+                int catTickets = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("What is your base level for cat cannon attack power?");
+                byte CatCannonAttack = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("What is your amount of speed ups?");
+                int SpeedUps = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
 
-                Console.WriteLine("Scan Complete");
-                stream.Position = 14474;
-                stream.WriteByte(catTickets);
-                stream.Position = 14478;
-                stream.WriteByte(catTickets);
-                stream.Position = 14482;
-                stream.WriteByte(catTickets);
-                stream.Position = 14486;
-                stream.WriteByte(catTickets);
-                stream.Position = 14490;
-                stream.WriteByte(catTickets);
-                stream.Position = 14494;
-                stream.WriteByte(catTickets);
+                byte[] bytesItems = Endian(catTickets);
+                byte[] bytesSpeedUps = Endian(SpeedUps);
+                for (int j = 14080; j < 15104; j++)
+                {
+                    if (allData[j + 64] == Convert.ToByte(bytesSpeedUps[0]) && allData[j + 65] == Convert.ToByte(bytesSpeedUps[1]) && allData[j] == Convert.ToByte(02) && allData[j + 1] == Convert.ToByte(0) && allData[j + 2] == Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j - 54] == CatCannonAttack - 1 && allData[j + 4] == Convert.ToByte(02) && allData[j + 5] == 0 && allData[j - 58] == 0 && allData[j + 24] == 0) //&& allData[j + 28] == 8) 
+                    {
+                        for (int i = 64; i <=84; i+=4)
+                        {
+                            stream.Position = i + j;
+                            stream.WriteByte(bytesItems[0]);
+                            stream.Position = i+1 + j;
+                            stream.WriteByte(bytesItems[1]);
+                            Console.WriteLine(i + j);
+                        }
+                    }
+                }
+                
             }
 
             static void Catamin(string path)
