@@ -28,7 +28,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.9.1")
+            if (lines[0] == "2.9.2")
             {
                 Console.WriteLine("Application up to date");
             }
@@ -197,12 +197,12 @@ namespace Battle_Cats_save_editor
                 for (int i = 2986; i <= 3566; i += 4)
                 {
                     stream.Position = i;
-                    stream.WriteByte(255);
+                    stream.WriteByte(100);
                 }
                 for (int i = 3770; i <= 4942; i += 4)
                 {
                     stream.Position = i;
-                    stream.WriteByte(255);
+                    stream.WriteByte(100);
                 }
                 Console.WriteLine("All maxed Treasures");
             }
@@ -574,6 +574,8 @@ namespace Battle_Cats_save_editor
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
 
+                bool found = false;
+
                 byte[] bytesItems = Endian(catTickets);
                 byte[] bytesSpeedUps = Endian(SpeedUps);
                 for (int j = 14080; j < 15104; j++)
@@ -582,15 +584,20 @@ namespace Battle_Cats_save_editor
                     {
                         for (int i = 64; i <=84; i+=4)
                         {
+                            found = true;
                             stream.Position = i + j;
                             stream.WriteByte(bytesItems[0]);
                             stream.Position = i+1 + j;
                             stream.WriteByte(bytesItems[1]);
-                            Console.WriteLine(i + j);
+                            //Console.WriteLine(i + j);
                         }
                     }
                 }
-                
+                if (!found)
+                {
+                    Console.WriteLine("Sorry your item position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                }
+
             }
 
             static void Catamin(string path)
