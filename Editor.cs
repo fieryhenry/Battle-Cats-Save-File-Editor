@@ -120,7 +120,6 @@ namespace Battle_Cats_save_editor
                     default:
                         Console.WriteLine("Please input a number that is recognised");
                         break;
-
                 }
                 Console.WriteLine("Are you finished with the editor?");
                 bool ChoiceExit = OnAskUser();
@@ -257,8 +256,7 @@ namespace Battle_Cats_save_editor
                     }
                     
                 }
-                if (!found)
-                    Console.WriteLine("Couldn't find value please enter your current leadership amount(backup before doing this):");
+                if (!found) Console.WriteLine("Sorry your cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
             }
 
             static void NP(string path)
