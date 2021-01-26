@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.9.5")
+            if (lines[0] == "2.9.6")
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Application up to date");
@@ -38,10 +38,9 @@ namespace Battle_Cats_save_editor
             if (FD.ShowDialog() == DialogResult.OK)
             {
                 string fileToOpen = FD.FileName;
-                
-
                 string path = Path.Combine(fileToOpen);
                 string result = Path.GetFileName(path);
+
                 Console.WriteLine("Save \"{0}\" is selected", result);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!", fileToOpen);
@@ -50,8 +49,8 @@ namespace Battle_Cats_save_editor
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& All treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& All cats from clearing stages\n&11.& Change gacha seed\n&12.& All cats evolved\n&13.& Change battle item count\n&14.& Change Catamins" +
                     "\n&15.& Change base materials\n&16.& Change catseyes\n&17.& All cats\n&18.& Get a specific cat\n&19.& Upgrade a specific cat to a specific level\n&20.& level 100 treasures (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                
                 int Choice = Inputed();
-
 
                 switch (Choice)
                 {
@@ -128,7 +127,7 @@ namespace Battle_Cats_save_editor
                 else
                 {
                     Encrypt(path);
-                    Console.WriteLine("Press enter to exit");
+                    Console.WriteLine("Use the backup manager to restore the save\nPress enter to exit");
                     Console.ReadLine();
                 }
             }
@@ -539,21 +538,22 @@ namespace Battle_Cats_save_editor
                         }
                     }
                 }
-                if (!found)
-                    Console.WriteLine("Sorry your item position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your item position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
             }
 
             static void Catamin(string path)
             {
-                Console.WriteLine("How many Catimins do you want(Backup before doing this)(max 255)");
-                byte platCatTickets = Convert.ToByte(Console.ReadLine());
-                Console.WriteLine("How many Catimin A do you have");
-                byte catA = Convert.ToByte(Console.ReadLine());
-                Console.WriteLine("How many Catimin B do you have");
-                byte catB = Convert.ToByte(Console.ReadLine());
-                Console.WriteLine("How many Catimin C do you have");
-                byte catC = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How many Catimins of each type do you want(max 65535)");
+                int platCatTickets = Inputed();
+                Console.WriteLine("How many Catimin  of type A do you have?");
+                int CurrentplatCatTickets = Inputed();
+
+                byte[] bytes = Endian(platCatTickets);
+                byte[] bytesCurrent = Endian(CurrentplatCatTickets);
+                
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                bool found = false;
 
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
@@ -562,17 +562,27 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length - 59; j++)
                 {
-                    if (allData[j] == Convert.ToByte(03) && allData[j + 4] == catA && allData[j + 8] == catB && allData[j + 12] == catC)
+                    if (allData[j] == Convert.ToByte(05) && allData[j + 1] == Convert.ToByte(0) && allData[j + 69] == Convert.ToByte(10) && allData[j + 73] == Convert.ToByte(01) && allData[j + 83] == Convert.ToByte(27) && allData[j + 28] == Convert.ToByte(bytesCurrent[0]) && allData[j + 29] == Convert.ToByte(bytesCurrent[1]))
                     {
-                        stream.Position = j + 4;
-                        stream.WriteByte(platCatTickets);
-                        stream.Position = j + 8;
-                        stream.WriteByte(platCatTickets);
-                        stream.Position = j + 12;
-                        stream.WriteByte(platCatTickets);
+                        found = true;
+
+                        stream.Position = j + 28;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 29;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 32;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 33;
+                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 36;
+                        stream.WriteByte(bytes[0]);
+                        stream.Position = j + 37;
+                        stream.WriteByte(bytes[1]);
+                        
                         Console.WriteLine("Success");
                     }
                 }
+                if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
             }
 
             static void BaseMats(string path)
@@ -588,27 +598,27 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length - 194; j++)
+                for (int j = 0; j > allData.Length; j++)
                 {
-                    if (allData[j] == Convert.ToByte(02) && allData[j + 4] == Convert.ToByte(03) && allData[j + 12] == Convert.ToByte(01) && allData[j + 16] == Convert.ToByte(02) && allData[j + 178] == Convert.ToByte(64) && allData[j + 194] == Convert.ToByte(65) && allData[j + -61] == Convert.ToByte(08) && allData[j - 57] == catA)
+                    if (allData[j] == Convert.ToByte(1) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == catA)
                     {
                         stream.Position = j - 57;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 53;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 49;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 45;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 42;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 39;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 36;
-                        stream.WriteByte(platCatTickets);
+                        //stream.WriteByte(platCatTickets);
                         stream.Position = j - 33;
-                        stream.WriteByte(platCatTickets);
-                        Console.WriteLine("Success");
+                        //stream.WriteByte(platCatTickets);
+                        Console.WriteLine(j);
                     }
                 }
             }
