@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Battle_Cats_save_editor
@@ -29,7 +23,7 @@ namespace Battle_Cats_save_editor
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
 
-            if (lines[0] == "2.9.4")
+            if (lines[0] == "2.9.5")
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Application up to date");
@@ -38,17 +32,19 @@ namespace Battle_Cats_save_editor
             {
                 System.Diagnostics.Process.Start(@"Updater.exe");
                 Environment.Exit(1);
-
             }
 
             var FD = new OpenFileDialog();
             if (FD.ShowDialog() == DialogResult.OK)
             {
                 string fileToOpen = FD.FileName;
+                
 
                 string path = Path.Combine(fileToOpen);
+                string result = Path.GetFileName(path);
+                Console.WriteLine("Save \"{0}\" is selected", result);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nBackup your save before using this editor!");
+                Console.WriteLine("\nBackup your save before using this editor!", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.White;
                 ColouredText("\n&What do you want to do?&(Note many features are currently broken I am working on fixing them)", ConsoleColor.White, ConsoleColor.Magenta);
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& All treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
@@ -287,7 +283,6 @@ namespace Battle_Cats_save_editor
                 byte[] bytesCurrent = Endian(leaderCurent);
                 for (int j = 212992; j < length - 12; j++)
                 {
-                    //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(72) && allData[j + 1] == Convert.ToByte(57) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j - 6] == bytesCurrent[0] && allData[j - 5] == bytesCurrent[1])
                     {
                         stream.Position = j - 16;
@@ -365,14 +360,15 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("Success");
                     }
                 }
-                if (!found)
-                    Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
             }
 
             static void PlatTicketRare(string path)
             {
-                Console.WriteLine("How much Platinum Cat Tickets do you want(max 9 any more and ban)");
+                Console.WriteLine("How much Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
                 byte platCatTickets = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How many Platinum Cat Tickets do you have?");
+                byte platCurrent = Convert.ToByte(Console.ReadLine());
                 if (platCatTickets > 9) platCatTickets = 9;
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -380,17 +376,20 @@ namespace Battle_Cats_save_editor
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
 
+                bool found = false;
+
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length - 8; j++)
+                for (int j = 0; j < length - 11; j++)
                 {
-                    //Console.WriteLine(j);
-                    if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j + 2] == Convert.ToByte(255) && allData[j + 3] == Convert.ToByte(255) && allData[j + 4] == Convert.ToByte(255) && allData[j + 5] == Convert.ToByte(255) && allData[j + 6] == Convert.ToByte(255) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(54))
+                    if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j+2] == 0 && allData[j+3] == Convert.ToByte(54) && allData[j + 4] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(0) && allData[j + 11] == Convert.ToByte(54) && allData[j + 12] == Convert.ToByte(0) && allData[j + 19] == Convert.ToByte(platCurrent))
                     {
-                        stream.Position = j + 24;
+                        found = true;
+                        stream.Position = j + 19;
                         stream.WriteByte(platCatTickets);
                         Console.WriteLine("Success");
                     }
                 }
+                if (!found) Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
 
             }
 
