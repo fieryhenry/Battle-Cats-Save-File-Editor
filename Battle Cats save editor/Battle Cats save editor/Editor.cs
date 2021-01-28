@@ -536,29 +536,13 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == catA)
                     {
                         found = true;
-                        for (int i = 0; i < 17; i+=4)
+                        for (int i = 0; i < 29; i+=4)
                         {
                             stream.Position = j + 64 + i;
                             stream.WriteByte(bytes[0]);
                             stream.Position = j + 65 + i;
                             stream.WriteByte(bytes[1]);
-                            Console.WriteLine("bruh");
                         }
-                        stream.Position = j - 53;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 49;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 45;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 42;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 39;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 36;
-                        //stream.WriteByte(platCatTickets);
-                        stream.Position = j - 33;
-                        //stream.WriteByte(platCatTickets);
-                        Console.WriteLine(j);
                     }
                 }
                 if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
