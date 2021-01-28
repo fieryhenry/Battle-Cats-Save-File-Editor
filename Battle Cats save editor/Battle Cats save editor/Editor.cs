@@ -22,7 +22,7 @@ namespace Battle_Cats_save_editor
 
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.6";
+            string version = "2.9.7";
 
             if (lines[0] == version)
             {
