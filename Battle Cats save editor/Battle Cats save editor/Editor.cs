@@ -360,7 +360,7 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
                 bool found = false;
-                Console.WriteLine("What seed do you want?(max 99999999)");
+                Console.WriteLine("What seed do you want?(max 99999999), Curently broken for most save files");
                 int XP = Inputed();
                 if (XP > 99999999) XP = 99999999;
                 byte[] bytes = Endian(XP);
@@ -424,7 +424,6 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length - 25; j++)
                 {
-                    //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00) && allData[j + 24] == Convert.ToByte(70) && allData[j + 25] == Convert.ToByte(02))
                     {
                         for (int i = j + 60; i < j + 2710; i += 4)
@@ -689,7 +688,7 @@ namespace Battle_Cats_save_editor
             static bool OnAskUser()
             {
                 return DialogResult.Yes == MessageBox.Show(
-                 "Finished with editor?", "Check for updates",
+                 "Finished with editor?", "Finshed",
                  MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
 
@@ -780,7 +779,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (FormatException)
                 {
-                    ColouredText("Input given was not an integer\n", ConsoleColor.White, ConsoleColor.DarkRed);
+                    ColouredText("Input given was not a number or it wasn't an integer\n", ConsoleColor.White, ConsoleColor.DarkRed);
                     Main();
                 }
                 return input;
