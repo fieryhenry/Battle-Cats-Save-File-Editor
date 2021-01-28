@@ -49,7 +49,8 @@ namespace Battle_Cats_save_editor
                 ColouredText("\n&What do you want to do?&(Note many features are currently broken I am working on fixing them)", ConsoleColor.White, ConsoleColor.Magenta);
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved\n&12.& Change battle item count\n&13.& Change Catamins" +
-                    "\n&14.& Change base materials\n&15.& Change catseyes\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n&19.& level 100 treasures (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "\n&14.& Change base materials\n&15.& Change catseyes\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 
                 int Choice = Inputed();
 
@@ -151,18 +152,21 @@ namespace Battle_Cats_save_editor
 
             static void MaxTreasures(string path)
             {
+                Console.WriteLine("What level of treasures of you want?(max 255)");
+                int level = Inputed();
+                if (level > 255) level = 255;
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 for (int i = 2986; i <= 3566; i += 4)
                 {
                     stream.Position = i;
-                    stream.WriteByte(100);
+                    stream.WriteByte((byte)level);
                 }
                 for (int i = 3770; i <= 4942; i += 4)
                 {
                     stream.Position = i;
-                    stream.WriteByte(100);
+                    stream.WriteByte((byte)level);
                 }
-                Console.WriteLine("All maxed Treasures");
+                Console.WriteLine("All treasures level {0}", level);
             }
 
             static void CatUpgrades(string path)
@@ -201,7 +205,6 @@ namespace Battle_Cats_save_editor
                 byte[] bytesCurrent = Endian(leaderCurent);
                 for (int j = 212992; j < length - 12; j++)
                 {
-                    //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(72) && allData[j + 1] == Convert.ToByte(57) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j - 6] == bytesCurrent[0] && allData[j - 5] == bytesCurrent[1])
                     {
 
@@ -304,7 +307,6 @@ namespace Battle_Cats_save_editor
                 byte[] bytesCurrent = Endian(catTicketsCurrent);
                 for (int j = 0; j < length - 3; j++)
                 {
-                    //Console.WriteLine(j);
                     if (allData[j] == Convert.ToByte(131) && allData[j + 3] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(131) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(131) && allData[j + 11] == Convert.ToByte(0) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
                     {
                         found = true;
@@ -355,10 +357,7 @@ namespace Battle_Cats_save_editor
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
-                for (int i = 0; i <= length; i++)
-                {
 
-                }
                 Console.WriteLine("Scan Complete");
                 bool found = false;
                 Console.WriteLine("What seed do you want?(max 99999999)");
@@ -519,23 +518,32 @@ namespace Battle_Cats_save_editor
 
             static void BaseMats(string path)
             {
-                Console.WriteLine("How many Base Materials do you want(max 255)");
-                byte platCatTickets = Convert.ToByte(Console.ReadLine());
+                Console.WriteLine("How many Base Materials do you want(max 65535)");
+                int platCatTickets = (int)Convert.ToInt64(Console.ReadLine());
                 Console.WriteLine("How many bricks do you have");
                 byte catA = Convert.ToByte(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
+                byte[] bytes = Endian(platCatTickets);
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
+                bool found = false;
 
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j > allData.Length; j++)
+                for (int j = 0; j < allData.Length; j++)
                 {
-                    if (allData[j] == Convert.ToByte(1) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == catA)
+                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == catA)
                     {
-                        stream.Position = j - 57;
-                        //stream.WriteByte(platCatTickets);
+                        found = true;
+                        for (int i = 0; i < 17; i+=4)
+                        {
+                            stream.Position = j + 64 + i;
+                            stream.WriteByte(bytes[0]);
+                            stream.Position = j + 65 + i;
+                            stream.WriteByte(bytes[1]);
+                            Console.WriteLine("bruh");
+                        }
                         stream.Position = j - 53;
                         //stream.WriteByte(platCatTickets);
                         stream.Position = j - 49;
@@ -553,6 +561,7 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine(j);
                     }
                 }
+                if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
             }
 
             static void Catseyes(string path)
