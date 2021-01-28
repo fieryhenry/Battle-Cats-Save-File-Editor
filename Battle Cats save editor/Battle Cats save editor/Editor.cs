@@ -360,7 +360,7 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
                 bool found = false;
-                Console.WriteLine("What seed do you want?(max 99999999)");
+                Console.WriteLine("What seed do you want?(max 99999999), Curently broken for most save files");
                 int XP = Inputed();
                 if (XP > 99999999) XP = 99999999;
                 byte[] bytes = Endian(XP);
