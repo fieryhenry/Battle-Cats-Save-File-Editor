@@ -22,11 +22,12 @@ namespace Battle_Cats_save_editor
 
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
+            string version = "2.9.6";
 
-            if (lines[0] == "2.9.6")
+            if (lines[0] == version)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Application up to date");
+                Console.WriteLine("Application up to date - current version is {0}", version);
             }
             else
             {
@@ -46,9 +47,9 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("\nBackup your save before using this editor!", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.White;
                 ColouredText("\n&What do you want to do?&(Note many features are currently broken I am working on fixing them)", ConsoleColor.White, ConsoleColor.Magenta);
-                ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& All treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
-                    "\n&9.& Change platinum tickets\n&10.& All cats from clearing stages\n&11.& Change gacha seed\n&12.& All cats evolved\n&13.& Change battle item count\n&14.& Change Catamins" +
-                    "\n&15.& Change base materials\n&16.& Change catseyes\n&17.& All cats\n&18.& Get a specific cat\n&19.& Upgrade a specific cat to a specific level\n&20.& level 100 treasures (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
+                    "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved\n&12.& Change battle item count\n&13.& Change Catamins" +
+                    "\n&14.& Change base materials\n&15.& Change catseyes\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n&19.& level 100 treasures (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 
                 int Choice = Inputed();
 
@@ -80,9 +81,6 @@ namespace Battle_Cats_save_editor
                         break;
                     case 9:
                         PlatTicketRare(path);
-                        break;
-                    case 10:
-                        ClearStageCat(path);
                         break;
                     case 11:
                         Seed(path);
@@ -392,30 +390,6 @@ namespace Battle_Cats_save_editor
 
             }
 
-            static void ClearStageCat(string path)
-            {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-
-                Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length - 1503; j++)
-                {
-                    if (allData[j] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 6] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(00) && allData[j + 10] == Convert.ToByte(00) && allData[j + 145] == Convert.ToByte(44) && allData[j + 146] == Convert.ToByte(01) && allData[j + 1503] == 250)
-                    {
-                        Console.WriteLine("Success");
-                        for (int i = 0; i <= j + 482; i += 4)
-                        {
-                            stream.Position = i;
-                            stream.WriteByte(01);
-                        }
-                    }
-                }
-
-            }
-
             static void Seed(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -579,7 +553,7 @@ namespace Battle_Cats_save_editor
                         stream.Position = j + 37;
                         stream.WriteByte(bytes[1]);
                         
-                        Console.WriteLine("Success");
+                        Console.WriteLine(j);
                     }
                 }
                 if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
@@ -822,10 +796,7 @@ namespace Battle_Cats_save_editor
                 char[] chars = { '&' };
 
                 string[] split = new string[input.Length];
-                try
-                {
-                    split = input.Split(chars);
-                }
+                try { split = input.Split(chars); }
                 catch (IndexOutOfRangeException)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -844,7 +815,7 @@ namespace Battle_Cats_save_editor
                     }
                     Console.ForegroundColor = Base;
                 }
-                catch (IndexOutOfRangeException) { };
+                catch (IndexOutOfRangeException) { }
             }
 
             static int Inputed()
