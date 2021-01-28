@@ -1,0 +1,10 @@
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\bin\Debug\Battle Cats save editor.exe.config
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\bin\Debug\Battle Cats save editor.exe
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\bin\Debug\Battle Cats save editor.pdb
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\obj\Debug\Battle Cats save editor.csproj.CoreCompileInputs.cache
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\obj\Debug\Battle Cats save editor.exe
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\obj\Debug\Battle Cats save editor.pdb
+C:\Users\henry_5ufuxnx\Downloads\LethaL-EN\My save editor\Battle Cats save editor.exe.config
+C:\Users\henry_5ufuxnx\Downloads\LethaL-EN\My save editor\Battle Cats save editor.exe
+C:\Users\henry_5ufuxnx\Downloads\LethaL-EN\My save editor\Battle Cats save editor.pdb
+C:\Users\henry_5ufuxnx\source\repos\Battle Cats save editor\Battle Cats save editor\obj\Debug\Battle Cats save editor.csprojAssemblyReference.cache
