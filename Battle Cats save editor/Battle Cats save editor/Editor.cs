@@ -55,69 +55,27 @@ namespace Battle_Cats_save_editor
 
                 switch (Choice)
                 {
-                    case 1:
-                        CatFood(path);
-                        break;
-                    case 2:
-                        XP(path);
-                        break;
-                    case 3:
-                        Treasure(path);
-                        break;
-                    case 4:
-                        CatUpgrades(path);
-                        break;
-                    case 5:
-                        Leadership(path);
-                        break;
-                    case 6:
-                        NP(path);
-                        break;
-                    case 7:
-                        CatTicket(path);
-                        break;
-                    case 8:
-                        CatTicketRare(path);
-                        break;
-                    case 9:
-                        PlatTicketRare(path);
-                        break;
-                    case 11:
-                        Seed(path);
-                        break;
-                    case 12:
-                        Evolve(path);
-                        break;
-                    case 13:
-                        Items(path);
-                        break;
-                    case 14:
-                        Catamin(path);
-                        break;
-                    case 15:
-                        BaseMats(path);
-                        break;
-                    case 16:
-                        Catseyes(path);
-                        break;
-                    case 17:
-                        Cats(path);
-                        break;
-                    case 18:
-                        SpecifiCat(path);
-                        break;
-                    case 19:
-                        SpecifUpgrade(path);
-                        break;
-                    case 20:
-                        MaxTreasures(path);
-                        break;
-                    case 21:
-                        Encrypt(path);
-                        break;
-                    default:
-                        Console.WriteLine("Please input a number that is recognised");
-                        break;
+                    case 1: CatFood(path); break;
+                    case 2: XP(path); break;
+                    case 3: Treasure(path); break;
+                    case 4: CatUpgrades(path); break;
+                    case 5: Leadership(path); break;
+                    case 6: NP(path); break;
+                    case 7: CatTicket(path); break;
+                    case 8: CatTicketRare(path); break;
+                    case 9: PlatTicketRare(path); break;
+                    case 10: Seed(path); break;
+                    case 11: Evolve(path); break;
+                    case 12: Items(path); break;
+                    case 13: Catamin(path); break;
+                    case 14: BaseMats(path); break;
+                    case 15: Catseyes(path); break;
+                    case 16: Cats(path); break;
+                    case 17: SpecifiCat(path); break;
+                    case 18: SpecifUpgrade(path); break;
+                    case 19: MaxTreasures(path); break;
+                    case 20: Encrypt(path); break;
+                    default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
                 bool ChoiceExit = OnAskUser();
