@@ -20,7 +20,6 @@ namespace Battle_Cats_save_editor
             WebClient webClient = new WebClient();
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
-
             string[] lines = File.ReadAllLines(@"newversion.txt");
             string version = "2.9.7";
 
