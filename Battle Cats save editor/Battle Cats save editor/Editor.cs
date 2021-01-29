@@ -274,14 +274,26 @@ namespace Battle_Cats_save_editor
                 byte[] bytesCurrent = Endian(catTicketsCurrent);
                 for (int j = 0; j < length - 3; j++)
                 {
-                    if (allData[j] == Convert.ToByte(131) && allData[j + 3] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(131) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(131) && allData[j + 11] == Convert.ToByte(0) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
+                    if (allData[j] == Convert.ToByte(131) && allData[j + 4] == Convert.ToByte(131) && allData[j + 8] == Convert.ToByte(131) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 16] == Convert.ToByte(131) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
                     {
-                        found = true;
-                        stream.Position = j + 64;
-                        stream.WriteByte(bytes[0]);
-                        stream.Position = j + 65;
-                        stream.WriteByte(bytes[1]);
-                        Console.WriteLine("Success");
+                        if (allData[j + 3] == Convert.ToByte(01) || allData[j + 3] == Convert.ToByte(0)) 
+                        {
+                            if (allData[j+72] == Convert.ToByte(75) || allData[j+72] == Convert.ToByte(70))
+                            {
+                                if (allData[j+7] == 0 || allData[j+7] == 1)
+                                {
+                                    if (allData[j + 11] == 0 || allData[j+11] == 1)
+                                    {
+                                        found = true;
+                                        stream.Position = j + 64;
+                                        stream.WriteByte(bytes[0]);
+                                        stream.Position = j + 65;
+                                        stream.WriteByte(bytes[1]);
+                                        Console.WriteLine("Success");
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 if (!found)
@@ -306,14 +318,26 @@ namespace Battle_Cats_save_editor
                 byte[] bytesCurrent = Endian(catTicketsCurrent);
                 for (int j = 0; j < length - 3; j++)
                 {
-                    if (allData[j] == Convert.ToByte(131) && allData[j + 3] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(131) && allData[j + 7] == Convert.ToByte(00) && allData[j + 8] == Convert.ToByte(131) && allData[j + 11] == Convert.ToByte(0) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
+                    if (allData[j] == Convert.ToByte(131) && allData[j + 4] == Convert.ToByte(131) && allData[j + 8] == Convert.ToByte(131) && allData[j + 12] == Convert.ToByte(131) && allData[j + 15] == Convert.ToByte(0) && allData[j + 16] == Convert.ToByte(131) && allData[j + 45] == Convert.ToByte(241) && allData[j + 44] == Convert.ToByte(132) && allData[j + 16] == Convert.ToByte(131) && allData[j + 73] == Convert.ToByte(02) && allData[j + 74] == Convert.ToByte(0) && allData[j + 64] == Convert.ToByte(bytesCurrent[0]) && allData[j + 65] == Convert.ToByte(bytesCurrent[1]))
                     {
-                        found = true;
-                        stream.Position = j + 68;
-                        stream.WriteByte(bytes[0]);
-                        stream.Position = j + 69;
-                        stream.WriteByte(bytes[1]);
-                        Console.WriteLine("Success");
+                        if (allData[j + 3] == Convert.ToByte(01) || allData[j + 3] == Convert.ToByte(0))
+                        {
+                            if (allData[j + 72] == Convert.ToByte(75) || allData[j + 72] == Convert.ToByte(70))
+                            {
+                                if (allData[j + 7] == 0 || allData[j + 7] == 1)
+                                {
+                                    if (allData[j + 11] == 0 || allData[j + 11] == 1)
+                                    {
+                                        found = true;
+                                        stream.Position = j + 68;
+                                        stream.WriteByte(bytes[0]);
+                                        stream.Position = j + 69;
+                                        stream.WriteByte(bytes[1]);
+                                        Console.WriteLine("Success");
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 if (!found) Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
