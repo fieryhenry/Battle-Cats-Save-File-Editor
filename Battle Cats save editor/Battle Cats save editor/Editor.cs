@@ -21,7 +21,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.7";
+            string version = "2.9.8";
 
             if (lines[0] == version)
             {
@@ -258,9 +258,9 @@ namespace Battle_Cats_save_editor
 
             static void CatTicket(string path)
             {
-                Console.WriteLine("How much Cat Tickets do you want(max 65535)");
+                Console.WriteLine("How many Cat Tickets do you want(max 65535)");
                 int catTickets = Inputed();
-                Console.WriteLine("How much Normal Cat Tickets do you have?");
+                Console.WriteLine("How many Normal Cat Tickets do you have?");
                 int catTicketsCurrent = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -302,9 +302,9 @@ namespace Battle_Cats_save_editor
 
             static void CatTicketRare(string path)
             {
-                Console.WriteLine("How much Rare Cat Tickets do you want(max 65535)");
+                Console.WriteLine("How many Rare Cat Tickets do you want(max 65535)");
                 int catTickets = Inputed();
-                Console.WriteLine("How much Normal Cat Tickets do you have?");
+                Console.WriteLine("How many Normal Cat Tickets do you have?");
                 int catTicketsCurrent = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -345,7 +345,7 @@ namespace Battle_Cats_save_editor
 
             static void PlatTicketRare(string path)
             {
-                Console.WriteLine("How much Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
+                Console.WriteLine("How many Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
                 byte platCatTickets = Convert.ToByte(Console.ReadLine());
                 Console.WriteLine("How many Platinum Cat Tickets do you have?");
                 byte platCurrent = Convert.ToByte(Console.ReadLine());
@@ -461,11 +461,11 @@ namespace Battle_Cats_save_editor
 
             static void Items(string path)
             {
-                Console.WriteLine("How much of each item do you want(max 65535)");
+                Console.WriteLine("How many of each item do you want(max 65535)");
                 int catTickets = Inputed();
-                Console.WriteLine("What is your base level for cat cannon attack power?");
+                Console.WriteLine("What is your base level(not including +levels) for cat cannon attack power?");
                 byte CatCannonAttack = Convert.ToByte(Console.ReadLine());
-                Console.WriteLine("What is your amount of speed ups?");
+                Console.WriteLine("how many speed ups do you have?");
                 int SpeedUps = Inputed();
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -498,7 +498,7 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How many Catimins of each type do you want(max 65535)");
                 int platCatTickets = Inputed();
-                Console.WriteLine("How many Catimin  of type A do you have?");
+                Console.WriteLine("How many type A catamins do you have?");
                 int CurrentplatCatTickets = Inputed();
 
                 byte[] bytes = Endian(platCatTickets);
@@ -543,11 +543,12 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("How many Base Materials do you want(max 65535)");
                 int platCatTickets = (int)Convert.ToInt64(Console.ReadLine());
                 Console.WriteLine("How many bricks do you have");
-                byte catA = Convert.ToByte(Console.ReadLine());
+                int catA = (int)Convert.ToInt64(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
                 byte[] bytes = Endian(platCatTickets);
+                byte[] bytesCat = Endian(catA);
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
                 bool found = false;
@@ -555,7 +556,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < allData.Length; j++)
                 {
-                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == catA)
+                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == bytesCat[0] && allData[j + 65] == bytesCat[1])
                     {
                         found = true;
                         for (int i = 0; i < 29; i+=4)
