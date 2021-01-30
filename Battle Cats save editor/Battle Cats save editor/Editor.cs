@@ -21,7 +21,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.9";
+            string version = "2.9.10";
 
             if (lines[0] == version)
             {
@@ -188,7 +188,6 @@ namespace Battle_Cats_save_editor
                             stream.WriteByte(Convert.ToByte(80));
                             stream.Position = i + 2;
                             stream.WriteByte(Convert.ToByte(50));
-                            Console.WriteLine("bruh");
                         }
                     }
                 }
@@ -701,6 +700,7 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("What is the cat ID?");
                 int catID = Inputed();
+                if (catID > 590) catID = 590;
                 int startPosID = 9694 + catID * 4;
                 Console.WriteLine("What base level do you want?(max 40)");
                 byte Levelbase = Convert.ToByte(Console.ReadLine());
@@ -709,14 +709,26 @@ namespace Battle_Cats_save_editor
                 byte Levelplus = Convert.ToByte(Console.ReadLine());
                 if (Levelplus > 80) Levelplus = 80;
 
-                stream.Position = startPosID;
-                stream.WriteByte(Levelplus);
-                Console.WriteLine("cat +" + Levelplus);
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+                bool repeat = true;
 
-                stream.Position = startPosID + 2;
-                stream.WriteByte(Levelbase);
-                Console.WriteLine("cat level " + Levelbase);
-
+                for (int j = 9600; j <= 12000; j++)
+                {
+                    if (allData[j] == 2 && repeat)
+                    {
+                        startPosID = catID * 4;
+                        startPosID += j;
+                        repeat = false;
+                        
+                        stream.Position = startPosID + 3;
+                        stream.WriteByte(Convert.ToByte(Levelplus));
+                        stream.Position = startPosID + 5;
+                        stream.WriteByte(Convert.ToByte(Levelbase - 1));
+                        
+                    }
+                }
             }
 
             static bool OnAskUser()
