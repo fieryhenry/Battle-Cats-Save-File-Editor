@@ -21,7 +21,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.8";
+            string version = "2.9.9";
 
             if (lines[0] == version)
             {
@@ -171,17 +171,27 @@ namespace Battle_Cats_save_editor
             static void CatUpgrades(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                for (int i = 9694; i <= 11878; i += 4)
-                {
-                    stream.Position = i;
-                    stream.WriteByte(Convert.ToByte(80));
-                }
-                for (int i = 9686; i <= 11880; i += 4)
-                {
-                    stream.Position = i;
-                    stream.WriteByte(Convert.ToByte(40));
-                }
 
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+                bool repeat = true;
+
+                for (int j = 9600; j <=12000; j++)
+                {
+                    if (allData[j] == 2 && repeat)
+                    {
+                        repeat = false;
+                        for (int i = j + 3; i <= j + 2361 && i < 12000; i += 4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(Convert.ToByte(80));
+                            stream.Position = i + 2;
+                            stream.WriteByte(Convert.ToByte(50));
+                            Console.WriteLine("bruh");
+                        }
+                    }
+                }
                 Console.WriteLine("all cats max level");
             }
 
