@@ -21,7 +21,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.10";
+            string version = "2.9.11";
 
             if (lines[0] == version)
             {
@@ -198,8 +198,8 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How much leadership do you want(max 65535)");
                 int CatFood = Inputed();
-                Console.WriteLine("How much leadership do you have?");
-                int leaderCurent = Convert.ToInt32(Console.ReadLine());
+                ColouredText("&How much leadership do you have? (must have more than 0 or leadership &might& get corrupted - high chance it won't but small chance it will)", ConsoleColor.White, ConsoleColor.Blue);
+                int leaderCurent = Inputed();
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -211,19 +211,21 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 byte[] bytes = Endian(CatFood);
                 byte[] bytesCurrent = Endian(leaderCurent);
-                for (int j = 212992; j < length - 12; j++)
+
+                int offset = 0;
+                for (int j = 230496; j < length - 12; j++)
                 {
-                    if (allData[j] == Convert.ToByte(72) && allData[j + 1] == Convert.ToByte(57) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j - 6] == bytesCurrent[0] && allData[j - 5] == bytesCurrent[1])
+                    if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00))
                     {
+                        if (allData[j + 5] == bytesCurrent[0] && allData[j + 6] == bytesCurrent[1]) offset = 5;
+                        else if (allData[j + 4] == bytesCurrent[0] && allData[j + 5] == bytesCurrent[1]) offset = 4;
 
-                        stream.Position = j - 6;
+                        stream.Position = j + offset;
                         stream.WriteByte(bytes[0]);
-                        stream.Position = j - 5;
+                        stream.Position = j + offset + 1;
                         stream.WriteByte(bytes[1]);
-
-                        found = true;
-
                         Console.WriteLine("Success");
+                        found = true;
                     }
 
                 }
@@ -234,8 +236,6 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How much NP do you want(max 65535)");
                 int CatFood = Inputed();
-                Console.WriteLine("How much leadership do you have?");
-                int leaderCurent = Convert.ToInt32(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -246,19 +246,16 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
                 byte[] bytes = Endian(CatFood);
-                byte[] bytesCurrent = Endian(leaderCurent);
-                for (int j = 212992; j < length - 12; j++)
+                for (int j = 230496; j < length - 12; j++)
                 {
-                    if (allData[j] == Convert.ToByte(72) && allData[j + 1] == Convert.ToByte(57) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00) && allData[j - 6] == bytesCurrent[0] && allData[j - 5] == bytesCurrent[1])
+                    if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00))
                     {
-                        stream.Position = j - 16;
+                        stream.Position = j - 5;
                         stream.WriteByte(bytes[0]);
-                        stream.Position = j - 15;
+                        stream.Position = j - 4;
                         stream.WriteByte(bytes[1]);
-
-                        found = true;
-
                         Console.WriteLine("Success");
+                        found = true;
                     }
 
                 }
