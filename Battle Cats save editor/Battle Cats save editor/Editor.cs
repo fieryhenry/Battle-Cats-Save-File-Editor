@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,10 +12,10 @@ namespace Battle_Cats_save_editor
     class Editor
     {
 
-        [STAThreadAttribute]
+        [STAThread]
         static void Main()
         {
-            Console.WindowWidth = 125;
+            Console.WindowWidth = 155;
             string folderName = @"newversion.txt";
 
             WebClient webClient = new WebClient();
@@ -47,7 +48,7 @@ namespace Battle_Cats_save_editor
                 Console.ForegroundColor = ConsoleColor.White;
                 ColouredText("\n&What do you want to do?&(Note many features are currently broken I am working on fixing them)", ConsoleColor.White, ConsoleColor.Magenta);
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
-                    "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved\n&12.& Change battle item count\n&13.& Change Catamins" +
+                    "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 
@@ -198,7 +199,7 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How much leadership do you want(max 65535)");
                 int CatFood = Inputed();
-                ColouredText("&How much leadership do you have? (must have more than 0 or leadership &might& get corrupted - high chance it won't but small chance it will)", ConsoleColor.White, ConsoleColor.Blue);
+                ColouredText("&How much leadership do you have? (must have more than 0 or leadership &might& get corrupted and/or give you the wrong amount - high chance it won't but small chance it will)", ConsoleColor.White, ConsoleColor.Blue);
                 int leaderCurent = Inputed();
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -446,25 +447,33 @@ namespace Battle_Cats_save_editor
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
-                for (int i = 0; i <= length; i++)
-                {
 
-                }
+                int count = 0;
+                int i = 0;
                 Console.WriteLine("Scan Complete");
-                for (int j = 0; j < length - 25; j++)
+
+                int offset = 47;
+                for (i = 0; i < length - 30; i++)
+                    if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
+                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i + 18] == 1 && allData[i + 19] == 1 && allData[i + 20] == 1 && allData[i + 21] == 1 && allData[i + 22] == 1 && allData[i + 23] == 1 && allData[i + 24] == 1 && allData[i + 25] == 1 && allData[i + 26] == 1 && allData[i + 27] == 1 &&
+                        allData[i + 28] == 1 && allData[i + 29] == 1) {
+
+                        if (allData[i + 47] == Convert.ToByte(75) || allData[i + 47] == Convert.ToByte(70)) offset = 47; count = i;
+                        if (allData[i + 46] == Convert.ToByte(75) || allData[i + 46] == Convert.ToByte(70)) offset = 46; count = i;
+                    }
+
+                if (count > 0)
                 {
-                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte(01) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(01) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(01) && allData[j + 7] == Convert.ToByte(00) && allData[j + 24] == Convert.ToByte(70) && allData[j + 25] == Convert.ToByte(02))
+                    Console.WriteLine("Found values");
+                    for (int j = 0; j < 2660; j += 4)
                     {
-                        for (int i = j + 60; i < j + 2710; i += 4)
-                        {
-                            stream.Position = j;
-                            stream.WriteByte(02);
-                        }
-                        Console.WriteLine("Success");
+                        stream.Position = count + j + offset + 40;
+                        stream.WriteByte(02);
                     }
                 }
-            }
-
+                if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
+            }    
+            
             static void Items(string path)
             {
                 Console.WriteLine("How many of each item do you want(max 65535)");
