@@ -46,9 +46,6 @@ namespace Battle_Cats_save_editor
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!\n", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.White;
-                ColouredText("WARNING: Using features that drastically change your save file such as give all cats, max all cats, or evolve all cats\nCould lead to your inquiry code changing, if this happens features such as NP and Leadership changes won't apply themselves until you accept your new code\nTo fix this you must re-save " +
-                    "your save using the backup manager after you login and change your NP + leadership amounts again.\nGamototo will crash your game if your inquiry code changes stopping you from using him and otto, so use those features at your own risk\n", ConsoleColor.White, ConsoleColor.Red);
-                ColouredText("\n&What do you want to do?&(Note many features are currently broken I am working on fixing them)", ConsoleColor.White, ConsoleColor.Magenta);
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
@@ -360,11 +357,6 @@ namespace Battle_Cats_save_editor
                 {
                     if (allData[j] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(228) && allData[j + 6] == Convert.ToByte(07) && allData[j + 9] == Convert.ToByte(11) && allData[j + 1] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00))
                     {
-
-
-                        char[] XPArr = { };
-                        char[] XPArr0 = { '0' };
-
                         found = true;
 
                         stream.Position = j - 16;
