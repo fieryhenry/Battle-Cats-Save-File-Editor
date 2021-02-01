@@ -22,7 +22,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.12";
+            string version = "2.9.14";
 
             if (lines[0] == version)
             {
@@ -425,10 +425,20 @@ namespace Battle_Cats_save_editor
 
                 if (count > 0)
                 {
+                    int stop = 0;
+                    for (int e = 3; e<2660; e++)
+                    {
+                        if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
+                        {
+                            Console.WriteLine(count + e + offset);
+                            stop = e + count + offset;
+                        }
+                    }
                     Console.WriteLine("Found values");
-                    for (int j = 0; j < 2660; j += 4)
+                    for (int j = 0; j < 2660 && stop  - 32> count + j + offset + 40; j += 4)
                     {
                         stream.Position = count + j + offset + 40;
+                        int total = count + j + offset + 40;
                         stream.WriteByte(02);
                     }
                 }
