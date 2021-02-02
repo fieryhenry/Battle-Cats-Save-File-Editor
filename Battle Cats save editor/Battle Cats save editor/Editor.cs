@@ -22,7 +22,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.15";
+            string version = "2.9.16";
 
             if (lines[0] == version)
             {
@@ -49,7 +49,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 
                 int Choice = Inputed();
 
@@ -74,7 +74,8 @@ namespace Battle_Cats_save_editor
                     case 17: SpecifiCat(path); break;
                     case 18: SpecifUpgrade(path); break;
                     case 19: MaxTreasures(path); break;
-                    case 20: Encrypt(path); break;
+                    case 20: EvolveSpecific(path); break;
+                    case 21: Encrypt(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -772,6 +773,51 @@ namespace Battle_Cats_save_editor
                 }
 
                 return occurrence;
+            }
+
+            static void EvolveSpecific(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                Console.WriteLine("What is the cat id?");
+                int id = Convert.ToInt32(Console.ReadLine());
+                int idPos = id * 4;
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                int count = 0;
+                int i = 0;
+                Console.WriteLine("Scan Complete");
+
+                int offset = 47;
+                for (i = 0; i < length - 30; i++)
+                    if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
+                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i + 18] == 1 && allData[i + 19] == 1 && allData[i + 20] == 1 && allData[i + 21] == 1 && allData[i + 22] == 1 && allData[i + 23] == 1 && allData[i + 24] == 1 && allData[i + 25] == 1 && allData[i + 26] == 1 && allData[i + 27] == 1 &&
+                        allData[i + 28] == 1 && allData[i + 29] == 1)
+                    {
+
+                        if (allData[i + 47] == Convert.ToByte(75) || allData[i + 47] == Convert.ToByte(70)) offset = 47; count = i;
+                        if (allData[i + 46] == Convert.ToByte(75) || allData[i + 46] == Convert.ToByte(70)) offset = 46; count = i;
+                    }
+
+                if (count > 0)
+                {
+                    int stop = 0;
+                    for (int e = 3; e < 2660; e++)
+                    {
+                        if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
+                        {
+                            stop = e + count + offset;
+                        }
+                    }
+                    Console.WriteLine("Found values");
+                    stream.Position = count + offset + 40 + idPos;
+                    stream.WriteByte(02);
+
+                }
+                if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
             }
 
         }
