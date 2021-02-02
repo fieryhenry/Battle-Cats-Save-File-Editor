@@ -22,7 +22,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.14";
+            string version = "2.9.15";
 
             if (lines[0] == version)
             {
@@ -277,7 +277,7 @@ namespace Battle_Cats_save_editor
 
                 stream.Close();
 
-                int[] occurrence = Occurrence(path);
+                int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 stream2.Position = occurrence[4] - 8;
@@ -300,7 +300,7 @@ namespace Battle_Cats_save_editor
                 byte[] bytes = Endian(catTickets);
                 stream.Close();
 
-                int[] occurrence = Occurrence(path);
+                int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 stream2.Position = occurrence[4] - 4;
@@ -334,7 +334,7 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("Success");
                     }
                 }
-                if (!found) Console.WriteLine("Sorry your rare cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
 
             }
 
@@ -347,50 +347,34 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-                bool found = false;
-                Console.WriteLine("What seed do you want?(max 99999999), Curently broken for most save files");
-                int XP = Inputed();
-                if (XP > 99999999) XP = 99999999;
+
+                Console.WriteLine("What seed do you want?(max 4294967295)");
+                long XP = Inputed();
+                if (XP > 4294967295) XP = 4294967295;
                 byte[] bytes = Endian(XP);
 
-                for (int j = 0; j < length - 1503; j++)
+                byte[] year = new byte[2];
+                year[0] = allData[15];
+                year[1] = allData[16];
+
+                stream.Close();
+
+                int[] occurrence = OccurrenceE(path, year);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                try
                 {
-                    if (allData[j] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(228) && allData[j + 6] == Convert.ToByte(07) && allData[j + 9] == Convert.ToByte(11) && allData[j + 1] == Convert.ToByte(00) && allData[j + 2] == Convert.ToByte(00) && allData[j + 3] == Convert.ToByte(00) && allData[j + 4] == Convert.ToByte(00) && allData[j + 7] == Convert.ToByte(00))
-                    {
-                        found = true;
-
-                        stream.Position = j - 16;
-                        stream.WriteByte(bytes[0]);
-                        stream.Position = j - 15;
-                        stream.WriteByte(bytes[1]);
-                        stream.Position = j - 14;
-                        stream.WriteByte(bytes[2]);
-                        stream.Position = j - 13;
-                        stream.WriteByte(bytes[3]);
-
-                    }
+                    stream2.Position = occurrence[4] - 21;
                 }
-                if (!found)
+                catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("Couldn't find value please enter your current seed (backup before doing this):");
-                    int Current = (int)Convert.ToInt64(Console.ReadLine());
-
-                    byte[] currentBytes = Endian(Current);
-
-
-                    for (int j = 0; j < length - 3; j++)
-                    {
-                        if (allData[j] == currentBytes[0] && allData[j + 1] == currentBytes[1])
-                        {
-                            stream.Position = j;
-                            stream.WriteByte(bytes[0]);
-                            stream.Position = j + 1;
-                            stream.WriteByte(bytes[1]);
-
-                            Console.WriteLine("Success");
-                        }
-                    }
+                    Console.WriteLine("Sorry your seed position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Main();
                 }
+
+                Console.WriteLine("Set gacha seed to: {0}", XP);
+                for (int i = 0; i < 5; i++)
+                    stream2.WriteByte(bytes[i]);
             }
 
             static void Evolve(string path)
@@ -422,7 +406,6 @@ namespace Battle_Cats_save_editor
                     {
                         if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
                         {
-                            Console.WriteLine(count + e + offset);
                             stop = e + count + offset;
                         }
                     }
@@ -743,7 +726,7 @@ namespace Battle_Cats_save_editor
                 return input;
             }
 
-            static int[] Occurrence(string path)
+            static int[] OccurrenceB(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -762,6 +745,30 @@ namespace Battle_Cats_save_editor
                             occurrence[amount] = i;
                             amount++;
                         }
+                }
+
+                return occurrence;
+            }
+
+            static int[] OccurrenceE(string path, byte[] Currentyear)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                int amount = 0;
+                int[] occurrence = new int[50];
+
+                for (int i = 0; i < allData.Length - 1; i++)
+                {
+                    if (allData[i] == Convert.ToByte(Currentyear[0]) && allData[i+1] == Convert.ToByte(Currentyear[1]))
+                    {
+                        occurrence[amount] = i;
+                        amount++;
+                    }
+                    
                 }
 
                 return occurrence;
