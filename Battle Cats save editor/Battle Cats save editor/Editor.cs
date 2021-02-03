@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.17";
+            string version = "2.10.17";
 
             if (lines[0] == version)
             {
@@ -50,7 +50,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and seeds\n&22.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
                 int Choice = Inputed();
 
@@ -283,7 +283,7 @@ namespace Battle_Cats_save_editor
                 int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                stream2.Position = occurrence[4] - 8;
+                stream2.Position = occurrence[3] - 8;
 
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
@@ -306,7 +306,7 @@ namespace Battle_Cats_save_editor
                 int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                stream2.Position = occurrence[4] - 4;
+                stream2.Position = occurrence[3] - 4;
                 stream2.WriteByte(bytes[1]);
                 stream2.WriteByte(bytes[0]);
             }
@@ -551,22 +551,33 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
 
                 byte[] bytes = Endian(platCatTickets);
-                for (int j = 3; j < length - 80; j++)
+
+                stream.Close();
+
+                int[] occurance = OccurrenceB(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                
+                stream2.Position = occurance[7];
+                
+                for (int i = (int)(stream2.Position + 500); i < stream2.Position + 8000; i++)
                 {
-                    if (allData[j] == Convert.ToByte(10) && allData[j + 1] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(0) && allData[j + 14] == Convert.ToByte(27))
+                    if (allData[i] == Convert.ToByte("0a", 16) && allData[i+4] == 1 && allData[i + 5] == 1 && allData[i + 14] == Convert.ToByte("1b", 16) && !found)
                     {
-                        for (int i = 0; i < 20; i += 4)
+                        found = true;
+                        stream2.Position = i - 65;
+                        for (int e = 0; e <20; e += 4)
                         {
-                            found = true;
-                            Console.WriteLine("Successfully gave {0} catseyes", platCatTickets);
-                            stream.Position = j - 65 + i;
-                            stream.WriteByte(Convert.ToByte(bytes[0]));
-                            stream.Position = j - 64 + i;
-                            stream.WriteByte(Convert.ToByte(bytes[1]));
+                            stream2.WriteByte(bytes[0]);
+                            stream2.WriteByte(bytes[1]);
+                            stream2.Position += 2;
                         }
+                        Console.WriteLine("Found values");
                     }
                 }
-                if (!found) Console.WriteLine("You either haven't unlocked the ability to hypermax cats or if you have - it's bugged and you should tell me on the discord or do a bug report on the github");
+                if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                
             }
 
             static void Cats(string path)
