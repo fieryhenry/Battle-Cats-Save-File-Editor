@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,7 +23,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.9.16";
+            string version = "2.9.17";
 
             if (lines[0] == version)
             {
@@ -46,11 +47,11 @@ namespace Battle_Cats_save_editor
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!\n", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.White;
-                ColouredText("\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
+                ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Patch Data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and seeds\n&22.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+
                 int Choice = Inputed();
 
                 switch (Choice)
@@ -75,7 +76,8 @@ namespace Battle_Cats_save_editor
                     case 18: SpecifUpgrade(path); break;
                     case 19: MaxTreasures(path); break;
                     case 20: EvolveSpecific(path); break;
-                    case 21: Encrypt(path); break;
+                    case 21: CatFruit(path); break;
+                    case 22: Encrypt(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -178,7 +180,7 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
                 bool repeat = true;
 
-                for (int j = 9600; j <=12000; j++)
+                for (int j = 9600; j <= 12000; j++)
                 {
                     if (allData[j] == 2 && repeat)
                     {
@@ -327,7 +329,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length - 11; j++)
                 {
-                    if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j+2] == 0 && allData[j+3] == Convert.ToByte(54) && allData[j + 4] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(0) && allData[j + 11] == Convert.ToByte(54) && allData[j + 12] == Convert.ToByte(0) && allData[j + 19] == Convert.ToByte(platCurrent))
+                    if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j + 2] == 0 && allData[j + 3] == Convert.ToByte(54) && allData[j + 4] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(0) && allData[j + 11] == Convert.ToByte(54) && allData[j + 12] == Convert.ToByte(0) && allData[j + 19] == Convert.ToByte(platCurrent))
                     {
                         found = true;
                         stream.Position = j + 19;
@@ -394,7 +396,8 @@ namespace Battle_Cats_save_editor
                 for (i = 0; i < length - 30; i++)
                     if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
                         allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i + 18] == 1 && allData[i + 19] == 1 && allData[i + 20] == 1 && allData[i + 21] == 1 && allData[i + 22] == 1 && allData[i + 23] == 1 && allData[i + 24] == 1 && allData[i + 25] == 1 && allData[i + 26] == 1 && allData[i + 27] == 1 &&
-                        allData[i + 28] == 1 && allData[i + 29] == 1) {
+                        allData[i + 28] == 1 && allData[i + 29] == 1)
+                    {
 
                         if (allData[i + 47] == Convert.ToByte(75) || allData[i + 47] == Convert.ToByte(70)) offset = 47; count = i;
                         if (allData[i + 46] == Convert.ToByte(75) || allData[i + 46] == Convert.ToByte(70)) offset = 46; count = i;
@@ -403,7 +406,7 @@ namespace Battle_Cats_save_editor
                 if (count > 0)
                 {
                     int stop = 0;
-                    for (int e = 3; e<2660; e++)
+                    for (int e = 3; e < 2660; e++)
                     {
                         if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
                         {
@@ -411,7 +414,7 @@ namespace Battle_Cats_save_editor
                         }
                     }
                     Console.WriteLine("Found values");
-                    for (int j = 0; j < 2660 && stop  - 32> count + j + offset + 40; j += 4)
+                    for (int j = 0; j < 2660 && stop - 32 > count + j + offset + 40; j += 4)
                     {
                         stream.Position = count + j + offset + 40;
                         int total = count + j + offset + 40;
@@ -419,8 +422,8 @@ namespace Battle_Cats_save_editor
                     }
                 }
                 if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
-            }    
-            
+            }
+
             static void Items(string path)
             {
                 Console.WriteLine("How many of each item do you want(max 65535)");
@@ -465,7 +468,7 @@ namespace Battle_Cats_save_editor
 
                 byte[] bytes = Endian(platCatTickets);
                 byte[] bytesCurrent = Endian(CurrentplatCatTickets);
-                
+
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 bool found = false;
@@ -493,7 +496,7 @@ namespace Battle_Cats_save_editor
                         stream.WriteByte(bytes[0]);
                         stream.Position = j + 37;
                         stream.WriteByte(bytes[1]);
-                        
+
                         Console.WriteLine(j);
                     }
                 }
@@ -521,7 +524,7 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == bytesCat[0] && allData[j + 65] == bytesCat[1])
                     {
                         found = true;
-                        for (int i = 0; i < 29; i+=4)
+                        for (int i = 0; i < 29; i += 4)
                         {
                             stream.Position = j + 64 + i;
                             stream.WriteByte(bytes[0]);
@@ -550,9 +553,9 @@ namespace Battle_Cats_save_editor
                 byte[] bytes = Endian(platCatTickets);
                 for (int j = 3; j < length - 80; j++)
                 {
-                    if (allData[j] == Convert.ToByte(10) && allData[j+1] == Convert.ToByte(0) && allData[j+4] == Convert.ToByte(01) && allData[j+5] == Convert.ToByte(01) && allData[j+6] == Convert.ToByte(0) && allData[j+14] == Convert.ToByte(27))
+                    if (allData[j] == Convert.ToByte(10) && allData[j + 1] == Convert.ToByte(0) && allData[j + 4] == Convert.ToByte(01) && allData[j + 5] == Convert.ToByte(01) && allData[j + 6] == Convert.ToByte(0) && allData[j + 14] == Convert.ToByte(27))
                     {
-                        for (int i =0; i < 20; i+=4)
+                        for (int i = 0; i < 20; i += 4)
                         {
                             found = true;
                             Console.WriteLine("Successfully gave {0} catseyes", platCatTickets);
@@ -617,12 +620,12 @@ namespace Battle_Cats_save_editor
                         startPosID = catID * 4;
                         startPosID += j;
                         repeat = false;
-                        
+
                         stream.Position = startPosID + 3;
                         stream.WriteByte(Convert.ToByte(Levelplus));
                         stream.Position = startPosID + 5;
                         stream.WriteByte(Convert.ToByte(Levelbase - 1));
-                        
+
                     }
                 }
             }
@@ -738,10 +741,34 @@ namespace Battle_Cats_save_editor
                 int amount = 0;
                 int[] occurrence = new int[50];
 
-                for (int i = 0; i < allData.Length -1; i++)
+                for (int i = 0; i < allData.Length - 1; i++)
                 {
                     if (allData[i] == Convert.ToByte(70) || allData[i] == Convert.ToByte(75))
-                        if (allData[i + 1] == 2)
+                        if (allData[i + 1] == 2 && allData[i+2] == 0 && allData[i-1] == 0)
+                        {
+                            occurrence[amount] = i;
+                            amount++;
+                        }
+                }
+
+                return occurrence;
+            }
+
+            static int[] OccurrenceBf(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                int amount = 0;
+                int[] occurrence = new int[50];
+
+                for (int i = 0; i < allData.Length - 1; i++)
+                {
+                    if (allData[i] == Convert.ToByte(70) || allData[i] == Convert.ToByte(75))
+                        if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i-64] == 15)
                         {
                             occurrence[amount] = i;
                             amount++;
@@ -764,12 +791,12 @@ namespace Battle_Cats_save_editor
 
                 for (int i = 0; i < allData.Length - 1; i++)
                 {
-                    if (allData[i] == Convert.ToByte(Currentyear[0]) && allData[i+1] == Convert.ToByte(Currentyear[1]))
+                    if (allData[i] == Convert.ToByte(Currentyear[0]) && allData[i + 1] == Convert.ToByte(Currentyear[1]))
                     {
                         occurrence[amount] = i;
                         amount++;
                     }
-                    
+
                 }
 
                 return occurrence;
@@ -820,8 +847,122 @@ namespace Battle_Cats_save_editor
                 if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
             }
 
+            static void CatFruit(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                stream.Close();
+
+                int[] occurrence = OccurrenceBf(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+
+                try
+                {
+                    stream2.Position = occurrence[0] - 17;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Console.WriteLine("You either can't evolve cats or it's bugged and if it's bugged then:\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Main();
+                }
+
+                byte[] pSeed = new byte[4];
+                pSeed[0] = allData[occurrence[0] - 60];
+                pSeed[1] = allData[occurrence[0] - 59];
+
+                byte[] rSeed = new byte[4];
+                rSeed[0] = allData[occurrence[0] - 56];
+                rSeed[1] = allData[occurrence[0] - 55];
+
+                byte[] bSeed = new byte[4];
+                bSeed[0] = allData[occurrence[0] - 52];
+                bSeed[1] = allData[occurrence[0] - 51];
+
+                byte[] gSeed = new byte[4];
+                gSeed[0] = allData[occurrence[0] - 48];
+                gSeed[1] = allData[occurrence[0] - 47];
+
+                byte[] ySeed = new byte[4];
+                ySeed[0] = allData[occurrence[0] - 44];
+                ySeed[1] = allData[occurrence[0] - 43];
+
+                byte[] pFruit = new byte[4];
+                pFruit[0] = allData[occurrence[0] - 40];
+                pFruit[1] = allData[occurrence[0] - 39];
+
+                byte[] rFruit = new byte[4];
+                rFruit[0] = allData[occurrence[0] - 36];
+                rFruit[1] = allData[occurrence[0] - 35];
+
+                byte[] bFruit = new byte[4];
+                bFruit[0] = allData[occurrence[0] - 32];
+                bFruit[1] = allData[occurrence[0] - 31];
+
+                byte[] gFruit = new byte[4];
+                gFruit[0] = allData[occurrence[0] - 28];
+                gFruit[1] = allData[occurrence[0] - 27];
+
+                byte[] yFruit = new byte[4];
+                yFruit[0] = allData[occurrence[0] - 24];
+                yFruit[1] = allData[occurrence[0] - 23];
+
+                byte[] eFruit = new byte[4];
+                eFruit[0] = allData[occurrence[0] - 20];
+                eFruit[1] = allData[occurrence[0] - 19];
+
+                byte[] elderSeed = new byte[4];
+                elderSeed[0] = allData[occurrence[0] - 16];
+                elderSeed[1] = allData[occurrence[0] - 15];
+
+                byte[] elderFruit = new byte[4];
+                elderFruit[0] = allData[occurrence[0] - 12];
+                elderFruit[1] = allData[occurrence[0] - 11];
+
+                int Efruit = BitConverter.ToInt32(eFruit, 0);
+                int yfruit = BitConverter.ToInt32(yFruit, 0);
+                int gfruit = BitConverter.ToInt32(gFruit, 0);
+                int bfruit = BitConverter.ToInt32(bFruit, 0);
+                int rfruit = BitConverter.ToInt32(rFruit, 0);
+                int pfruit = BitConverter.ToInt32(pFruit, 0);
+                int yseed = BitConverter.ToInt32(ySeed, 0);
+                int bseed = BitConverter.ToInt32(bSeed, 0);
+                int gseed = BitConverter.ToInt32(gSeed, 0);
+                int rseed = BitConverter.ToInt32(rSeed, 0);
+                int pseed = BitConverter.ToInt32(pSeed, 0);
+                int eseed = BitConverter.ToInt32(elderSeed, 0);
+                int efruit = BitConverter.ToInt32(elderFruit, 0);
+                Console.WriteLine("You have:\n1.Purple Seed:{0}\n2.Red Seed:{1}\n3.Blue Seed:{2}\n4.Green Seed:{3}\n5.Yellow Seed:{4}\n6.Purple Fruit:{5}\n7.Red Fruit:{6}\n8.Blue Fruit:{7}\n9.Green Fruit:{8}\n10.Yellow Fruit:{9}\n11.Epic Fruit:{10}\n12.Elder Seed:{12}\n13.Elder Fruit:{11}", pseed, rseed, bseed, gseed, yseed, pfruit, rfruit, bfruit, gfruit, yfruit, Efruit, efruit, eseed);
+                int total = Efruit + yfruit + gfruit + bfruit + rfruit + pfruit + yseed + bseed + gseed + rseed + pseed + eseed + efruit;
+                Console.WriteLine("\nTotal amount = {0}", total);
+                Console.WriteLine("Free space = {0}", 256 - total);
+
+                Console.WriteLine("What would you like to edit?(1-13)");
+                int choice = Inputed();
+                Console.WriteLine("How many of this cat fruit would you like?(max 256) Warning: Don't go over your storage cap as then it will overwrite other cat fruit");
+                int amount = Inputed();
+                if (amount > 256) amount = 256;
+
+                stream2.Position = occurrence[0] - 64 + choice * 4;
+
+                byte[] bytes = Endian(amount);
+                stream2.WriteByte(bytes[0]);
+                stream2.WriteByte(bytes[1]);
+                Console.WriteLine("Are you finished changing cat fruit?(yes or no)");
+                string answer = Console.ReadLine();
+                if (answer.ToLower() == "yes") Main();
+
+                stream2.Close();
+                if (answer.ToLower() == "no") CatFruit(path);
+            }
+
         }
     }
 }
-    
+
 
