@@ -13,6 +13,7 @@ namespace Updater
     {
         static void Main(string[] args)
         {
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             string folderName = @"newversion.txt";
             File.Delete(@"Battle Cats save editor.exe");
             string application = @"Battle Cats Save Editor.exe";

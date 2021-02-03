@@ -15,6 +15,7 @@ namespace Battle_Cats_save_editor
         [STAThread]
         static void Main()
         {
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             Console.WindowWidth = 160;
             Console.WindowHeight = 40;
             string folderName = @"newversion.txt";
@@ -23,7 +24,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.10.17";
+            string version = "2.10.2";
 
             if (lines[0] == version)
             {
