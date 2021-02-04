@@ -24,7 +24,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.10.2";
+            string version = "2.11.0";
 
             if (lines[0] == version)
             {
@@ -51,7 +51,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
                 int Choice = Inputed();
 
@@ -78,7 +78,8 @@ namespace Battle_Cats_save_editor
                     case 19: MaxTreasures(path); break;
                     case 20: EvolveSpecific(path); break;
                     case 21: CatFruit(path); break;
-                    case 22: Encrypt(path); break;
+                    case 22: Talents(path); break;
+                    case 23: Encrypt(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -393,15 +394,19 @@ namespace Battle_Cats_save_editor
                 int i = 0;
                 Console.WriteLine("Scan Complete");
 
+                stream.Close();
+                int anchour = Anchour(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
                 int offset = 47;
                 for (i = 0; i < length - 30; i++)
                     if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
-                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i + 18] == 1 && allData[i + 19] == 1 && allData[i + 20] == 1 && allData[i + 21] == 1 && allData[i + 22] == 1 && allData[i + 23] == 1 && allData[i + 24] == 1 && allData[i + 25] == 1 && allData[i + 26] == 1 && allData[i + 27] == 1 &&
-                        allData[i + 28] == 1 && allData[i + 29] == 1)
+                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i-4] == Convert.ToByte("c8", 16))
                     {
 
-                        if (allData[i + 47] == Convert.ToByte(75) || allData[i + 47] == Convert.ToByte(70)) offset = 47; count = i;
-                        if (allData[i + 46] == Convert.ToByte(75) || allData[i + 46] == Convert.ToByte(70)) offset = 46; count = i;
+                        if (allData[i + 47] == anchour) offset = 47; count = i;
+                        if (allData[i + 46] == anchour) offset = 46; count = i;
                     }
 
                 if (count > 0)
@@ -417,9 +422,9 @@ namespace Battle_Cats_save_editor
                     Console.WriteLine("Found values");
                     for (int j = 0; j < 2660 && stop - 32 > count + j + offset + 40; j += 4)
                     {
-                        stream.Position = count + j + offset + 40;
+                        stream2.Position = count + j + offset + 40;
                         int total = count + j + offset + 40;
-                        stream.WriteByte(02);
+                        stream2.WriteByte(02);
                     }
                 }
                 if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
@@ -752,10 +757,12 @@ namespace Battle_Cats_save_editor
 
                 int amount = 0;
                 int[] occurrence = new int[50];
+                stream.Close();
+                byte anchour = Anchour(path);
 
                 for (int i = 0; i < allData.Length - 1; i++)
                 {
-                    if (allData[i] == Convert.ToByte(70) || allData[i] == Convert.ToByte(75))
+                    if (allData[i] == anchour)
                         if (allData[i + 1] == 2 && allData[i+2] == 0 && allData[i-1] == 0)
                         {
                             occurrence[amount] = i;
@@ -776,15 +783,43 @@ namespace Battle_Cats_save_editor
 
                 int amount = 0;
                 int[] occurrence = new int[50];
+                stream.Close();
 
+                byte anchour = Anchour(path);
                 for (int i = 0; i < allData.Length - 1; i++)
                 {
-                    if (allData[i] == Convert.ToByte(70) || allData[i] == Convert.ToByte(75))
+                    if (allData[i] == anchour)
                         if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i-64] == 15)
                         {
                             occurrence[amount] = i;
                             amount++;
                         }
+                }
+
+                return occurrence;
+            }
+
+            static int[] OccurrenceT(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                int amount = 0;
+                int[] occurrence = new int[50];
+
+                for (int i = 0; i < allData.Length - 1; i++)
+                {
+                    if (allData[i] == Convert.ToByte("48", 16) && allData[i + 1] == Convert.ToByte("39", 16))
+                    {
+                        if (allData[i - 16] != 0 || allData[i - 15] != 0)
+                        {
+                            occurrence[amount] = i;
+                            amount++;
+                        }
+                    }
                 }
 
                 return occurrence;
@@ -872,7 +907,6 @@ namespace Battle_Cats_save_editor
                 int[] occurrence = OccurrenceBf(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
 
                 try
                 {
@@ -965,6 +999,7 @@ namespace Battle_Cats_save_editor
                 byte[] bytes = Endian(amount);
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
+                Encrypt(path);
                 Console.WriteLine("Are you finished changing cat fruit?(yes or no)");
                 string answer = Console.ReadLine();
 
@@ -974,6 +1009,60 @@ namespace Battle_Cats_save_editor
 
                 stream2.Close();
                 if (answer.ToLower() == "no") CatFruit(path);
+            }
+
+            static void Talents(string path)
+            {
+                Console.WriteLine("What level of talents do you want to upgrade everything to?(max 65535)");
+                int level = Inputed();
+                if (level > 65535) level = 65535;
+
+                byte[] talents = Endian(level);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                stream.Close();
+
+                int[] occurrence = OccurrenceT(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                try
+                {
+                    stream2.Position = occurrence[0] - 3148;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Console.WriteLine("You either havn't unlocked NP or it's bugged and if it's bugged then:\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Main();
+                }
+                for (int i = (int)stream2.Position; i < occurrence[0] - 19; i += 8)
+                {
+                    stream2.Position = i;
+                    if (allData[stream2.Position] != 5) { 
+                        stream2.WriteByte(talents[0]);
+                        stream2.WriteByte(talents[1]);
+                    }
+                }
+                Console.WriteLine("Set all talents to level: {0}", level);
+                Encrypt(path);
+            }
+
+            static byte Anchour(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                byte anchour = allData[7358];
+
+                stream.Close();
+                return anchour;
             }
 
         }
