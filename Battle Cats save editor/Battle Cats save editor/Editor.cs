@@ -186,12 +186,12 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == 2 && repeat)
                     {
                         repeat = false;
-                        for (int i = j + 3; i <= j + 2361 && i < 12000; i += 4)
+                        for (int i = j + 3; i <= j + 2361 && i < 12000 - 40; i += 4)
                         {
-                            stream.Position = i;
-                            stream.WriteByte(Convert.ToByte(80));
-                            stream.Position = i + 2;
+                            stream.Position = i+38;
                             stream.WriteByte(Convert.ToByte(50));
+                            stream.Position = i + 40;
+                            stream.WriteByte(Convert.ToByte(80));
                         }
                     }
                 }
@@ -967,7 +967,10 @@ namespace Battle_Cats_save_editor
                 stream2.WriteByte(bytes[1]);
                 Console.WriteLine("Are you finished changing cat fruit?(yes or no)");
                 string answer = Console.ReadLine();
-                if (answer.ToLower() == "yes") Main();
+
+                stream2.Close();
+                stream.Close();
+                if (answer.ToLower() == "yes") Encrypt(path);
 
                 stream2.Close();
                 if (answer.ToLower() == "no") CatFruit(path);
