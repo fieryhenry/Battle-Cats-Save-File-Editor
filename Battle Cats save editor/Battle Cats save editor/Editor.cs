@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
 
@@ -13,11 +15,12 @@ namespace Battle_Cats_save_editor
     {
 
         [STAThread]
+
         static void Main()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-            Console.WindowWidth = 160;
-            Console.WindowHeight = 40;
+            //Console.WindowWidth = 160;
+            //Console.WindowHeight = 40;
             string folderName = @"newversion.txt";
 
             WebClient webClient = new WebClient();
@@ -970,6 +973,14 @@ namespace Battle_Cats_save_editor
                 elderFruit[0] = allData[occurrence[0] - 12];
                 elderFruit[1] = allData[occurrence[0] - 11];
 
+                byte[] EpicSeed = new byte[4];
+                elderSeed[0] = allData[occurrence[0] - 8];
+                elderSeed[1] = allData[occurrence[0] - 7];
+
+                byte[] GoldFruit = new byte[4];
+                elderFruit[0] = allData[occurrence[0] - 4];
+                elderFruit[1] = allData[occurrence[0] - 3];
+
                 int Efruit = BitConverter.ToInt32(eFruit, 0);
                 int yfruit = BitConverter.ToInt32(yFruit, 0);
                 int gfruit = BitConverter.ToInt32(gFruit, 0);
@@ -983,8 +994,10 @@ namespace Battle_Cats_save_editor
                 int pseed = BitConverter.ToInt32(pSeed, 0);
                 int eseed = BitConverter.ToInt32(elderSeed, 0);
                 int efruit = BitConverter.ToInt32(elderFruit, 0);
-                Console.WriteLine("You have:\n1.Purple Seed:{0}\n2.Red Seed:{1}\n3.Blue Seed:{2}\n4.Green Seed:{3}\n5.Yellow Seed:{4}\n6.Purple Fruit:{5}\n7.Red Fruit:{6}\n8.Blue Fruit:{7}\n9.Green Fruit:{8}\n10.Yellow Fruit:{9}\n11.Epic Fruit:{10}\n12.Elder Seed:{12}\n13.Elder Fruit:{11}", pseed, rseed, bseed, gseed, yseed, pfruit, rfruit, bfruit, gfruit, yfruit, Efruit, efruit, eseed);
-                int total = Efruit + yfruit + gfruit + bfruit + rfruit + pfruit + yseed + bseed + gseed + rseed + pseed + eseed + efruit;
+                int epseed = BitConverter.ToInt32(EpicSeed, 0);
+                int gofruit = BitConverter.ToInt32(GoldFruit, 0);
+                Console.WriteLine("You have:\n1.Purple Seed:{0}\n2.Red Seed:{1}\n3.Blue Seed:{2}\n4.Green Seed:{3}\n5.Yellow Seed:{4}\n6.Purple Fruit:{5}\n7.Red Fruit:{6}\n8.Blue Fruit:{7}\n9.Green Fruit:{8}\n10.Yellow Fruit:{9}\n11.Epic Fruit:{10}\n12.Elder Seed:{12}\n13.Elder Fruit:{11}\n14. Epic seed:{13}\n15. Golden Fruit:{14}",pseed, rseed, bseed, gseed, yseed, pfruit, rfruit, bfruit, gfruit, yfruit, Efruit, eseed, efruit, epseed, gofruit);
+                int total = Efruit + yfruit + gfruit + bfruit + rfruit + pfruit + yseed + bseed + gseed + rseed + pseed + eseed + efruit + epseed + gofruit;
                 Console.WriteLine("\nTotal amount = {0}", total);
                 Console.WriteLine("Free space = {0}", 256 - total);
 
@@ -999,15 +1012,13 @@ namespace Battle_Cats_save_editor
                 byte[] bytes = Endian(amount);
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
+                stream2.Close();
                 Encrypt(path);
                 Console.WriteLine("Are you finished changing cat fruit?(yes or no)");
                 string answer = Console.ReadLine();
 
-                stream2.Close();
-                stream.Close();
                 if (answer.ToLower() == "yes") Encrypt(path);
 
-                stream2.Close();
                 if (answer.ToLower() == "no") CatFruit(path);
             }
 
@@ -1048,6 +1059,7 @@ namespace Battle_Cats_save_editor
                     }
                 }
                 Console.WriteLine("Set all talents to level: {0}", level);
+                stream2.Close();
                 Encrypt(path);
             }
 
