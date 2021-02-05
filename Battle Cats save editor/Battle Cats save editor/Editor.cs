@@ -789,7 +789,7 @@ namespace Battle_Cats_save_editor
                 stream.Close();
 
                 byte anchour = Anchour(path);
-                for (int i = 0; i < allData.Length - 1; i++)
+                for (int i = 0; i < allData.Length - 2; i++)
                 {
                     if (allData[i] == anchour)
                         if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i-64] == 15)
@@ -996,7 +996,7 @@ namespace Battle_Cats_save_editor
                 int efruit = BitConverter.ToInt32(elderFruit, 0);
                 int epseed = BitConverter.ToInt32(EpicSeed, 0);
                 int gofruit = BitConverter.ToInt32(GoldFruit, 0);
-                Console.WriteLine("You have:\n1.Purple Seed:{0}\n2.Red Seed:{1}\n3.Blue Seed:{2}\n4.Green Seed:{3}\n5.Yellow Seed:{4}\n6.Purple Fruit:{5}\n7.Red Fruit:{6}\n8.Blue Fruit:{7}\n9.Green Fruit:{8}\n10.Yellow Fruit:{9}\n11.Epic Fruit:{10}\n12.Elder Seed:{12}\n13.Elder Fruit:{11}\n14. Epic seed:{13}\n15. Golden Fruit:{14}",pseed, rseed, bseed, gseed, yseed, pfruit, rfruit, bfruit, gfruit, yfruit, Efruit, eseed, efruit, epseed, gofruit);
+                Console.WriteLine("You have:\n1.Purple Seed:{0}\n2.Red Seed:{1}\n3.Blue Seed:{2}\n4.Green Seed:{3}\n5.Yellow Seed:{4}\n6.Purple Fruit:{5}\n7.Red Fruit:{6}\n8.Blue Fruit:{7}\n9.Green Fruit:{8}\n10.Yellow Fruit:{9}\n11.Epic Fruit:{10}\n12.Elder Seed:{12}\n13.Elder Fruit:{11}\n14.Epic seed:{13}\n15.Golden Fruit:{14}",pseed, rseed, bseed, gseed, yseed, pfruit, rfruit, bfruit, gfruit, yfruit, Efruit, epseed, gofruit, eseed, efruit);
                 int total = Efruit + yfruit + gfruit + bfruit + rfruit + pfruit + yseed + bseed + gseed + rseed + pseed + eseed + efruit + epseed + gofruit;
                 Console.WriteLine("\nTotal amount = {0}", total);
                 Console.WriteLine("Free space = {0}", 256 - total);
