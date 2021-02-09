@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.11.0";
+            string version = "2.12.0";
 
             if (lines[0] == version)
             {
@@ -83,6 +83,7 @@ namespace Battle_Cats_save_editor
                     case 21: CatFruit(path); break;
                     case 22: Talents(path); break;
                     case 23: Encrypt(path); break;
+                    case 24: Stage(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -394,43 +395,32 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 int count = 0;
-                int i = 0;
                 Console.WriteLine("Scan Complete");
 
                 stream.Close();
-                int anchour = Anchour(path);
+                int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-                int offset = 47;
-                for (i = 0; i < length - 30; i++)
-                    if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
-                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i-4] == Convert.ToByte("c8", 16))
-                    {
-
-                        if (allData[i + 47] == anchour) offset = 47; count = i;
-                        if (allData[i + 46] == anchour) offset = 46; count = i;
-                    }
-
-                if (count > 0)
+                try
                 {
-                    int stop = 0;
-                    for (int e = 3; e < 2660; e++)
-                    {
-                        if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
-                        {
-                            stop = e + count + offset;
-                        }
-                    }
-                    Console.WriteLine("Found values");
-                    for (int j = 0; j < 2660 && stop - 32 > count + j + offset + 40; j += 4)
-                    {
-                        stream2.Position = count + j + offset + 40;
-                        int total = count + j + offset + 40;
-                        stream2.WriteByte(02);
-                    }
+                    stream2.Position = occurrence[4] + 40;
                 }
-                if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); }
+                if (allData[occurrence[4] - 204] != Convert.ToByte("C8", 16))
+                {
+                    Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord\n\nPress enter to go back to back to selecting your option for editing");
+                    stream2.Close();
+                    Console.ReadLine();
+                    Encrypt(path);
+                    Main();
+                }
+                for (int j = occurrence[4] + 40; j <= occurrence[4] + 40 + 2296; j += 4)
+                {
+                    stream2.Position = j;
+                    stream2.WriteByte(01);
+                }
+                Console.WriteLine("Success");
             }
 
             static void Items(string path)
@@ -689,7 +679,7 @@ namespace Battle_Cats_save_editor
                 Data = md5.ComputeHash(Usable);
 
                 string hex = ByteArrayToString(Data);
-                Console.WriteLine(hex);
+                Console.WriteLine("Data patched");
 
                 string EncyptedHex = ByteArrayToString(Data);
 
@@ -1075,6 +1065,141 @@ namespace Battle_Cats_save_editor
 
                 stream.Close();
                 return anchour;
+            }
+            static void Stage(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                ColouredText("What chapters do you want to complete?(1-9)\n1.&Empire of cats chapter 1&\n2.&Empire of cats chapter 2&\n3.&Empire of cats chapter 3&\n4.&Into the future chapter 1&\n5.&Into the future chapter 2&\n6.&Into the future chapter 3&\n7.&Cats of the cosmos chapter 1&" +
+                    "\n8.&Cats of the cosmos chapter 2&\n9.&Cats of the cosmos chapter 3&\n10.&All chapters&\n", ConsoleColor.White, ConsoleColor.Cyan);
+                int choice = Inputed();
+
+                if (choice == 10)
+                {
+                    for (int i = 946; i <= 1134; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 1150; i <= 1338; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 1354; i <= 1542; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 1762; i <= 1950; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 1966; i <= 2154; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 2170; i <= 2358; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 2374; i <= 2562; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 2578; i <= 2766; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                    for (int i = 2782; i <= 2970; i += 4)
+                    {
+                        stream.Position = i;
+                        stream.WriteByte(01);
+                    }
+                }
+                switch (choice)
+                {
+                    case 1:
+                        for (int i = 946; i <= 1134; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 2:
+                        for (int i = 1150; i <= 1338; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 3:
+                        for (int i = 1354; i <= 1542; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 4:
+                        for (int i = 1762; i <= 1950; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 5:
+                        for (int i = 1966; i <= 2154; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 6:
+                        for (int i = 2170; i <= 2358; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 7:
+                        for (int i = 2374; i <= 2562; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 8:
+                        for (int i = 2578; i <= 2766; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 9:
+                        for (int i = 2782; i <= 2970; i+=4)
+                        {
+                            stream.Position = i;
+                            stream.WriteByte(01);
+                        }
+                        break;
+                    case 10:
+                        break;
+                    default:
+                        Console.WriteLine("Please enter a recognised number");
+                        stream.Close();
+                        Stage(path);
+                        break;
+                }
+                
             }
 
         }
