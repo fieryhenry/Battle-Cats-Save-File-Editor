@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor
             HttpRequest webClient = new HttpRequest(@"newversion.txt", "https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", "Updater");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.0";
+            string version = "2.12.2";
 
             if (lines[0] == version)
             {
@@ -1124,6 +1124,24 @@ namespace Battle_Cats_save_editor
                         stream.Position = i;
                         stream.WriteByte(01);
                     }
+                    stream.Position = 906;
+                    stream.WriteByte(0x30);
+                    stream.Position = 910;
+                    stream.WriteByte(0x30);
+                    stream.Position = 914;
+                    stream.WriteByte(0x30);
+                    stream.Position = 922;
+                    stream.WriteByte(0x30);
+                    stream.Position = 926;
+                    stream.WriteByte(0x30);
+                    stream.Position = 930;
+                    stream.WriteByte(0x30);
+                    stream.Position = 934;
+                    stream.WriteByte(0x30);
+                    stream.Position = 938;
+                    stream.WriteByte(0x30);
+                    stream.Position = 942;
+                    stream.WriteByte(0x30);
                 }
                 switch (choice)
                 {
@@ -1133,6 +1151,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 906;
+                        stream.WriteByte(0x30);
                         break;
                     case 2:
                         for (int i = 1150; i <= 1338; i+=4)
@@ -1140,6 +1160,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 910;
+                        stream.WriteByte(0x30);
                         break;
                     case 3:
                         for (int i = 1354; i <= 1542; i+=4)
@@ -1147,6 +1169,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 914;
+                        stream.WriteByte(0x30);
                         break;
                     case 4:
                         for (int i = 1762; i <= 1950; i+=4)
@@ -1154,6 +1178,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 922;
+                        stream.WriteByte(0x30);
                         break;
                     case 5:
                         for (int i = 1966; i <= 2154; i+=4)
@@ -1161,6 +1187,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 926;
+                        stream.WriteByte(0x30);
                         break;
                     case 6:
                         for (int i = 2170; i <= 2358; i+=4)
@@ -1168,6 +1196,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 930;
+                        stream.WriteByte(0x30);
                         break;
                     case 7:
                         for (int i = 2374; i <= 2562; i+=4)
@@ -1175,6 +1205,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 934;
+                        stream.WriteByte(0x30);
                         break;
                     case 8:
                         for (int i = 2578; i <= 2766; i+=4)
@@ -1182,6 +1214,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 938;
+                        stream.WriteByte(0x30);
                         break;
                     case 9:
                         for (int i = 2782; i <= 2970; i+=4)
@@ -1189,6 +1223,8 @@ namespace Battle_Cats_save_editor
                             stream.Position = i;
                             stream.WriteByte(01);
                         }
+                        stream.Position = 942;
+                        stream.WriteByte(0x30);
                         break;
                     case 10:
                         break;
