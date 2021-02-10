@@ -6,6 +6,7 @@ using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
 
 namespace Battle_Cats_save_editor
@@ -21,10 +22,8 @@ namespace Battle_Cats_save_editor
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             //Console.WindowWidth = 160;
             //Console.WindowHeight = 40;
-            string folderName = @"newversion.txt";
 
-            WebClient webClient = new WebClient();
-            webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", folderName);
+            HttpRequest webClient = new HttpRequest(@"newversion.txt", "https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", "Updater");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
             string version = "2.12.0";
@@ -54,7 +53,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded 40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& Change Catamins" +
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
                 int Choice = Inputed();
 
@@ -82,8 +81,8 @@ namespace Battle_Cats_save_editor
                     case 20: EvolveSpecific(path); break;
                     case 21: CatFruit(path); break;
                     case 22: Talents(path); break;
-                    case 23: Encrypt(path); break;
-                    case 24: Stage(path); break;
+                    case 23: Stage(path); break;
+                    case 24: Encrypt(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
