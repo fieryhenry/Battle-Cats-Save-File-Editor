@@ -42,7 +42,9 @@ namespace Battle_Cats_save_editor
             var FD = new OpenFileDialog();
             if (FD.ShowDialog() == DialogResult.OK)
             {
+                //Console.WriteLine("Enter the path to your save(use backslashes)");
                 string fileToOpen = FD.FileName;
+                //string fileToOpen = Console.ReadLine();
                 string path = Path.Combine(fileToOpen);
                 string result = Path.GetFileName(path);
 
@@ -580,8 +582,9 @@ namespace Battle_Cats_save_editor
 
             static void Cats(string path)
             {
+                int[] occurrence = OccurrenceB(path);
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                for (int i = 7362; i <= 9686; i += 4)
+                for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
                 {
                     stream.Position = i;
                     stream.WriteByte(Convert.ToByte(01));
