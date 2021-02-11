@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor
             HttpRequest webClient = new HttpRequest(@"newversion.txt", "https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", "Updater");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.2";
+            string version = "2.12.3";
 
             if (lines[0] == version)
             {
