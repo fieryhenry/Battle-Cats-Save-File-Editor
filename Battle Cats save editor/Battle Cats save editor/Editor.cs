@@ -23,7 +23,8 @@ namespace Battle_Cats_save_editor
             //Console.WindowWidth = 160;
             //Console.WindowHeight = 40;
 
-            HttpRequest webClient = new HttpRequest(@"newversion.txt", "https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", "Updater");
+            WebClient webClient = new WebClient();
+            webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
             string version = "2.12.4";
