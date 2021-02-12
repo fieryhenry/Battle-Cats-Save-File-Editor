@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor
             HttpRequest webClient = new HttpRequest(@"newversion.txt", "https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", "Updater");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.3";
+            string version = "2.12.4";
 
             if (lines[0] == version)
             {
@@ -422,6 +422,11 @@ namespace Battle_Cats_save_editor
                     stream2.WriteByte(01);
                 }
                 Console.WriteLine("Success");
+                for (int i = occurrence[4] + 40; i <= occurrence[4] + 2341; i += 4)
+                {
+                    Console.WriteLine(i);
+                }
+
             }
 
             static void Items(string path)
@@ -1035,7 +1040,7 @@ namespace Battle_Cats_save_editor
 
                 try
                 {
-                    stream2.Position = occurrence[0] - 3148;
+                    stream2.Position = occurrence[0] - 4044;
                 }
                 catch (ArgumentOutOfRangeException)
                 {
