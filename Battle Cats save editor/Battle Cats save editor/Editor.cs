@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.6";
+            string version = "2.12.9";
 
             if (lines[0] == version)
             {
@@ -414,23 +414,10 @@ namespace Battle_Cats_save_editor
                     stream2.Position = occurrence[4] + 40;
                 }
                 catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); }
-                if (allData[occurrence[4] - 204] != Convert.ToByte("C8", 16))
-                {
-                    Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord\n\nPress enter to go back to back to selecting your option for editing");
-                    stream2.Close();
-                    Console.ReadLine();
-                    Encrypt(path);
-                    Main();
-                }
                 for (int j = occurrence[4] + 40; j <= occurrence[4] + 40 + 2296; j += 4)
                 {
                     stream2.Position = j;
-                    stream2.WriteByte(01);
-                }
-                Console.WriteLine("Success");
-                for (int i = occurrence[4] + 40; i <= occurrence[4] + 2341; i += 4)
-                {
-                    Console.WriteLine(i);
+                    stream2.WriteByte(02);
                 }
 
             }
@@ -518,13 +505,10 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How many Base Materials do you want(max 65535)");
                 int platCatTickets = (int)Convert.ToInt64(Console.ReadLine());
-                Console.WriteLine("How many bricks do you have");
-                int catA = (int)Convert.ToInt64(Console.ReadLine());
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
                 byte[] bytes = Endian(platCatTickets);
-                byte[] bytesCat = Endian(catA);
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
                 bool found = false;
@@ -532,14 +516,13 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < allData.Length; j++)
                 {
-                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] != Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(1) && allData[j + 10] == Convert.ToByte(1) && allData[j + 56] == Convert.ToByte(63) && allData[j + 64] == bytesCat[0] && allData[j + 65] == bytesCat[1])
+                    if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte("3F", 16) && allData[j+2] == 0 && allData[j + 3] == 0 && allData[j + 4] == 0 && allData[j + 5] == 8)
                     {
                         found = true;
                         for (int i = 0; i < 29; i += 4)
                         {
-                            stream.Position = j + 64 + i;
+                            stream.Position = j + 9 + i;
                             stream.WriteByte(bytes[0]);
-                            stream.Position = j + 65 + i;
                             stream.WriteByte(bytes[1]);
                         }
                     }
@@ -679,7 +662,23 @@ namespace Battle_Cats_save_editor
                 byte[] toBeUsed = new byte[allData.Length - 32];
                 for (int i = 0; i < allData.Length - 32; i++)
                     toBeUsed[i] = allData[i];
-                byte[] bytes = Encoding.ASCII.GetBytes("battlecatsen");
+                Console.WriteLine("What version of the game are you in (en or jp)?");
+                string choice = Console.ReadLine();
+                byte[] bytes = Encoding.ASCII.GetBytes("battlecats");
+                if (choice == "en")
+                {
+                    bytes = Encoding.ASCII.GetBytes("battlecatsen");
+                }
+                else if (choice == "jp")
+                {
+                    bytes = Encoding.ASCII.GetBytes("battlecats");
+                }
+                else
+                {
+                    Console.WriteLine("Answer was not jp or en");
+                    stream.Close();
+                    Encrypt(path);
+                }
                 int test = 32 - bytes.Length;
 
                 byte[] Usable = new byte[allData.Length - test];
@@ -821,7 +820,7 @@ namespace Battle_Cats_save_editor
                 {
                     if (allData[i] == Convert.ToByte("48", 16) && allData[i + 1] == Convert.ToByte("39", 16))
                     {
-                        if (allData[i - 16] != 0 || allData[i - 15] != 0)
+                        if (allData[i - 2] == 0 || allData[i - 1] == 0)
                         {
                             occurrence[amount] = i;
                             amount++;
@@ -858,6 +857,8 @@ namespace Battle_Cats_save_editor
 
             static void EvolveSpecific(string path)
             {
+                int[] occurrence = OccurrenceB(path);
+
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 Console.WriteLine("What is the cat id?");
@@ -868,37 +869,12 @@ namespace Battle_Cats_save_editor
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
 
-                int count = 0;
-                int i = 0;
                 Console.WriteLine("Scan Complete");
 
-                int offset = 47;
-                for (i = 0; i < length - 30; i++)
-                    if (allData[i] == 1 && allData[i + 1] == 1 && allData[i + 2] == 1 && allData[i + 3] == 1 && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 6] == 1 && allData[i + 7] == 1 && allData[i + 8] == 1 && allData[i + 9] == 1 && allData[i + 10] == 1 && allData[i + 11] == 1 && allData[i + 12] == 1 &&
-                        allData[i + 13] == 1 && allData[i + 14] == 1 && allData[i + 15] == 1 && allData[i + 16] == 1 && allData[i + 17] == 1 && allData[i + 18] == 1 && allData[i + 19] == 1 && allData[i + 20] == 1 && allData[i + 21] == 1 && allData[i + 22] == 1 && allData[i + 23] == 1 && allData[i + 24] == 1 && allData[i + 25] == 1 && allData[i + 26] == 1 && allData[i + 27] == 1 &&
-                        allData[i + 28] == 1 && allData[i + 29] == 1)
-                    {
+                stream.Position = occurrence[4] + 40 + idPos;
+                stream.WriteByte(2);
+                stream.Close();
 
-                        if (allData[i + 47] == Convert.ToByte(75) || allData[i + 47] == Convert.ToByte(70)) offset = 47; count = i;
-                        if (allData[i + 46] == Convert.ToByte(75) || allData[i + 46] == Convert.ToByte(70)) offset = 46; count = i;
-                    }
-
-                if (count > 0)
-                {
-                    int stop = 0;
-                    for (int e = 3; e < 2660; e++)
-                    {
-                        if (allData[e + count + offset] != 0 && allData[e + count + offset] != 1 && allData[e + count + offset] != 2)
-                        {
-                            stop = e + count + offset;
-                        }
-                    }
-                    Console.WriteLine("Found values");
-                    stream.Position = count + offset + 40 + idPos;
-                    stream.WriteByte(02);
-
-                }
-                if (count == 0) Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord or do a bug report");
             }
 
             static void CatFruit(string path)
@@ -1005,7 +981,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("\nTotal amount = {0}", total);
                 Console.WriteLine("Free space = {0}", 256 - total);
 
-                Console.WriteLine("What would you like to edit?(1-13)");
+                Console.WriteLine("What would you like to edit?(1-15)");
                 int choice = Inputed();
                 Console.WriteLine("How many of this cat fruit would you like?(max 256) Warning: Don't go over your storage cap as then it will overwrite other cat fruit");
                 int amount = Inputed();
