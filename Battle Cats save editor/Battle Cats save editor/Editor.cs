@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.9";
+            string version = "2.12.10";
 
             if (lines[0] == version)
             {
@@ -1002,6 +1002,32 @@ namespace Battle_Cats_save_editor
                 if (answer.ToLower() == "no") CatFruit(path);
             }
 
+            static int[] Occurrence1(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                int amount = 0;
+                int[] occurrence = new int[50];
+
+                for (int i = 0; i < allData.Length - 1; i++)
+                {
+                    if (allData[i] == Convert.ToByte(0) && allData[i + 1] == Convert.ToByte(0) && allData[i + 2] == Convert.ToByte(0) && allData[i + 3] == Convert.ToByte(0) && allData[i + 4] == Convert.ToByte(0) && allData[i + 5] == Convert.ToByte(1) && allData[i + 6] == Convert.ToByte("4d", 16) && allData[i + 7] == Convert.ToByte(0) && allData[i + 8] == Convert.ToByte(0) && allData[i + 9] == Convert.ToByte(0))
+                    {
+                        if (allData[i - 1] == 0 && allData[i + 2] == 0)
+                        {
+                            occurrence[amount] = i;
+                            amount++;
+                        }
+                    }
+                }
+
+                return occurrence;
+            }
+
             static void Talents(string path)
             {
                 Console.WriteLine("What level of talents do you want to upgrade everything to?(max 65535)");
@@ -1017,21 +1043,26 @@ namespace Battle_Cats_save_editor
 
                 stream.Close();
 
-                int[] occurrence = OccurrenceT(path);
+                int[] occurrence = Occurrence1(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 try
                 {
-                    stream2.Position = occurrence[0] - 4124;
+                    stream2.Position = occurrence[0] + 220;
                 }
                 catch (ArgumentOutOfRangeException)
                 {
                     Console.WriteLine("You either havn't unlocked NP or it's bugged and if it's bugged then:\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
                     Main();
                 }
-                for (int i = (int)stream2.Position; i < occurrence[0] - 19; i += 8)
+                for (int i = (int)stream2.Position; i < occurrence[0] + 5284; i += 8)
                 {
+                    if (allData[i - 12] == Convert.ToByte(255) && allData[i - 11] == Convert.ToByte(255))
+                    {
+                        i = occurrence[0] + 5300;
+                        break;
+                    }
                     stream2.Position = i;
                     if (allData[stream2.Position] != 5) { 
                         stream2.WriteByte(talents[0]);
