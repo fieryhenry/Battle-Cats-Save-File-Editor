@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.10";
+            string version = "2.12.11";
 
             if (lines[0] == version)
             {
@@ -414,14 +414,22 @@ namespace Battle_Cats_save_editor
                     stream2.Position = occurrence[4] + 40;
                 }
                 catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); }
-                for (int j = occurrence[4] + 40; j <= occurrence[4] + 40 + 2296; j += 4)
+                int pos = 0;
+                for (int i = occurrence[4] + 3; i < allData.Length; i++)
                 {
-                    stream2.Position = j;
-                    stream2.WriteByte(02);
+                    if (allData[i] == 1 || allData[i] == 2)
+                    {
+                        pos = i;
+                        stream2.Position = i;
+                        i = allData.Length + 1;
+                    }
                 }
-
+                while (stream2.Position < pos + 2250)
+                {
+                    stream2.WriteByte(02);
+                    stream2.Position += 3;
+                }
             }
-
             static void Items(string path)
             {
                 Console.WriteLine("How many of each item do you want(max 65535)");
@@ -871,7 +879,14 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
 
-                stream.Position = occurrence[4] + 40 + idPos;
+                for (int i = occurrence[4] + 3; i < allData.Length; i++)
+                {
+                    if (allData[i] == 1 || allData[i] == 2)
+                    {
+                        stream.Position = i + idPos;
+                        i = allData.Length;
+                    }
+                }
                 stream.WriteByte(2);
                 stream.Close();
 
