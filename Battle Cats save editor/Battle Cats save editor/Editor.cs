@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.12.11";
+            string version = "2.13.0";
 
             if (lines[0] == version)
             {
@@ -61,7 +61,7 @@ namespace Battle_Cats_save_editor
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat" +
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
-                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
                 int Choice = Inputed();
 
@@ -91,6 +91,7 @@ namespace Battle_Cats_save_editor
                     case 22: Talents(path); break;
                     case 23: Stage(path); break;
                     case 24: Encrypt(path); break;
+                    case 25: menu(path);  break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -107,6 +108,19 @@ namespace Battle_Cats_save_editor
             {
                 ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 Main();
+            }
+
+            static void menu(string path)
+            {
+                ColouredText("Welcome to the small patches and tweaks menu\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                int choice = Inputed();
+
+                switch (choice)
+                {
+                    case 1: Bundle(path); break;
+                    default: Console.WriteLine("Please input a number that is recognised"); break;
+
+                }
             }
 
             static void CatFood(string path)
@@ -1108,6 +1122,7 @@ namespace Battle_Cats_save_editor
                 stream.Close();
                 return anchour;
             }
+
             static void Stage(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1278,6 +1293,21 @@ namespace Battle_Cats_save_editor
                         break;
                 }
                 
+            }
+
+            static void Bundle(string path)
+            {
+                int[] occurrence = OccurrenceB(path);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                stream.Position = occurrence[5] - 16;
+                stream.WriteByte(0xff);
+                stream.WriteByte(0xff);
+                Console.WriteLine("Closed all bundle menus");
+
             }
 
         }
