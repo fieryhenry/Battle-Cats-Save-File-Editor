@@ -14,20 +14,18 @@ namespace Battle_Cats_save_editor
 
     class Editor
     {
-
+        static int catAmount = 0;
         [STAThread]
 
         static void Main()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-            //Console.WindowWidth = 160;
-            //Console.WindowHeight = 40;
 
             WebClient webClient = new WebClient();
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.13.0";
+            string version = "2.13.1";
 
             if (lines[0] == version)
             {
@@ -62,8 +60,12 @@ namespace Battle_Cats_save_editor
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-
+                byte[] anchour = new byte[20];
+                anchour[0] = Anchour(path);
+                anchour[1] = 0x02;
+                catAmount = BitConverter.ToInt32(anchour, 0);
                 int Choice = Inputed();
+                
 
                 switch (Choice)
                 {
@@ -211,17 +213,20 @@ namespace Battle_Cats_save_editor
                 {
                     if (allData[j] == 2 && repeat)
                     {
+                        Console.WriteLine("all cats max level");
+                        Console.WriteLine((catAmount*4) - 40);
+
                         repeat = false;
-                        for (int i = j + 3; i <= j + 2361 && i < 12083 - 40; i += 4)
+                        for (int i = j + 3; i <= j + (catAmount * 4) - 40; i += 4)
                         {
+                            //Console.WriteLine(i);
                             stream.Position = i+38;
-                            stream.WriteByte(Convert.ToByte(50));
+                            stream.WriteByte(Convert.ToByte(39));
                             stream.Position = i + 40;
                             stream.WriteByte(Convert.ToByte(80));
                         }
                     }
                 }
-                Console.WriteLine("all cats max level");
             }
 
             static void Leadership(string path)
@@ -333,7 +338,7 @@ namespace Battle_Cats_save_editor
                 int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                stream2.Position = occurrence[3] - 4;
+                stream2.Position = occurrence[3] - 5;
                 stream2.WriteByte(bytes[1]);
                 stream2.WriteByte(bytes[0]);
             }
@@ -342,8 +347,6 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How many Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
                 byte platCatTickets = Convert.ToByte(Console.ReadLine());
-                Console.WriteLine("How many Platinum Cat Tickets do you have?");
-                byte platCurrent = Convert.ToByte(Console.ReadLine());
                 if (platCatTickets > 9) platCatTickets = 9;
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -356,14 +359,35 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length - 11; j++)
                 {
-                    if (allData[j] == Convert.ToByte(255) && allData[j + 1] == Convert.ToByte(255) && allData[j + 2] == 0 && allData[j + 3] == Convert.ToByte(54) && allData[j + 4] == Convert.ToByte(0) && allData[j + 5] == Convert.ToByte(0) && allData[j + 11] == Convert.ToByte(54) && allData[j + 12] == Convert.ToByte(0) && allData[j + 19] == Convert.ToByte(platCurrent))
+                    if (allData[j] == 0 && allData[j+1] == 0xC8 && allData[j+2] == 0 && allData[j+365] == 0x37)
                     {
-                        found = true;
-                        stream.Position = j + 19;
-                        stream.WriteByte(platCatTickets);
-                        Console.WriteLine("Success");
+                        if (allData[j-23] == 0x36 && allData[j-7] != 0xEC)
+                        {
+                            stream.Position = j - 7;
+                            stream.WriteByte(platCatTickets);
+                            found = true;
+                        }
+                        else if (allData[j - 311] == 0x36)
+                        {
+                            found = true;
+                            stream.Position = j - 295;
+                            stream.WriteByte(platCatTickets);
+                        }
+                        else if (allData[j -31] == 0x36 && allData[j-15] != 0xEC)
+                        {
+                            found = true;
+                            stream.Position = j - 15;
+                            stream.WriteByte(platCatTickets);
+                        }
+                        else if (allData[j - 39] == 0x36)
+                        {
+                            found = true;
+                            stream.Position = j - 23;
+                            stream.WriteByte(platCatTickets);
+                        }
                     }
                 }
+                if (found) Console.WriteLine("Success");
                 if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
 
             }
@@ -438,7 +462,7 @@ namespace Battle_Cats_save_editor
                         i = allData.Length + 1;
                     }
                 }
-                while (stream2.Position < pos + 2250)
+                while (stream2.Position < pos + (catAmount*4) - 37)
                 {
                     stream2.WriteByte(02);
                     stream2.Position += 3;
@@ -700,6 +724,7 @@ namespace Battle_Cats_save_editor
                     Console.WriteLine("Answer was not jp or en");
                     stream.Close();
                     Encrypt(path);
+                    return;
                 }
                 int test = 32 - bytes.Length;
 
