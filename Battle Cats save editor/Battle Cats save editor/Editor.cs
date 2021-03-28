@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.13.1";
+            string version = "2.14.0";
 
             if (lines[0] == version)
             {
@@ -59,13 +59,13 @@ namespace Battle_Cats_save_editor
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat" +
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
-                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n&26.& Display current gacha seed\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
                 catAmount = BitConverter.ToInt32(anchour, 0);
                 int Choice = Inputed();
-                
+                bool ChoiceExit = false;
 
                 switch (Choice)
                 {
@@ -92,12 +92,13 @@ namespace Battle_Cats_save_editor
                     case 21: CatFruit(path); break;
                     case 22: Talents(path); break;
                     case 23: Stage(path); break;
-                    case 24: Encrypt(path); break;
+                    case 24: Encrypt(path); Console.WriteLine("Use the backup manager to restore the save\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
                     case 25: menu(path);  break;
+                    case 26: GetSeed(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
-                bool ChoiceExit = OnAskUser();
+                ChoiceExit = OnAskUser();
                 if (ChoiceExit == false) Main();
                 else
                 {
@@ -429,6 +430,47 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Set gacha seed to: {0}", XP);
                 for (int i = 0; i < 5; i++)
                     stream2.WriteByte(bytes[i]);
+            }
+            static void GetSeed(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                Console.WriteLine("Scan Complete");
+
+                //Console.WriteLine("What seed do you want?(max 4294967295)");
+                long XP = 0;
+
+                byte[] year = new byte[2];
+                year[0] = allData[15];
+                year[1] = allData[16];
+
+                stream.Close();
+
+                int[] occurrence = OccurrenceE(path, year);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                try
+                {
+                    stream2.Position = occurrence[4] - 21;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Console.WriteLine("Sorry your seed position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Main();
+                }
+                byte[] seed = new byte[100];
+                int j = 0;
+                for (int i = occurrence[4] - 21; i < occurrence[4] - 16; i++)
+                {
+                    seed[j] = allData[i];
+                    j++;
+                }
+                seed = Endian(BitConverter.ToInt64(seed, 0));
+                Console.WriteLine("Seed is:" + BitConverter.ToInt64(seed, 0));
             }
 
             static void Evolve(string path)
