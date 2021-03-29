@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.14.0";
+            string version = "2.15.0";
 
             if (lines[0] == version)
             {
@@ -59,7 +59,8 @@ namespace Battle_Cats_save_editor
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat" +
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
-                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n&26.& Display current gacha seed\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n" +
+                    "&23.& Clear story chapters\n&24.& Patch data\n&25.& Enter small tweaks and fixes menu\n&26.& Display current gacha seed\n&27.& Change all into the future timed score rewards\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -95,6 +96,7 @@ namespace Battle_Cats_save_editor
                     case 24: Encrypt(path); Console.WriteLine("Use the backup manager to restore the save\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
                     case 25: menu(path);  break;
                     case 26: GetSeed(path); break;
+                    case 27: TimedScore(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -440,9 +442,6 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-
-                //Console.WriteLine("What seed do you want?(max 4294967295)");
-                long XP = 0;
 
                 byte[] year = new byte[2];
                 year[0] = allData[15];
@@ -1377,6 +1376,60 @@ namespace Battle_Cats_save_editor
 
             }
 
+            static void TimedScore(string path)
+            {
+                Console.WriteLine("What timed score do you want? (max 9999)");
+                int score = Inputed();
+                if (score > 9999) score = 9999;
+                byte[] scoreByte = Endian(score);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                Console.WriteLine("Scan Complete");
+
+                stream.Close();
+
+                int[] occurance = OccurrenceB(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+
+                stream2.Position = occurance[5];
+                if (stream2.Position == 0)
+                {
+                    Console.WriteLine("Sorry your timed score position couldn't be found please contact me on discord(linked in the readme)");
+                    return;
+                }
+                if (allData[occurance[5] - 2095] == 1) stream2.Position = occurance[5] - 2096;
+                if (allData[occurance[5] - 2127] == 1) stream2.Position = occurance[5] - 2128;
+
+                stream2.Position -= 616;
+                for (int i = 0; i < 48; i++)
+                {
+                    stream2.WriteByte(scoreByte[0]);
+                    stream2.WriteByte(scoreByte[1]);
+                    stream2.Position += 2;
+                }
+                stream2.Position += 12;
+                for (int i = 0; i < 48; i++)
+                {
+                    stream2.WriteByte(scoreByte[0]);
+                    stream2.WriteByte(scoreByte[1]);
+                    stream2.Position += 2;
+                }
+                stream2.Position += 12;
+                for (int i = 0; i < 48; i++)
+                {
+                    stream2.WriteByte(scoreByte[0]);
+                    stream2.WriteByte(scoreByte[1]);
+                    stream2.Position += 2;
+                }
+                Console.WriteLine("Set ItF timed score rewards to: " + score);
+
+            }
         }
     }
 }
