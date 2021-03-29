@@ -3,6 +3,8 @@
 I have a discord server:https://discord.gg/DvmMgvn5ZB You can become a developer there and give me your pre-backed up save files
 and is the best way to report bugs + contact me
 
+# How to use
+
 To edit your save file first download u/1plus1equalswindow's (aka Lethal's)save file editor https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
 Back up your save using BackupManagerEN.exe (included in Lethal's editor) follow instructions in that
