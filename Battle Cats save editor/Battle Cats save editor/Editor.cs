@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.15.0";
+            string version = "2.15.1";
 
             if (lines[0] == version)
             {
@@ -37,7 +37,6 @@ namespace Battle_Cats_save_editor
                 System.Diagnostics.Process.Start(@"Updater.exe");
                 Environment.Exit(1);
             }
-
             var FD = new OpenFileDialog();
             if (FD.ShowDialog() == DialogResult.OK)
             {
@@ -105,7 +104,7 @@ namespace Battle_Cats_save_editor
                 else
                 {
                     Encrypt(path);
-                    Console.WriteLine("Use the backup manager to restore the save\nPress enter to exit");
+                    Console.WriteLine("Pess enter to exit");
                     Console.ReadLine();
                 }
             }
@@ -480,7 +479,6 @@ namespace Battle_Cats_save_editor
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
 
-                int count = 0;
                 Console.WriteLine("Scan Complete");
 
                 stream.Close();
@@ -492,7 +490,7 @@ namespace Battle_Cats_save_editor
                 {
                     stream2.Position = occurrence[4] + 40;
                 }
-                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); }
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
                 int pos = 0;
                 for (int i = occurrence[4] + 3; i < allData.Length; i++)
                 {
@@ -503,8 +501,17 @@ namespace Battle_Cats_save_editor
                         i = allData.Length + 1;
                     }
                 }
-                while (stream2.Position < pos + (catAmount*4) - 37)
+                bool stop = false;
+                while (stream2.Position < pos + (catAmount*4) - 37 && !stop)
                 {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        if (allData[stream2.Position + i] != 0x01 && allData[stream2.Position + i] != 0 && allData[stream2.Position + i] != 0x02)
+                        {
+                            stop = true;
+                            break;
+                        }
+                    }
                     stream2.WriteByte(02);
                     stream2.Position += 3;
                 }
