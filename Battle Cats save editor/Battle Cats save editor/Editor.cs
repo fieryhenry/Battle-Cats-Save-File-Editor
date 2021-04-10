@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,7 +17,6 @@ namespace Battle_Cats_save_editor
     {
         static int catAmount = 0;
         [STAThread]
-
         static void Main()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.15.1";
+            string version = "2.16.0";
 
             if (lines[0] == version)
             {
@@ -266,7 +266,7 @@ namespace Battle_Cats_save_editor
                     }
 
                 }
-                if (!found) Console.WriteLine("Sorry your leadership couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your leadership couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void NP(string path)
@@ -296,7 +296,7 @@ namespace Battle_Cats_save_editor
                     }
 
                 }
-                if (!found) Console.WriteLine("Sorry your NP position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your NP position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void CatTicket(string path)
@@ -390,7 +390,7 @@ namespace Battle_Cats_save_editor
                     }
                 }
                 if (found) Console.WriteLine("Success");
-                if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
             }
 
@@ -424,7 +424,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("Sorry your seed position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
 
@@ -457,7 +457,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("Sorry your seed position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
                 byte[] seed = new byte[100];
@@ -491,17 +491,10 @@ namespace Battle_Cats_save_editor
                     stream2.Position = occurrence[4] + 40;
                 }
                 catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
-                int pos = 0;
-                for (int i = occurrence[4] + 3; i < allData.Length; i++)
-                {
-                    if (allData[i] == 1 || allData[i] == 2)
-                    {
-                        pos = i;
-                        stream2.Position = i;
-                        i = allData.Length + 1;
-                    }
-                }
+                int[] form = EvolvedFormsGetter();
                 bool stop = false;
+                int t = 0;
+                int pos = (int)stream2.Position;
                 while (stream2.Position < pos + (catAmount*4) - 37 && !stop)
                 {
                     for (int i = 0; i < 24; i++)
@@ -512,8 +505,9 @@ namespace Battle_Cats_save_editor
                             break;
                         }
                     }
-                    stream2.WriteByte(02);
+                    stream2.WriteByte((byte)form[t]);
                     stream2.Position += 3;
+                    t++;
                 }
             }
             static void Items(string path)
@@ -548,7 +542,7 @@ namespace Battle_Cats_save_editor
                         }
                     }
                 }
-                if (!found) Console.WriteLine("Sorry your item position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your item position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void Catamin(string path)
@@ -592,7 +586,7 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine(j);
                     }
                 }
-                if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void BaseMats(string path)
@@ -621,7 +615,7 @@ namespace Battle_Cats_save_editor
                         }
                     }
                 }
-                if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void Catseyes(string path)
@@ -664,7 +658,7 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("Found values");
                     }
                 }
-                if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                 
             }
 
@@ -999,7 +993,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("You either can't evolve cats or it's bugged and if it's bugged then:\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Console.WriteLine("You either can't evolve cats or it's bugged and if it's bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
 
@@ -1155,7 +1149,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("You either havn't unlocked NP or it's bugged and if it's bugged then:\nPlease upload your save onto the save editor discord linked in the readme.md of the github\nBecome a save donater and put it in #save-files in the discord\nThank you");
+                    Console.WriteLine("You either havn't unlocked NP or it's bugged and if it's bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
                 for (int i = (int)stream2.Position; i < occurrence[0] + 5284; i += 8)
@@ -1436,6 +1430,40 @@ namespace Battle_Cats_save_editor
                 }
                 Console.WriteLine("Set ItF timed score rewards to: " + score);
 
+            }
+
+            static int[] EvolvedFormsGetter()
+            {
+                WebClient client = new WebClient();
+                client.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/cats.csv", @"cats.csv");
+                using var reader = new StreamReader(@"cats.csv");
+                List<string> listA = new List<string>();
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    string[] values = line.Split('?');
+
+                    listA.Add(values[0]);
+                }
+                string[] first = new string[600];
+                string[] second = new string[600];
+                int[] form = new int[600];
+                string[] f = new string[3];
+                for (int i = 0; i < 600; i++)
+                {
+                    f = listA[i].Split('/');
+                    first[i] = f[0];
+                    try
+                    {
+                        second[i] = f[1];
+                    }
+                    catch { form[i] = 1; }
+                }
+                for (int i = 0; i < 600; i++)
+                {
+                    if (form[i] == 0) form[i] = 2;
+                }
+                return form;
             }
         }
     }
