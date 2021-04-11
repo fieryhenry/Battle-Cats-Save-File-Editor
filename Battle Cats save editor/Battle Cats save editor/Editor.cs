@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.16.0";
+            string version = "2.16.1";
 
             if (lines[0] == version)
             {
@@ -216,12 +216,10 @@ namespace Battle_Cats_save_editor
                     if (allData[j] == 2 && repeat)
                     {
                         Console.WriteLine("all cats max level");
-                        Console.WriteLine((catAmount*4) - 40);
 
                         repeat = false;
                         for (int i = j + 3; i <= j + (catAmount * 4) - 40; i += 4)
                         {
-                            //Console.WriteLine(i);
                             stream.Position = i+38;
                             stream.WriteByte(Convert.ToByte(39));
                             stream.Position = i + 40;
@@ -229,6 +227,8 @@ namespace Battle_Cats_save_editor
                         }
                     }
                 }
+                stream.Close();
+                Bundle(path);
             }
 
             static void Leadership(string path)
@@ -1462,6 +1462,9 @@ namespace Battle_Cats_save_editor
                 for (int i = 0; i < 600; i++)
                 {
                     if (form[i] == 0) form[i] = 2;
+                    if (form[i] == 1) form[i] = 0;
+                    if (listA[i].Contains("EX,rarity,") && form[i] == 2) form[i] = 1;
+                    if (listA[i].Contains("Cat God the Awesome") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Dark Emperor Catdam") || listA[i].Contains("Crimson Mina") || listA[i].Contains("Heroic Musashi") || listA[i].Contains("Mecha-Bun Mk II")) form[i] = 2;
                 }
                 return form;
             }
