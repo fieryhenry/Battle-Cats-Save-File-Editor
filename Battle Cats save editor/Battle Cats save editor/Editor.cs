@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.16.1";
+            string version = "2.16.2";
 
             if (lines[0] == version)
             {
@@ -387,6 +387,12 @@ namespace Battle_Cats_save_editor
                             stream.Position = j - 23;
                             stream.WriteByte(platCatTickets);
                         }
+                        else if (allData[j - 79] == 0x36)
+                        {
+                          found = true;
+                          stream.Position = j - 63;
+                          stream.WriteByte(platCatTickets);
+                        }
                     }
                 }
                 if (found) Console.WriteLine("Success");
@@ -530,7 +536,7 @@ namespace Battle_Cats_save_editor
                 byte[] bytesSpeedUps = Endian(SpeedUps);
                 for (int j = 14080; j < 15104; j++)
                 {
-                    if (allData[j + 64] == Convert.ToByte(bytesSpeedUps[0]) && allData[j + 65] == Convert.ToByte(bytesSpeedUps[1]) && allData[j] == Convert.ToByte(02) && allData[j + 1] == Convert.ToByte(0) && allData[j + 2] == Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j - 54] == CatCannonAttack - 1 && allData[j + 4] == Convert.ToByte(02) && allData[j + 5] == 0 && allData[j - 58] == 0 && allData[j + 24] == 0) //&& allData[j + 28] == 8) 
+                    if (allData[j + 64] == Convert.ToByte(bytesSpeedUps[0]) && allData[j + 65] == Convert.ToByte(bytesSpeedUps[1]) && allData[j] == Convert.ToByte(02) && allData[j + 1] == Convert.ToByte(0) && allData[j + 2] == Convert.ToByte(0) && allData[j + 3] == Convert.ToByte(0) && allData[j - 54] == CatCannonAttack - 1 && allData[j + 4] == Convert.ToByte(02) && allData[j + 5] == 0 && allData[j - 58] == 0 && allData[j + 24] == 0) //&& allData[j + 28] == 8)
                     {
                         for (int i = 64; i <= 84; i += 4)
                         {
@@ -640,9 +646,9 @@ namespace Battle_Cats_save_editor
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-                
+
                 stream2.Position = occurance[7];
-                
+
                 for (int i = (int)(stream2.Position + 500); i < stream2.Position + 8000; i++)
                 {
                     if (allData[i] == Convert.ToByte("0a", 16) && allData[i+4] == 1 && allData[i + 5] == 1 && allData[i + 14] == Convert.ToByte("1b", 16) && !found)
@@ -659,7 +665,7 @@ namespace Battle_Cats_save_editor
                     }
                 }
                 if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
-                
+
             }
 
             static void Cats(string path)
@@ -1160,7 +1166,7 @@ namespace Battle_Cats_save_editor
                         break;
                     }
                     stream2.Position = i;
-                    if (allData[stream2.Position] != 5) { 
+                    if (allData[stream2.Position] != 5) {
                         stream2.WriteByte(talents[0]);
                         stream2.WriteByte(talents[1]);
                     }
@@ -1359,7 +1365,7 @@ namespace Battle_Cats_save_editor
                         Stage(path);
                         break;
                 }
-                
+
             }
 
             static void Bundle(string path)
@@ -1471,5 +1477,3 @@ namespace Battle_Cats_save_editor
         }
     }
 }
-
-
