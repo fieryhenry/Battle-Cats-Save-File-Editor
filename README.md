@@ -47,4 +47,4 @@ And done have fun!
 27. Change ItF timed scores
 
 
-If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry obviously it's entirely optional and I will keep this editor free to use forever and only donate if you have some spare money and are willing to use it supporting me.
+If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
