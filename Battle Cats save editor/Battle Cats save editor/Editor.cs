@@ -25,7 +25,7 @@ namespace Battle_Cats_save_editor
             webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
 
             string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.17.0";
+            string version = "2.17.1";
 
             if (lines[0] == version)
             {
@@ -520,7 +520,7 @@ namespace Battle_Cats_save_editor
             }
             static void Items(string path)
             {
-                Console.WriteLine("How many of each item do you want?(max 65535)");
+                Console.WriteLine("Before using this feature make sure that this is a recent save otherwise your data could get corrupted!\nHow many of each item do you want?(max 65535)");
                 int CatFood = Inputed();
                 byte[] bytes = new byte[10];
                 byte[] year = new byte[2];
@@ -547,8 +547,8 @@ namespace Battle_Cats_save_editor
                 }
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-                stream2.Position = occurrence[2] - 220;
-                for (int i = occurrence[2] -220 ; i < occurrence[2] - 199; i+=4)
+                stream2.Position = occurrence[2] - 224;
+                for (int i = occurrence[2] -224 ; i < occurrence[2] - 203; i+=4)
                 {
                     stream2.Position = i;
                     stream2.WriteByte(bytes[0]);
@@ -877,6 +877,7 @@ namespace Battle_Cats_save_editor
                             amount++;
                         }
                 }
+                stream.Close();
 
                 return occurrence;
             }
@@ -965,6 +966,8 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("What is the cat id?");
                 int id = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Is it a cat that needs cat fruit to evolve?(e.g ninja frog cat doesn't, but bishop does)(yes/no)");
+                string answer = Console.ReadLine();
                 int idPos = id * 4;
 
                 int length = (int)stream.Length;
@@ -973,40 +976,47 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
 
-                for (int i = occurrence[4] + 3; i < allData.Length; i++)
+                try
                 {
-                    if (allData[i] == 1 || allData[i] == 2)
-                    {
-                        stream.Position = i + idPos;
-                        i = allData.Length;
-                    }
+                    stream.Position = occurrence[4] + 40;
                 }
-                stream.WriteByte(2);
-                stream.Close();
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
+                int pos = (int)stream.Position;
+                stream.Position = occurrence[4] + 44 + idPos;
+                if (answer.ToLower() == "yes")
+                {
+                    stream.WriteByte(02);
+                }
+                else if (answer.ToLower() == "no")
+                {
+                    stream.WriteByte(01);
+                }
 
             }
             static void NewIQ(string path)
             {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                int length = (int)stream.Length;
+                int[] occurrence = OccurrenceB(path);
+
+                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                int length = (int)stream2.Length;
                 byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
+                stream2.Read(allData, 0, length);
 
                 Console.WriteLine("Scan Complete");
-
-                stream.Close();
-                int[] occurrence = OccurrenceB(path);
-                using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 try
                 {
-                    stream2.Position = occurrence[4] + 2397;
+                    for (int i = 0; i < 200; i++)
+                    {
+                        if (allData[occurrence[4] + 2397 + i] == 0xC8)
+                        {
+                            stream2.Position = occurrence[4] + 2397 + i;
+                            break;
+                        }
+                    }
                 }
                 catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
-                stream2.WriteByte(0xC9);
-                stream2.Position += 3;
-                stream2.WriteByte(0x0D);
-                stream2.Position += 3;
-                stream2.WriteByte(0x05);
+                byte[] bytes = { 0xC9, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x05 };
+                stream2.Write(bytes, 0, bytes.Length);
                 Console.WriteLine("New inquiry code generated, you should now be able to use the backupmanager to restore the save");
             }
 
