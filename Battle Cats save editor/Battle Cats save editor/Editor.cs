@@ -21,21 +21,38 @@ namespace Battle_Cats_save_editor
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 
-            WebClient webClient = new WebClient();
-            webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
-
-            string[] lines = File.ReadAllLines(@"newversion.txt");
-            string version = "2.17.1";
+            WebClient webClient = new();
+            bool skip = false;
+            try
+            {
+                webClient.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt", @"newversion.txt");
+            }
+            catch (WebException)
+            {
+                ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
+                skip = true;
+            }
+            string[] lines = new string[1];
+            if (!skip)
+            {
+                lines = File.ReadAllLines(@"newversion.txt");
+            }
+            string version = "2.17.2";
 
             if (lines[0] == version)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Application up to date - current version is {0}", version);
             }
-            else
+            else if (lines[0] != version && !skip)
             {
-                System.Diagnostics.Process.Start(@"Updater.exe");
-                Environment.Exit(1);
+                ColouredText("A new version is available would you like to update?\n", ConsoleColor.White, ConsoleColor.Green);
+                bool answer = OnAskUser("A new version is available would you like to update?", "Updater");
+                if (answer)
+                {
+                    System.Diagnostics.Process.Start(@"Updater.exe");
+                    Environment.Exit(1);
+                }
             }
             var FD = new OpenFileDialog();
             if (FD.ShowDialog() == DialogResult.OK)
@@ -99,7 +116,7 @@ namespace Battle_Cats_save_editor
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
-                ChoiceExit = OnAskUser();
+                ChoiceExit = OnAskUser("Are finished with the editor?", "Finished?");
                 if (ChoiceExit == false) Main();
                 else
                 {
@@ -498,7 +515,7 @@ namespace Battle_Cats_save_editor
                 {
                     stream2.Position = occurrence[4] + 40;
                 }
-                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
                 int[] form = EvolvedFormsGetter();
                 bool stop = false;
                 int t = 0;
@@ -738,10 +755,10 @@ namespace Battle_Cats_save_editor
                 }
             }
 
-            static bool OnAskUser()
+            static bool OnAskUser(string title, string title2)
             {
                 return DialogResult.Yes == MessageBox.Show(
-                 "Finished with editor?", "Finshed",
+                 title, title2,
                  MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             }
 
@@ -882,58 +899,6 @@ namespace Battle_Cats_save_editor
                 return occurrence;
             }
 
-            static int[] OccurrenceBf(string path)
-            {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-
-                int amount = 0;
-                int[] occurrence = new int[50];
-                stream.Close();
-
-                byte anchour = Anchour(path);
-                for (int i = 0; i < allData.Length - 2; i++)
-                {
-                    if (allData[i] == anchour)
-                        if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i - 64] == 15)
-                        {
-                            occurrence[amount] = i;
-                            amount++;
-                        }
-                }
-
-                return occurrence;
-            }
-
-            static int[] OccurrenceT(string path)
-            {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-
-                int amount = 0;
-                int[] occurrence = new int[50];
-
-                for (int i = 0; i < allData.Length - 1; i++)
-                {
-                    if (allData[i] == Convert.ToByte("48", 16) && allData[i + 1] == Convert.ToByte("39", 16))
-                    {
-                        if (allData[i - 2] == 0 || allData[i - 1] == 0)
-                        {
-                            occurrence[amount] = i;
-                            amount++;
-                        }
-                    }
-                }
-
-                return occurrence;
-            }
-
             static int[] OccurrenceE(string path, byte[] Currentyear)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -978,11 +943,11 @@ namespace Battle_Cats_save_editor
 
                 try
                 {
-                    stream.Position = occurrence[4] + 40;
+                    stream.Position = occurrence[4];
                 }
-                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
                 int pos = (int)stream.Position;
-                stream.Position = occurrence[4] + 44 + idPos;
+                stream.Position = occurrence[4] + idPos + 4;
                 if (answer.ToLower() == "yes")
                 {
                     stream.WriteByte(02);
@@ -1005,16 +970,16 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Scan Complete");
                 try
                 {
-                    for (int i = 0; i < 200; i++)
+                    for (int i = 0; i < 600; i++)
                     {
-                        if (allData[occurrence[4] + 2397 + i] == 0xC8)
+                        if (allData[occurrence[4] + 2100 + i] == 0xC8)
                         {
-                            stream2.Position = occurrence[4] + 2397 + i;
+                            stream2.Position = occurrence[4] + 2100 + i;
                             break;
                         }
                     }
                 }
-                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - it's bugged and you should tell me on the discord"); return; }
+                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
                 byte[] bytes = { 0xC9, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x05 };
                 stream2.Write(bytes, 0, bytes.Length);
                 Console.WriteLine("New inquiry code generated, you should now be able to use the backupmanager to restore the save");
@@ -1040,7 +1005,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("You either can't evolve cats or it's bugged and if it's bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+                    Console.WriteLine("You either can't evolve cats or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
                 byte[] catfruit = new byte[4];
@@ -1127,7 +1092,7 @@ namespace Battle_Cats_save_editor
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Console.WriteLine("You either havn't unlocked NP or it's bugged and if it's bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+                    Console.WriteLine("You either havn't unlocked NP or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
                     Main();
                 }
                 for (int i = (int)stream2.Position; i < occurrence[0] + 5284; i += 8)
@@ -1413,10 +1378,10 @@ namespace Battle_Cats_save_editor
 
             static int[] EvolvedFormsGetter()
             {
-                WebClient client = new WebClient();
+                WebClient client = new();
                 client.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/cats.csv", @"cats.csv");
                 using var reader = new StreamReader(@"cats.csv");
-                List<string> listA = new List<string>();
+                List<string> listA = new();
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
