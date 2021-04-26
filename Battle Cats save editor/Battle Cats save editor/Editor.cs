@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.17.2";
+            string version = "2.17.3";
 
             if (lines[0] == version)
             {
@@ -133,17 +133,78 @@ namespace Battle_Cats_save_editor
 
             static void menu(string path)
             {
-                ColouredText("Welcome to the small patches and tweaks menu\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
+                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Display current inquiry code\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
                 switch (choice)
                 {
                     case 1: Bundle(path); break;
                     case 2: NewIQ(path); break;
+                    case 3: ChangeCode(path); break;
+                    case 4: ReadCode(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
 
                 }
+            }
+            static void ReadCode(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+                bool found = false;
+                byte[] code = new byte[9];
+
+                for (int i = 0; i < allData.Length; i++)
+                {
+                    if (allData[i] == 0x2D && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i + 4] == 0x2E)
+                    {
+                        stream.Position = i - 1920;
+                        for (int j = 0; j < 9; j++)
+                        {
+                            code[j] = allData[(i - 1920) + j];
+                        }
+                        Console.WriteLine("Account code is :" + Encoding.ASCII.GetString(code));
+                        found = true;
+                        break;
+                    }
+
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Sorry your account code position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord - prefered\nThank you");
+                }
+            }
+            static void ChangeCode(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                Console.WriteLine("What inquiry code do you want? (make sure it is from an account that allows you to load in without an error)");
+                string answer = Console.ReadLine();
+                byte[] bytes = Encoding.ASCII.GetBytes(answer);
+                bool found = false;
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                byte[] values = { 0x2D, 0x00, 0x00, 0x00, 0x2E };
+                for (int i = 0; i < allData.Length; i++)
+                {
+                    if (allData[i] == 0x2D && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i+4] == 0x2E)
+                    {
+                        stream.Position = i - 1920;
+                        stream.Write(bytes, 0, bytes.Length);
+                        Console.WriteLine("Set account code to :" + answer);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("Sorry your account code position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord - prefered\nThank you");
+                }
+
             }
 
             static void CatFood(string path)
