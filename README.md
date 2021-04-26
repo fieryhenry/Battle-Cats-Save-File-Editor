@@ -6,7 +6,7 @@ and is the best way to report bugs + contact me
 # How to use
 This got way more complicated due to added security to the transfer system, you now need to have a rooted device - either emulator or real and extract the save that way. 
 
-Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get update.zip, unless you are getting network errors with it, then get NoUpdate.exe)
+Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get Battle Cats Save File Editor.zip, not the exe)
 
 I have created a tutorial video that goes you through the steps: https://www.youtube.com/watch?v=T2f68SyH1Jo
 
