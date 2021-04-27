@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.17.3";
+            string version = "2.17.4";
 
             if (lines[0] == version)
             {
@@ -134,7 +134,7 @@ namespace Battle_Cats_save_editor
             static void menu(string path)
             {
                 ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Display current inquiry code\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
                 switch (choice)
@@ -142,7 +142,7 @@ namespace Battle_Cats_save_editor
                     case 1: Bundle(path); break;
                     case 2: NewIQ(path); break;
                     case 3: ChangeCode(path); break;
-                    case 4: ReadCode(path); break;
+                    //case 4: ReadCode(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
 
                 }
@@ -181,7 +181,10 @@ namespace Battle_Cats_save_editor
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 Console.WriteLine("What inquiry code do you want? (make sure it is from an account that allows you to load in without an error)");
                 string answer = Console.ReadLine();
+                Console.WriteLine("What inquiry code do you have? (the one that is currently on this save)");
+                string answers = Console.ReadLine();
                 byte[] bytes = Encoding.ASCII.GetBytes(answer);
+                byte[] bytesa = Encoding.ASCII.GetBytes(answers);
                 bool found = false;
 
                 int length = (int)stream.Length;
@@ -191,13 +194,12 @@ namespace Battle_Cats_save_editor
                 byte[] values = { 0x2D, 0x00, 0x00, 0x00, 0x2E };
                 for (int i = 0; i < allData.Length; i++)
                 {
-                    if (allData[i] == 0x2D && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i+4] == 0x2E)
+                    if (allData[i] == bytesa[0] && allData[i + 1] == bytesa[1] && allData[i + 2] == bytesa[2] && allData[i + 3] == bytesa[3] && allData[i + 4] == bytesa[4] && allData[i + 5] == bytesa[5] && allData[i + 6] == bytesa[6] && allData[i + 7] == bytesa[7] && allData[i + 8] == bytesa[8])
                     {
-                        stream.Position = i - 1920;
+                        stream.Position = i;
                         stream.Write(bytes, 0, bytes.Length);
-                        Console.WriteLine("Set account code to :" + answer);
                         found = true;
-                        break;
+                        Console.WriteLine("Set account code to: " + answers);
                     }
                 }
                 if (!found)
