@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.17.4";
+            string version = "2.17.5";
 
             if (lines[0] == version)
             {
@@ -199,7 +199,7 @@ namespace Battle_Cats_save_editor
                         stream.Position = i;
                         stream.Write(bytes, 0, bytes.Length);
                         found = true;
-                        Console.WriteLine("Set account code to: " + answers);
+                        Console.WriteLine("Set account code to: " + answer);
                     }
                 }
                 if (!found)
@@ -422,9 +422,9 @@ namespace Battle_Cats_save_editor
                 int[] occurrence = OccurrenceB(path);
 
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                stream2.Position = occurrence[3] - 5;
-                stream2.WriteByte(bytes[1]);
+                stream2.Position = occurrence[3] - 4;
                 stream2.WriteByte(bytes[0]);
+                stream2.WriteByte(bytes[1]);
             }
 
             static void PlatTicketRare(string path)
@@ -439,43 +439,28 @@ namespace Battle_Cats_save_editor
                 stream.Read(allData, 0, length);
 
                 bool found = false;
-
+                int[] count = new int[5];
+                int loop = 0;
                 Console.WriteLine("Scan Complete");
                 for (int j = 0; j < length - 11; j++)
                 {
                     if (allData[j] == 0 && allData[j + 1] == 0xC8 && allData[j + 2] == 0 && allData[j + 365] == 0x37)
                     {
-                        if (allData[j - 23] == 0x36 && allData[j - 7] != 0xEC)
+                        for (int i =0; i < 1300; i++)
                         {
-                            stream.Position = j - 7;
-                            stream.WriteByte(platCatTickets);
-                            found = true;
-                        }
-                        else if (allData[j - 311] == 0x36)
-                        {
-                            found = true;
-                            stream.Position = j - 295;
-                            stream.WriteByte(platCatTickets);
-                        }
-                        else if (allData[j - 31] == 0x36 && allData[j - 15] != 0xEC)
-                        {
-                            found = true;
-                            stream.Position = j - 15;
-                            stream.WriteByte(platCatTickets);
-                        }
-                        else if (allData[j - 39] == 0x36)
-                        {
-                            found = true;
-                            stream.Position = j - 23;
-                            stream.WriteByte(platCatTickets);
-                        }
-                        else if (allData[j - 79] == 0x36)
-                        {
-                            found = true;
-                            stream.Position = j - 63;
-                            stream.WriteByte(platCatTickets);
+                            if (allData[j - i] == 0x36)
+                            {
+                                count[loop] = j - i;
+                                loop++;
+                            }
                         }
                     }
+                }
+                if (loop != 0)
+                {
+                    stream.Position = count[1] + 16;
+                    stream.WriteByte(platCatTickets);
+                    found = true;
                 }
                 if (found) Console.WriteLine("Success");
                 if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
