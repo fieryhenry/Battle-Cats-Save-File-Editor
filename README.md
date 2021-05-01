@@ -1,7 +1,11 @@
 # Battle Cats Save File Editor
 
 I have a discord server:https://discord.gg/DvmMgvn5ZB You can become a developer there and give me your pre-backed up save files
-and is the best way to report bugs + contact me
+and is the best way to report bugs + contact me.
+
+Thanks to:
+Lethal's editor for giving me inspiration to start the project and it helped me work out how to patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+Beeven and csehydrogen's open source code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats, https://github.com/csehydrogen/BattleCatsHacker
 
 # How to use
 This got way more complicated due to added security to the transfer system, you now need to have a rooted device - either emulator or real and extract the save that way. 
@@ -12,7 +16,7 @@ I have created a tutorial video that goes you through the steps: https://www.you
 
 :exclamation::exclamation:IMPORTANT:When you are done make sure to either select the patch save option or click "yes" when the dialog box opens asking you if you're finished with the editor
 
-Run BackupManagerEN and restore the save
+Run BackupManagerEN and restore the save or overwrite the save in the game's files
 
 Take those codes and put them back into the game
 
