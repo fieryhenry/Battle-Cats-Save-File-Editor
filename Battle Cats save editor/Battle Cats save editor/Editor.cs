@@ -20,7 +20,13 @@ namespace Battle_Cats_save_editor
         static void Main()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-
+            try
+            {
+                Console.WindowHeight = 40;
+            }
+            catch
+            {
+            }
             WebClient webClient = new();
             bool skip = false;
             try
@@ -37,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.17.5";
+            string version = "2.18.0";
 
             if (lines[0] == version)
             {
@@ -66,7 +72,10 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Save \"{0}\" is selected", result);
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25 and select generate new account code\n", fileToOpen);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which i used to implement the save patching algorithm\n");
                 Console.ForegroundColor = ConsoleColor.White;
+
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded " +
                     "40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
@@ -76,7 +85,8 @@ namespace Battle_Cats_save_editor
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n" +
-                    "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all into the future timed score rewards\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
+                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -113,6 +123,7 @@ namespace Battle_Cats_save_editor
                     case 25: menu(path); break;
                     case 26: GetSeed(path); break;
                     case 27: TimedScore(path); break;
+                    case 28: SoL(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -317,8 +328,6 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("How much leadership do you want(max 65535)");
                 int CatFood = Inputed();
-                ColouredText("&How much leadership do you have? (must have more than 0 or leadership &might& get corrupted and/or give you the wrong amount - high chance it won't but small chance it will)", ConsoleColor.White, ConsoleColor.Blue);
-                int leaderCurent = Inputed();
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 int length = (int)stream.Length;
@@ -329,22 +338,16 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
                 byte[] bytes = Endian(CatFood);
-                byte[] bytesCurrent = Endian(leaderCurent);
 
-                int offset = 0;
-                for (int j = 230496; j < length - 12; j++)
+                for (int j = 0; j < length - 12; j++)
                 {
-                    if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00))
+                    if(allData[j] == 0x80 && allData[j+1] == 0x38)
                     {
-                        if (allData[j + 5] == bytesCurrent[0] && allData[j + 6] == bytesCurrent[1]) offset = 5;
-                        else if (allData[j + 4] == bytesCurrent[0] && allData[j + 5] == bytesCurrent[1]) offset = 4;
-
-                        stream.Position = j + offset;
-                        stream.WriteByte(bytes[0]);
-                        stream.Position = j + offset + 1;
-                        stream.WriteByte(bytes[1]);
+                        stream.Position = j + 5;
+                        stream.Write(bytes, 0, 2);
                         Console.WriteLine("Success");
                         found = true;
+                        break;
                     }
 
                 }
@@ -365,7 +368,7 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("Scan Complete");
                 byte[] bytes = Endian(CatFood);
-                for (int j = 230496; j < length - 12; j++)
+                for (int j = 0; j < length - 12; j++)
                 {
                     if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00))
                     {
@@ -446,7 +449,7 @@ namespace Battle_Cats_save_editor
                 {
                     if (allData[j] == 0 && allData[j + 1] == 0xC8 && allData[j + 2] == 0 && allData[j + 365] == 0x37)
                     {
-                        for (int i =0; i < 1300; i++)
+                        for (int i = 0; i < 1300; i++)
                         {
                             if (allData[j - i] == 0x36)
                             {
@@ -613,7 +616,7 @@ namespace Battle_Cats_save_editor
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
                 stream2.Position = occurrence[2] - 224;
-                for (int i = occurrence[2] -224 ; i < occurrence[2] - 203; i+=4)
+                for (int i = occurrence[2] - 224; i < occurrence[2] - 203; i += 4)
                 {
                     stream2.Position = i;
                     stream2.WriteByte(bytes[0]);
@@ -1060,10 +1063,10 @@ namespace Battle_Cats_save_editor
                 int[] FruitCat = new int[15];
                 string[] fruits = { "Purple Seed", "Red Seed", "Blue Seed", "Green Seed", "Yellow Seed", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seed", "Elder Fruit", "Epic Seed", "Gold Fruit" };
                 int j = 0;
-                for (int i = occurrence[6] - 60; i < occurrence[6] - 3; i+=4)
+                for (int i = occurrence[6] - 60; i < occurrence[6] - 3; i += 4)
                 {
                     catfruit[0] = allData[i];
-                    catfruit[1] = allData[i+1];
+                    catfruit[1] = allData[i + 1];
                     FruitCat[j] = BitConverter.ToInt32(catfruit, 0);
                     j++;
                 }
@@ -1080,7 +1083,7 @@ namespace Battle_Cats_save_editor
                 if (amount > 256) amount = 256;
                 else if (amount < 0) amount = 0;
                 byte[] bytes = Endian(amount);
-                stream2.Position = (occurrence[6] - 60) + ((choice -1)* 4);
+                stream2.Position = (occurrence[6] - 60) + ((choice - 1) * 4);
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
                 Console.WriteLine("Have you finished editing cat fruits?(yes/no)");
@@ -1459,6 +1462,184 @@ namespace Battle_Cats_save_editor
                     if (listA[i].Contains("Cat God the Awesome") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Dark Emperor Catdam") || listA[i].Contains("Crimson Mina") || listA[i].Contains("Heroic Musashi") || listA[i].Contains("Mecha-Bun Mk II")) form[i] = 2;
                 }
                 return form;
+            }
+            static byte[] Levels()
+            {
+                byte[] levels = { 8, 8, 8, 8, 6, 8, 8, 8, 8, 6, 8, 8, 8, 6, 6, 8, 8, 6, 6, 8, 6, 6, 6, 6, 8, 8, 8, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 1 };
+                return levels;
+            }
+            static void SoL(string path)
+            {
+                ColouredText("What do you want to do?\nExample:&\nEnter a single chapter id (e.g 1 = legend begins 2 = passion land) to complete just that chapter&\nEnter a single chapter id + * + number of stars (e.g 1*4 = legend begins 4 stars)&\n" +
+                    "Enter a - between ids to do a range of chapters (e.g 1 - 4 = legend begins to swimming cats)&\nEnter a - between ids and a number of stars (e.g 1*4 - 4 = legend begins 4 star to swimming cats 4 star)& - This will complete the chapters in between and make them all 4 star\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                string answer = Console.ReadLine();
+                string[] split = answer.Split(' ');
+                bool isStar = false;
+                if (answer.Contains('*')) isStar = true;
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+                long unlock = 0;
+                long levels = 0;
+                byte[] levelCount = Levels();
+
+                for (int i = 0; i < allData.Length; i++)
+                {
+                    if (allData[i] == 0x05 && allData[i + 1] == 0xFA && allData[i + 2] == 0 && allData[i + 3] == 0x04)
+                    {
+                        stream.Position = i + 5005;
+                        levels = i + 10005;
+                    }
+                    else if (allData[i] == 0x2C && allData[i + 1] == 01 && allData[i + 2] == 0 && allData[i - 1] == 0)
+                    {
+                        unlock = i;
+                        break;
+                    }
+                }
+                try
+                {
+                    if (split.Length == 1)
+                    {
+                        if (!isStar)
+                        {
+                            int id = int.Parse(answer) - 1;
+                            stream.Position += id * 4;
+                            stream.WriteByte(08);
+                            stream.Position = (unlock - 5152) + (id * 4);
+                            stream.WriteByte(03);
+                            stream.Position = levels + (id * 97) - id;
+                            for (int i = 0; i < levelCount[id]; i++)
+                            {
+                                stream.WriteByte(01);
+                                stream.Position += 7;
+                            }
+                            Console.WriteLine("Cleared subchapter " + (id + 1));
+                        }
+                        else
+                        {
+                            string[] starr = answer.Split('*');
+                            int id = int.Parse(starr[0]) - 1;
+                            int stars = int.Parse(starr[1]);
+                            if (stars > 4) stars = 4;
+                            stream.Position += id * 4;
+                            for (int i = 0; i < stars; i++)
+                            {
+                                stream.WriteByte(08);
+                            }
+                            stream.Position = (unlock - 5152) + (id * 4);
+                            stream.WriteByte(03);
+                            stream.Position = levels + (id * 97) - id;
+                            long startpos = stream.Position;
+                            for (int i = 0; i < stars; i++)
+                            {
+                                for (int j = 0; j < levelCount[id]; j++)
+                                {
+                                    stream.WriteByte(03);
+                                    stream.Position += 7;
+                                }
+                                stream.Position = startpos + (i * 2) + 2;
+
+                            }
+                            Console.WriteLine("Cleared subchapter " + (id + 1) + " At level {0} star", stars);
+                        }
+                    }
+                    else if (answer.Contains('-'))
+                    {
+                        if (!isStar)
+                        {
+                            string[] splits = answer.Split('-');
+                            int firstid = int.Parse(splits[0]) - 1;
+                            int secondid = int.Parse(splits[1]) - 1;
+                            stream.Position += firstid * 4;
+                            for (int i = 0; i < (secondid - firstid) + 1; i++)
+                            {
+                                stream.WriteByte(08);
+                                stream.Position += 3;
+
+                            }
+                            stream.Position = (unlock - 5152) + (firstid * 4);
+                            stream.Position += firstid * 4;
+                            for (int i = 0; i < (secondid - firstid) + 1; i++)
+                            {
+                                stream.WriteByte(03);
+                                stream.Position += 3;
+                            }
+                            stream.Position = levels + (firstid * 97) - firstid;
+                            long startpos = stream.Position;
+                            for (int j = 0; j < (secondid - firstid) + 1; j++)
+                            {
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    stream.WriteByte(01);
+                                    stream.Position += 7;
+                                }
+                                stream.Position = startpos + 96;
+                            }
+                            Console.WriteLine("Cleared subchapters " + (firstid + 1) + " to " + (secondid + 1));
+
+                        }
+                        else
+                        {
+                            string[] splits = answer.Split('-');
+                            string[] first = splits[0].Split('*');
+                            string[] second = splits[1].Split('*');
+                            int secondid = int.Parse(second[0]) - 1;
+                            int firstid = int.Parse(first[0]) - 1;
+                            int stars = int.Parse(first[1]);
+                            long pos = stream.Position += firstid * 4;
+                            stream.Position += firstid * 4;
+                            if (stars > 4) stars = 4;
+                            for (int i = 0; i < (secondid - firstid) + 1; i++)
+                            {
+                                for (int j = 0; j < stars; j++)
+                                {
+                                    stream.Position = pos + j;
+                                    stream.WriteByte(08);
+                                    stream.Position -= 1;
+                                }
+                                pos += 4;
+                            }
+                            pos = (unlock - 5152) + (firstid * 4);
+                            stream.Position += firstid * 4;
+                            for (int i = 0; i < (secondid - firstid) + 1; i++)
+                            {
+                                for (int j = 0; j < stars; j++)
+                                {
+                                    stream.Position = pos + j;
+                                    stream.WriteByte(03);
+                                    stream.Position -= 1;
+                                }
+                                pos += 4;
+                            }
+                            stream.Position = levels + (firstid * 97) - firstid;
+                            long startpos = stream.Position;
+                            long pos2 = stream.Position;
+                            for (int j = 0; j < (secondid - firstid) + 1; j++)
+                            {
+                                for (int k = 0; k < stars; k++)
+                                {
+                                    for (int i = 0; i < 8; i++)
+                                    {
+                                        stream.WriteByte(01);
+                                        stream.Position += 7;
+                                    }
+                                    stream.Position = pos2 + (k * 2) + 2;
+                                }
+                                stream.Position = startpos + (j * 96) + 96;
+                                pos2 = stream.Position;
+                            }
+                            Console.WriteLine("Cleared subchapters " + (firstid + 1) + " to " + (secondid + 1) + " At {0} stars", stars);
+                        }
+                    }
+                }
+                catch (FormatException e)
+                {
+                    ColouredText(e.Message + "\n", ConsoleColor.White, ConsoleColor.Red);
+                    stream.Close();
+                    SoL(path);
+                }
             }
         }
     }
