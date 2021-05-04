@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.18.0";
+            string version = "2.19.0";
 
             if (lines[0] == version)
             {
@@ -77,7 +77,7 @@ namespace Battle_Cats_save_editor
                 Console.ForegroundColor = ConsoleColor.White;
 
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded " +
-                    "40+80\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
+                    "50+90\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
                     "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& " +
                     "Change Catamins" +
@@ -86,7 +86,7 @@ namespace Battle_Cats_save_editor
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
-                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -145,7 +145,8 @@ namespace Battle_Cats_save_editor
             static void menu(string path)
             {
                 ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already " +
+                    "have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Max out the blue upgrades on the right of the normal cat upgrades\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
                 switch (choice)
@@ -153,7 +154,7 @@ namespace Battle_Cats_save_editor
                     case 1: Bundle(path); break;
                     case 2: NewIQ(path); break;
                     case 3: ChangeCode(path); break;
-                    //case 4: ReadCode(path); break;
+                    case 4: Blue(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
 
                 }
@@ -311,17 +312,35 @@ namespace Battle_Cats_save_editor
                         Console.WriteLine("all cats max level");
 
                         repeat = false;
-                        for (int i = j + 3; i <= j + (catAmount * 4) - 40; i += 4)
+                        for (int i = j + 3; i <= j + (catAmount * 4) - 2; i += 4)
                         {
-                            stream.Position = i + 38;
-                            stream.WriteByte(Convert.ToByte(39));
-                            stream.Position = i + 40;
-                            stream.WriteByte(Convert.ToByte(80));
+                            stream.Position = i + 2;
+                            stream.WriteByte(Convert.ToByte(49));
+                            stream.Position = i;
+                            stream.WriteByte(Convert.ToByte(90));
                         }
                     }
                 }
                 stream.Close();
                 Bundle(path);
+            }
+            static void Blue(string path)
+            {
+                int[] occurrence = OccurrenceB(path);
+
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                stream.Position = occurrence[2] + 2440;
+                byte[] bytes = { 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x00, 0x00, 0x09, 0x00,
+                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
+                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
+                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13 };
+                stream.Write(bytes, 0, bytes.Length);
+                Console.WriteLine("Success");
             }
 
             static void Leadership(string path)
@@ -341,7 +360,7 @@ namespace Battle_Cats_save_editor
 
                 for (int j = 0; j < length - 12; j++)
                 {
-                    if(allData[j] == 0x80 && allData[j+1] == 0x38)
+                    if (allData[j] == 0x80 && allData[j + 1] == 0x38)
                     {
                         stream.Position = j + 5;
                         stream.Write(bytes, 0, 2);
@@ -775,14 +794,13 @@ namespace Battle_Cats_save_editor
 
                 Console.WriteLine("What is the cat ID?");
                 int catID = Inputed();
-                if (catID > 590) catID = 590;
                 int startPosID = 9694 + catID * 4;
-                Console.WriteLine("What base level do you want?(max 40)");
+                Console.WriteLine("What base level do you want?(max 50)");
                 byte Levelbase = Convert.ToByte(Console.ReadLine());
-                if (Levelbase > 40) Levelbase = 40;
-                Console.WriteLine("What plus level do you want?(max +80)");
+                if (Levelbase > 40) Levelbase = 50;
+                Console.WriteLine("What plus level do you want?(max +90)");
                 byte Levelplus = Convert.ToByte(Console.ReadLine());
-                if (Levelplus > 80) Levelplus = 80;
+                if (Levelplus > 80) Levelplus = 90;
 
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
