@@ -22,7 +22,7 @@ namespace Battle_Cats_save_editor
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             try
             {
-                Console.WindowHeight = 40;
+                Console.WindowHeight = 45;
             }
             catch
             {
@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.19.0";
+            string version = "2.20.0";
 
             if (lines[0] == version)
             {
@@ -86,7 +86,8 @@ namespace Battle_Cats_save_editor
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
-                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
+                    "&29.& Edit gamatoto helpers\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -124,6 +125,7 @@ namespace Battle_Cats_save_editor
                     case 26: GetSeed(path); break;
                     case 27: TimedScore(path); break;
                     case 28: SoL(path); break;
+                    case 29: GamHelp(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -145,7 +147,7 @@ namespace Battle_Cats_save_editor
             static void menu(string path)
             {
                 ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                    "this will cause your gamototo to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already " +
+                    "this will cause your gamatoto to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already " +
                     "have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Max out the blue upgrades on the right of the normal cat upgrades\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
@@ -447,6 +449,83 @@ namespace Battle_Cats_save_editor
                 stream2.Position = occurrence[3] - 4;
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
+            }
+            static void GamHelp(string path)
+            {
+                ColouredText("What helpers do you want?&\n&Type numbers separated by spaces\nThe different helper ids are as follows:&\nIntern &1 - 53&\nLacky &54 - 83&\nUnderling &84 - 108&\nAssistant &109 - 128&\nLegend &129 - 148&\ne.g entering " +
+                    "&3 69 120 86 110 &would set your helpers to &1& intern, &1& lackey, &2& assistants, &1& underling\nThe ids must be different to eachother, the max helpers you can have is &10\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                string[] answer = Console.ReadLine().Split(' ');
+                int[] answerInt = new int[answer.Length];
+                try
+                {
+                    answerInt = Array.ConvertAll(answer, s => int.Parse(s));
+                }
+                catch (Exception e)
+                {
+                    ColouredText(e.Message + "\n", ConsoleColor.White, ConsoleColor.Red);
+                    GamHelp(path);
+                }
+                for (int i = 0; i < answerInt.Length; i++)
+                {
+                    if (answerInt[i] < 1)
+                    {
+                        ColouredText("Error: you can't have an id below 1\n", ConsoleColor.White, ConsoleColor.Red);
+                        GamHelp(path);
+                    }
+                    if (answerInt[i] > 148)
+                    {
+                        ColouredText("Error: you can't have an id above 148\n", ConsoleColor.White, ConsoleColor.Red);
+                        GamHelp(path);
+                    }
+                }
+                byte[] bytes = answerInt.SelectMany(BitConverter.GetBytes).ToArray();
+
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                bool found = false;
+                int[] count = new int[5];
+                int loop = 0;
+                Console.WriteLine("Scan Complete");
+                for (int j = 0; j < length - 11; j++)
+                {
+                    if (allData[j] == 0 && allData[j + 1] == 0xC8 && allData[j + 2] == 0 && allData[j + 365] == 0x37)
+                    {
+                        for (int i = 0; i < 1300; i++)
+                        {
+                            if (allData[j - i] == 0x36)
+                            {
+                                count[loop] = j - i;
+                                loop++;
+                            }
+                        }
+                    }
+                }
+                if (loop != 0)
+                {
+                    stream.Position = count[1] - 1025;
+                    stream.Write(bytes, 0, bytes.Length);
+                    found = true;
+                }
+
+                if (found)
+                { 
+                    Console.WriteLine("Success");
+                    int[] helpNums = new int[answerInt.Length];
+                    for (int i = 0; i < answerInt.Length; i++)
+                    {
+                        if (answerInt[i] <= 53) helpNums[0]++;
+                        else if (answerInt[i] <= 83) helpNums[1]++;
+                        else if (answerInt[i] <= 108) helpNums[2]++;
+                        else if (answerInt[i] <= 128) helpNums[3]++;
+                        else helpNums[4]++;
+                    }
+                    Console.WriteLine("\nSet helpers to:\n {0} intern(s)\n {1} lackey(s)\n {2} underling(s)\n {3} assistant(s)\n {4} legend(s)", helpNums[0], helpNums[1], helpNums[2], helpNums[3], helpNums[4]);
+                }
+                if (!found) Console.WriteLine("Sorry your gamatoto helper position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
             }
 
             static void PlatTicketRare(string path)
