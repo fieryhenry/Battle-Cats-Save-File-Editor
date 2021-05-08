@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.21.0";
+            string version = "2.21.1";
 
             if (lines[0] == version)
             {
@@ -149,7 +149,7 @@ namespace Battle_Cats_save_editor
             {
                 ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
                     "this will cause your gamatoto to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already " +
-                    "have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Max out the blue upgrades on the right of the normal cat upgrades\n&5.&Fix gamatoto" +
+                    "have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&5.&Fix gamatoto" +
                     "(use if your gamatoto crashes your game)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
@@ -332,19 +332,49 @@ namespace Battle_Cats_save_editor
             static void Blue(string path)
             {
                 int[] occurrence = OccurrenceB(path);
-
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-
-                stream.Position = occurrence[2] + 2440;
+                Console.WriteLine("Do you want to upgrade all the blue upgrades at once? (yes/no)");
+                string answer = Console.ReadLine();
                 byte[] bytes = { 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x00, 0x00, 0x09, 0x00,
                     0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
                     0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
                     0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13 };
-                stream.Write(bytes, 0, bytes.Length);
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+                if (answer == "no")
+                {
+                    ColouredText("What do you want to upgrade?\n&1.& Power\n&2.& Range\n&3.& Charge\n&4.& Efficiency\n&5.& Wallet\n&6.& Health\n&7.& Research\n&8.& Accounting\n&9.& Study" +
+                        "\n&10.& Energy\nInput more than 1 id to edit more than 1 at a time (separated by spaces)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    string[] input = Console.ReadLine().Split(' ');
+                    int[] ids = Array.ConvertAll(input, int.Parse);
+
+                    Console.WriteLine("What base level do you want? (If you inputed more than 1 id before you must add more than 1 amount e.g if you said 1 4 5 before you need to input 3 numbers now)");
+                    string[] inputBase = Console.ReadLine().Split(' ');
+                    int[] idBase = Array.ConvertAll(inputBase, int.Parse);
+
+                    Console.WriteLine("What plus level do you want? (If you inputed more than 1 id before you must add more than 1 amount e.g if you said 1 4 5 before you need to input 3 numbers now)");
+                    string[] inputPlus = Console.ReadLine().Split(' ');
+                    int[] idPlus = Array.ConvertAll(inputPlus, int.Parse);
+
+                    int length = (int)stream.Length;
+                    byte[] allData = new byte[length];
+                    stream.Read(allData, 0, length);
+
+                    long pos = occurrence[2] + 2440;
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        if (ids[i] > 1) ids[i]++;
+                        stream.Position = pos + (ids[i] * 4) - 4;
+                        stream.WriteByte((byte)idPlus[i]);
+                        stream.Position++;
+                        stream.WriteByte((byte)((byte)idBase[i] - 1));
+                    }
+
+                }
+                if (answer == "yes")
+                {
+                    stream.Position = occurrence[2] + 2440;
+                    stream.Write(bytes, 0, bytes.Length);
+                }
                 Console.WriteLine("Success");
             }
 
@@ -965,16 +995,28 @@ namespace Battle_Cats_save_editor
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-                Console.WriteLine("What is the cat ID?");
-                int catID = Inputed();
-                int startPosID = 9694 + catID * 4;
-                Console.WriteLine("What base level do you want?(max 50)");
-                byte Levelbase = Convert.ToByte(Console.ReadLine());
-                if (Levelbase > 40) Levelbase = 50;
-                Console.WriteLine("What plus level do you want?(max +90)");
-                byte Levelplus = Convert.ToByte(Console.ReadLine());
-                if (Levelplus > 80) Levelplus = 90;
+                ColouredText("What is the cat id? (you can input more than 1 to upgrade more than 1 e.g 15 200 78 will select those cats)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                string[] ids = Console.ReadLine().Split(' ');
+                int[] idInt = Array.ConvertAll(ids, int.Parse);
 
+                ColouredText("What base level do you want? (max 50) - (If you inputed more than 1 id before, then input the base upgrades that amount of times e.g if you inputed id 12 56, then you need to input 2 numbers)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                string[] baselevel = Console.ReadLine().Split(' ');
+                int[] baseID = Array.ConvertAll(baselevel, int.Parse);
+
+                ColouredText("What plus level do you want? (max +90) - (If you inputed more than 1 id before, then input the plus levels that amount of times e.g if you inputed id 12 56, then you need to input 2 numbers)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                string[] plusLevel = Console.ReadLine().Split(' ');
+                int[] plusID = Array.ConvertAll(plusLevel, int.Parse);
+
+                if (plusID.Length < ids.Length || baselevel.Length < ids.Length)
+                {
+                    ColouredText("Error: not enough inputs were given", ConsoleColor.White, ConsoleColor.Red);
+                    SpecifUpgrade(path);
+                }
+                else if (plusID.Length > ids.Length || baselevel.Length > ids.Length)
+                {
+                    ColouredText("Error: too many inputs were given", ConsoleColor.White, ConsoleColor.Red);
+                    SpecifUpgrade(path);
+                }
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
@@ -984,16 +1026,19 @@ namespace Battle_Cats_save_editor
                 {
                     if (allData[j] == 2 && repeat)
                     {
-                        startPosID = catID * 4;
-                        startPosID += j;
-                        repeat = false;
-
-                        stream.Position = startPosID + 3;
-                        stream.WriteByte(Convert.ToByte(Levelplus));
-                        stream.Position = startPosID + 5;
-                        stream.WriteByte(Convert.ToByte(Levelbase - 1));
-
+                        for (int i = 0; i < idInt.Length; i++)
+                        {
+                            stream.Position = j + (idInt[i] * 4) + 3;
+                            stream.WriteByte((byte)plusID[i]);
+                            stream.Position++;
+                            stream.WriteByte((byte)((byte)baseID[i] -1));
+                        }
+                        break;
                     }
+                }
+                for (int i = 0; i < ids.Length; i++)
+                {
+                    ColouredText("Upgraded cat &" + ids[i] + "& to level &" + baseID[i] + "& +&" + plusID[i] + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 }
             }
 
