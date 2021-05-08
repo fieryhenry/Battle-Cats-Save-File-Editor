@@ -57,6 +57,7 @@ And done have fun!
 27. Display your current rare gacha seed
 28. Change ItF timed scores
 29. Edit amount of gamatoto helpers
+30. Edit gamatoto xp
 
 
 If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
