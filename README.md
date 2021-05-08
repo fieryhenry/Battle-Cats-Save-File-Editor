@@ -50,10 +50,13 @@ And done have fun!
 23. Clear specifc or all story chapters (doesn't include SoL)
 24. Patch the save (allows the save to be used in game)
 25. Secondary menu:
-25.a Close rank up bundle menus
-25.b Generate new account code
-26. Display your current rare gacha seed
-27. Change ItF timed scores
+25.1 Close rank up bundle menus
+25.2 Generate new account code
+25.3 Edit account code
+25.4 Max out the blue upgrades to the right of the normal cat upgrades
+27. Display your current rare gacha seed
+28. Change ItF timed scores
+29. Edit amount of gamatoto helpers
 
 
 If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
