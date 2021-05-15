@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.21.1";
+            string version = "2.21.2";
 
             if (lines[0] == version)
             {
@@ -84,7 +84,7 @@ namespace Battle_Cats_save_editor
                     "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat" +
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
-                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)\n" +
+                    "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                     "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
                     "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n", ConsoleColor.White, ConsoleColor.DarkYellow);
@@ -1031,7 +1031,7 @@ namespace Battle_Cats_save_editor
                             stream.Position = j + (idInt[i] * 4) + 3;
                             stream.WriteByte((byte)plusID[i]);
                             stream.Position++;
-                            stream.WriteByte((byte)((byte)baseID[i] -1));
+                            stream.WriteByte((byte)((byte)baseID[i] - 1));
                         }
                         break;
                     }
@@ -1267,9 +1267,9 @@ namespace Battle_Cats_save_editor
                     }
                 }
                 catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
-                byte[] bytes = { 0xC9, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00, 0x00, 0x05 };
+                byte[] bytes = { 0xC9, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x04 };
                 stream2.Write(bytes, 0, bytes.Length);
-                Console.WriteLine("New inquiry code generated, you should now be able to use the backupmanager to restore the save");
+                Console.WriteLine("New inquiry code generated, you should now be able to use the backupmanager/or overwrite the save in the files to restore the save");
             }
 
             static void CatFruit(string path)
@@ -1706,8 +1706,8 @@ namespace Battle_Cats_save_editor
             }
             static void SoL(string path)
             {
-                ColouredText("What do you want to do?\nExample:&\nEnter a single chapter id (e.g 1 = legend begins 2 = passion land) to complete just that chapter&\nEnter a single chapter id + * + number of stars (e.g 1*4 = legend begins 4 stars)&\n" +
-                    "Enter a - between ids to do a range of chapters (e.g 1 - 4 = legend begins to swimming cats)&\nEnter a - between ids and a number of stars (e.g 1*4 - 4 = legend begins 4 star to swimming cats 4 star)& - This will complete the chapters in between and make them all 4 star\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                ColouredText("&What do you want to do?\nExample:\nEnter a single chapter &id& (e.g &1& = &legend begins&,& 2& = &passion land&) to complete just that chapter\nEnter a single chapter &id& + &*& + &number of stars& (e.g &1*4& = &legend begins 4 stars&)\n" +
+                    "Enter a &-& between &ids& to do a range of chapters (e.g &1 - 4& = &legend begins& to &swimming cats&)\nEnter a &-& between &ids& and a &number of stars& (e.g &1*4& - &4& = &legend begins 4 star& to &swimming cats 4 star&) - This will complete the chapters in between and make them all 4 star\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 string answer = Console.ReadLine();
                 string[] split = answer.Split(' ');
                 bool isStar = false;
@@ -1743,7 +1743,7 @@ namespace Battle_Cats_save_editor
                             int id = int.Parse(answer) - 1;
                             stream.Position += id * 4;
                             stream.WriteByte(08);
-                            stream.Position = (unlock - 5152) + (id * 4);
+                            stream.Position = (unlock - 5152) + ((id +1)* 4);
                             stream.WriteByte(03);
                             stream.Position = levels + (id * 97) - id;
                             for (int i = 0; i < levelCount[id]; i++)
@@ -1764,7 +1764,7 @@ namespace Battle_Cats_save_editor
                             {
                                 stream.WriteByte(08);
                             }
-                            stream.Position = (unlock - 5152) + (id * 4);
+                            stream.Position = (unlock - 5152) + ((id +1)* 4);
                             stream.WriteByte(03);
                             stream.Position = levels + (id * 97) - id;
                             long startpos = stream.Position;
@@ -1795,8 +1795,8 @@ namespace Battle_Cats_save_editor
                                 stream.Position += 3;
 
                             }
-                            stream.Position = (unlock - 5152) + (firstid * 4);
-                            stream.Position += firstid * 4;
+                            stream.Position = (unlock - 5152) + ((firstid +1)* 4);
+                            //stream.Position += firstid * 4;
                             for (int i = 0; i < (secondid - firstid) + 1; i++)
                             {
                                 stream.WriteByte(03);
@@ -1837,8 +1837,8 @@ namespace Battle_Cats_save_editor
                                 }
                                 pos += 4;
                             }
-                            pos = (unlock - 5152) + (firstid * 4);
-                            stream.Position += firstid * 4;
+                            pos = (unlock - 5152) + ((firstid +1)* 4);
+                            //stream.Position += firstid * 4;
                             for (int i = 0; i < (secondid - firstid) + 1; i++)
                             {
                                 for (int j = 0; j < stars; j++)
