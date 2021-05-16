@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Web;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace Battle_Cats_save_editor
 {
@@ -22,7 +21,7 @@ namespace Battle_Cats_save_editor
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             try
             {
-                Console.WindowHeight = 45;
+                Console.WindowHeight = 48;
             }
             catch
             {
@@ -43,7 +42,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.21.2";
+            string version = "2.22.0";
 
             if (lines[0] == version)
             {
@@ -63,9 +62,7 @@ namespace Battle_Cats_save_editor
             var FD = new OpenFileDialog();
             if (FD.ShowDialog() == DialogResult.OK)
             {
-                //Console.WriteLine("Enter the path to your save(use backslashes)");
                 string fileToOpen = FD.FileName;
-                //string fileToOpen = Console.ReadLine();
                 string path = Path.Combine(fileToOpen);
                 string result = Path.GetFileName(path);
 
@@ -73,7 +70,7 @@ namespace Battle_Cats_save_editor
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25 and select generate new account code\n", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which i used to implement the save patching algorithm\n");
+                Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
                 Console.ForegroundColor = ConsoleColor.White;
 
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded " +
@@ -87,7 +84,7 @@ namespace Battle_Cats_save_editor
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                     "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes it gives you\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -120,13 +117,15 @@ namespace Battle_Cats_save_editor
                     case 21: CatFruit(path); break;
                     case 22: Talents(path); break;
                     case 23: Stage(path); break;
-                    case 24: Encrypt(path); Console.WriteLine("Use the backup manager to restore the save\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
+                    case 24: Encrypt(path); Console.WriteLine("\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
                     case 25: menu(path); break;
                     case 26: GetSeed(path); break;
                     case 27: TimedScore(path); break;
                     case 28: SoL(path); break;
                     case 29: GamHelp(path); break;
                     case 30: GamXP(path); break;
+                    case 31: UploadSave(path); break;
+                    case 32: TalentOrbs(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Console.WriteLine("Are you finished with the editor?");
@@ -144,12 +143,34 @@ namespace Battle_Cats_save_editor
                 ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 Main();
             }
+            static void UploadSave(string path)
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
+                int length = (int)stream.Length;
+                byte[] allData = new byte[length];
+                stream.Read(allData, 0, length);
+
+                var client = new WebClient
+                {
+                    BaseAddress = "https://nyanko.ponosgames.com/?action=store&country=en",
+                };
+                client.Headers.Add("Content-Type", "multipart/form-data;boundary=");
+
+                string data = Encoding.Default.GetString(allData);
+                ColouredText("Uploading saves is possible thanks to Lethal's save editor, as I could see the requests it made to the game servers allowing me to figure out how to do this&\nUploading save...", ConsoleColor.White, ConsoleColor.Green);
+                string response = client.UploadString("https://nyanko.ponosgames.com/?action=store&country=en", "--\n" +
+                    "Content-Disposition: attachment; name=\"saveData\";filename=\"data.sav\"" +
+                    "\nContent-Type: application/octet-stream\n\n" + data + "\n----");
+
+                ColouredText("&Your codes are:\nTransfer:&" + response.Substring(14, 9) + "\n&Confirmation:&" + response.Substring(32, 4) + "\nPut these codes back into the game\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+
+
+            }
             static void menu(string path)
             {
                 ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                    "this will cause your gamatoto to crash your game if entered and some things will be wiped, such as plat tickets, leadership, NP, however those can be added back after you re-save your data\n&3.&Change inquiry code part 2 use this if you already " +
-                    "have a working save loaded in game and what to load another save that has a different code, make sure to set the new code to the code that is on the working game\n&4.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&5.&Fix gamatoto" +
+                    "No longer crashes your gamatoto!\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
                     "(use if your gamatoto crashes your game)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 int choice = Inputed();
 
@@ -157,74 +178,59 @@ namespace Battle_Cats_save_editor
                 {
                     case 1: Bundle(path); break;
                     case 2: NewIQ(path); break;
-                    case 3: ChangeCode(path); break;
-                    case 4: Blue(path); break;
-                    case 5: FixGam(path); break;
+                    case 3: Blue(path); break;
+                    case 4: FixGam(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
 
                 }
             }
-            static void ReadCode(string path)
+            static void TalentOrbs(string path)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
-                bool found = false;
-                byte[] code = new byte[9];
 
-                for (int i = 0; i < allData.Length; i++)
+                long startPos = 0;
+                long endPos = 0;
+                for (int i = 5; i < 1294; i++)
                 {
-                    if (allData[i] == 0x2D && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i + 4] == 0x2E)
+                    if (allData[allData.Length - i] == 0x84 && allData[allData.Length - i + 1] == 0x61 && allData[allData.Length - i + 2] == 0x01)
                     {
-                        stream.Position = i - 1920;
-                        for (int j = 0; j < 9; j++)
-                        {
-                            code[j] = allData[(i - 1920) + j];
-                        }
-                        Console.WriteLine("Account code is :" + Encoding.ASCII.GetString(code));
-                        found = true;
+                        startPos = allData.Length - i;
                         break;
                     }
-
-                }
-                if (!found)
-                {
-                    Console.WriteLine("Sorry your account code position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord - prefered\nThank you");
-                }
-            }
-            static void ChangeCode(string path)
-            {
-                using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-                Console.WriteLine("What inquiry code do you want? (make sure it is from an account that allows you to load in without an error)");
-                string answer = Console.ReadLine();
-                Console.WriteLine("What inquiry code do you have? (the one that is currently on this save)");
-                string answers = Console.ReadLine();
-                byte[] bytes = Encoding.ASCII.GetBytes(answer);
-                byte[] bytesa = Encoding.ASCII.GetBytes(answers);
-                bool found = false;
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-
-                byte[] values = { 0x2D, 0x00, 0x00, 0x00, 0x2E };
-                for (int i = 0; i < allData.Length; i++)
-                {
-                    if (allData[i] == bytesa[0] && allData[i + 1] == bytesa[1] && allData[i + 2] == bytesa[2] && allData[i + 3] == bytesa[3] && allData[i + 4] == bytesa[4] && allData[i + 5] == bytesa[5] && allData[i + 6] == bytesa[6] && allData[i + 7] == bytesa[7] && allData[i + 8] == bytesa[8])
+                    else if (allData[allData.Length - i] == 0x01 && allData[allData.Length - i + 1] == 0x4C && allData[allData.Length - i + 2] == 0x62 && allData[allData.Length - i + 3] == 0x01)
                     {
-                        stream.Position = i;
-                        stream.Write(bytes, 0, bytes.Length);
-                        found = true;
-                        Console.WriteLine("Set account code to: " + answer);
+                        endPos = allData.Length - i;
                     }
                 }
-                if (!found)
+                int[] orbs = new int[65];
+                int j = 0;
+                for (int i = 6; i < endPos - startPos - 2; i++)
                 {
-                    Console.WriteLine("Sorry your account code position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord - prefered\nThank you");
+                    if ((i - 6) % 3 == 0)
+                    {
+                        orbs[allData[startPos + i - 3]] = allData[startPos + i - 1];
+                        j++;
+                    }
+                }
+                string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack ", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Green D attack", "Green C attack", "Green B attack", "Green A attack", "Green S attack ", "Green D defense", "Green C defense", "Green B defense", "Green A defense", "Green S defense ", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack ", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense ", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Yellow D attack", "Yellow C attack", "Yellow B attack", "Yellow A attack", "Yellow S attack", "Yellow D defense", "Yellow C defense", "Yellow B defense", "Yellow A defense", "Yellow S defense", "Blue D attack", "Blue C attack", "Blue B attack", "Blue A attack", "Blue S attack", "Blue D defense", "Blue C defense", "Blue B defense", "Blue A defense", "Blue S defense", "Purple D attack", "Purple C attack", "Purple B attack", "Purple A attack", "Purple S attack", "Purple D defense", "Purple C defense", "Purple B defense", "Purple A defense", "Purple S defense" };
+                Console.WriteLine("You have:");
+                for (int i = 0; i < orbs.Length; i++)
+                {
+                    if (orbs[i] == 1)
+                    {
+                        ColouredText(orbs[i] + " " + orbList[i] + " orb\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    }
+                    else if (orbs[i] > 1)
+                    {
+                        ColouredText(orbs[i] + " " + orbList[i] + " orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    }
                 }
 
-            }
+            }           
 
             static void CatFood(string path)
             {
@@ -1247,29 +1253,37 @@ namespace Battle_Cats_save_editor
             }
             static void NewIQ(string path)
             {
-                int[] occurrence = OccurrenceB(path);
-
                 using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
                 int length = (int)stream2.Length;
                 byte[] allData = new byte[length];
                 stream2.Read(allData, 0, length);
 
-                Console.WriteLine("Scan Complete");
-                try
+                WebClient client = new();
+                string iq = client.DownloadString("https://nyanko-backups.ponosgames.com/?action=createAccount&referenceId=");
+                byte[] bytes = Encoding.ASCII.GetBytes(iq.Substring(14, 9));
+                bool found = true;
+
+                for (int i = 0; i < allData.Length; i++)
                 {
-                    for (int i = 0; i < 600; i++)
+                    if (allData[i] == 01 && allData[i+1] == 0x2D && allData[i + 2] == 0x0 && allData[i + 3] == 0x0 && allData[i + 4] == 0x0 && allData[i + 5] == 0x2E)
                     {
-                        if (allData[occurrence[4] + 2100 + i] == 0xC8)
+                        for (int j = 1900; j < 2108; j++)
                         {
-                            stream2.Position = occurrence[4] + 2100 + i;
-                            break;
+                            if (allData[i - j] == 09)
+                            {
+                                stream2.Position = i - j + 4;
+                                stream2.Write(bytes, 0, bytes.Length);
+                                found = true;
+                            }
                         }
                     }
                 }
-                catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
-                byte[] bytes = { 0xC9, 0x00, 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x04 };
-                stream2.Write(bytes, 0, bytes.Length);
-                Console.WriteLine("New inquiry code generated, you should now be able to use the backupmanager/or overwrite the save in the files to restore the save");
+                if (!found)
+                {
+                    Console.WriteLine("Sorry your inquiry code position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
+                    return;
+                }
+                Console.WriteLine("Success\nYour new account code is now: " + iq.Substring(14,9) + " This should remove that \"save is being used elsewhere\" bug and if your account is banned, this should get you unbanned");
             }
 
             static void CatFruit(string path)
