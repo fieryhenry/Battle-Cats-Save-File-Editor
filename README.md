@@ -5,7 +5,7 @@ and is the best way to report bugs + contact me.
 
 Thanks to:
 
-Lethal's editor for giving me inspiration to start the project and it helped me work out how to patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+Lethal's editor for giving me inspiration to start the project and it helped me work out how to patch the save data and edit cf/xp and I used it to figure out how to upload saves onto the ponos servers: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
 Beeven and csehydrogen's open source code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats, https://github.com/csehydrogen/BattleCatsHacker
 
