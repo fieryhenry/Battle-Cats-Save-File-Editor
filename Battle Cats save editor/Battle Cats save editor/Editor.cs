@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using static System.Environment;
 
 namespace Battle_Cats_save_editor
 {
@@ -41,7 +42,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.23.0";
+            string version = "2.23.1";
 
             if (lines[0] == version)
             {
@@ -55,22 +56,35 @@ namespace Battle_Cats_save_editor
                 if (answer)
                 {
                     System.Diagnostics.Process.Start(@"Updater.exe");
-                    Environment.Exit(1);
+                    Exit(1);
                 }
             }
-            var FD = new OpenFileDialog();
+            var FD = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "battle cats save(*.*)|*.*"
+            };
             if (FD.ShowDialog() == DialogResult.OK)
             {
-                string fileToOpen = FD.FileName;
-                string path = Path.Combine(fileToOpen);
-                string result = Path.GetFileName(path);
-
-                Console.WriteLine("Save \"{0}\" is selected", result);
+                string[] fileToOpen = FD.FileNames;
+                string path = Path.Combine(fileToOpen[0]);
+                for (int i = 0; i < fileToOpen.Length; i++)
+                {
+                    ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
+                }
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25 and select generate new account code\n", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
                 Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("What game version are you using? (en or jp)");
+                string choice = Console.ReadLine();
+                if (choice != "en" && choice != "jp")
+                {
+                    Console.WriteLine("answer was not en or jp");
+                    Main();
+                }
+                ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
 
                 ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded " +
                     "50+90\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
@@ -83,57 +97,85 @@ namespace Battle_Cats_save_editor
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                     "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes it gives you\n&32.& Decrypt .pack and .list files in /files directory of the game(not ones inside .apk file as those use a different decryption key)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes it gives you\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
                 catAmount = BitConverter.ToInt32(anchour, 0);
                 int Choice = Inputed();
-                switch (Choice)
+                for (int i = 0; i < fileToOpen.Length; i++)
                 {
-                    case 1: CatFood(path); break;
-                    case 2: XP(path); break;
-                    case 3: Treasure(path); break;
-                    case 4: CatUpgrades(path); break;
-                    case 5: Leadership(path); break;
-                    case 6: NP(path); break;
-                    case 7: CatTicket(path); break;
-                    case 8: CatTicketRare(path); break;
-                    case 9: PlatTicketRare(path); break;
-                    case 10: Seed(path); break;
-                    case 11: Evolve(path); break;
-                    case 12: Items(path); break;
-                    case 13: Catamin(path); break;
-                    case 14: BaseMats(path); break;
-                    case 15: Catseyes(path); break;
-                    case 16: Cats(path); break;
-                    case 17: SpecifiCat(path); break;
-                    case 18: SpecifUpgrade(path); break;
-                    case 19: MaxTreasures(path); break;
-                    case 20: EvolveSpecific(path); break;
-                    case 21: CatFruit(path); break;
-                    case 22: Talents(path); break;
-                    case 23: Stage(path); break;
-                    case 24: Encrypt(path); Console.WriteLine("\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
-                    case 25: Menu(path); break;
-                    case 26: GetSeed(path); break;
-                    case 27: TimedScore(path); break;
-                    case 28: SoL(path); break;
-                    case 29: GamHelp(path); break;
-                    case 30: GamXP(path); break;
-                    case 31: UploadSave(path); break;
-                    case 32: Decrypt("b484857901742afc", "89a0f99078419c28"); Console.WriteLine("\nPress enter to exit"); Console.ReadLine(); Environment.Exit(0); break;
-                    case 33: TalentOrbs(path); break;
-                    default: Console.WriteLine("Please input a number that is recognised"); break;
+                    path = fileToOpen[i];
+                    switch (Choice)
+                    {
+                        case 1: CatFood(path); break;
+                        case 2: XP(path); break;
+                        case 3: Treasure(path); break;
+                        case 4: CatUpgrades(path); break;
+                        case 5: Leadership(path); break;
+                        case 6: NP(path); break;
+                        case 7: CatTicket(path); break;
+                        case 8: CatTicketRare(path); break;
+                        case 9: PlatTicketRare(path); break;
+                        case 10: Seed(path); break;
+                        case 11: Evolve(path); break;
+                        case 12: Items(path); break;
+                        case 13: Catamin(path); break;
+                        case 14: BaseMats(path); break;
+                        case 15: Catseyes(path); break;
+                        case 16: Cats(path); break;
+                        case 17: SpecifiCat(path); break;
+                        case 18: SpecifUpgrade(path); break;
+                        case 19: MaxTreasures(path); break;
+                        case 20: EvolveSpecific(path); break;
+                        case 21: CatFruit(path); break;
+                        case 22: Talents(path); break;
+                        case 23: Stage(path); break;
+                        case 24:
+                            Encrypt(choice, path);
+                            if (i == fileToOpen.Length - 1)
+                            {
+                                Console.WriteLine("Press enter to exit");
+                                Exit(0);
+                            }
+                            break;
+                        case 25: Menu(path); break;
+                        case 26: GetSeed(path); break;
+                        case 27: TimedScore(path); break;
+                        case 28: SoL(path); break;
+                        case 29: GamHelp(path); break;
+                        case 30: GamXP(path); break;
+                        case 31: UploadSave(choice, path); break;
+                        case 32:
+                            Decrypt("b484857901742afc", "89a0f99078419c28");
+                            if (i == fileToOpen.Length - 1)
+                            {
+                                Console.WriteLine("Press enter to exit");
+                                Exit(0);
+                            }
+                            break;
+                        case 33:
+                            EncryptData(path, "b484857901742afc", "89a0f99078419c28");
+                            if (i == fileToOpen.Length - 1)
+                            {
+                                Console.WriteLine("Press enter to exit");
+                                Exit(0);
+                            }
+                            break;
+                        case 34: TalentOrbs(path); break;
+                        default: Console.WriteLine("Please input a number that is recognised"); break;
+                    }
+                    Encrypt(choice, path);
                 }
                 Console.WriteLine("Are you finished with the editor?");
                 bool ChoiceExit = OnAskUser("Are finished with the editor?", "Finished?");
                 if (ChoiceExit == false) Main();
                 else
                 {
-                    Encrypt(path);
-                    Console.WriteLine("Pess enter to exit");
-                    Console.ReadLine();
+                    Encrypt(choice, path);
+                    Console.WriteLine("Press enter to exit");
+                    Exit(0);
+
                 }
             }
             else
@@ -144,7 +186,7 @@ namespace Battle_Cats_save_editor
         }
         static void Decrypt(string key, string key2)
         {
-            Console.WriteLine("Do you want the lists of the files contained within the .pack files to be outputed in the console?(yes/no) When slecting .pack and .list files, make sure the names match, you can select multiple packs and lists");
+            Console.WriteLine("Do you want the lists of the files contained within the .pack files to be outputed in the console?(yes/no) When slecting .pack and .list files, make sure the names match, you can select multiple packs and lists at the same time");
             string answer = Console.ReadLine();
             bool spam = false;
             if (answer == "yes")
@@ -296,10 +338,70 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Finished: files can be found in " + Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/game_files/");
             }
         }
-        static void UploadSave(string path)
+        static void EncryptData(string patht, string key, string key2)
         {
-            Console.WriteLine("What game version are you using? (en or jp)");
-            string answer = Console.ReadLine();
+            Console.WriteLine("Enter name of .pack file to be outputed");
+            string name = Console.ReadLine();
+            FolderBrowserDialog fd = new();
+            fd.SelectedPath = Path.GetDirectoryName(patht);
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                Console.WriteLine("Please select a folder of game content!");
+                Main();
+            }
+            string path = fd.SelectedPath;
+            string listFile = "";
+            string[] files = Directory.GetFiles(path);
+            listFile += files.Length + "\n";
+            long amount = 0;
+            for (int i = 0; i < files.Length; i++)
+            {
+                FileInfo attributes = new(files[i]);
+                try
+                {
+                    FileInfo attributesb = new(files[i - 1]);
+                    amount += attributes.Length;
+                    listFile += Path.GetFileName(files[i]) + "," + amount + "," + attributes.Length + "\n";
+                }
+                catch
+                {
+                    listFile += Path.GetFileName(files[i]) + "," + "0" + "," + attributes.Length + "\n";
+                }
+                Console.WriteLine("Done: " + files[i] + ", " + i + "/" + files.Length);
+
+            }
+            if (!Directory.Exists("Complists/"))
+            {
+                Directory.CreateDirectory("Complists/");
+            }
+            File.WriteAllText(@"Complists/" + name, listFile);
+
+
+            using var stream = new FileStream(@"Complists/" + name, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            int left = 0;
+            stream.Close();
+            if (allData.Length % 16 != 0)
+            {
+                for (int i = 0; i < 16 - (allData.Length % 16); i++)
+                {
+                    Console.WriteLine(allData.Length + i);
+                    left++;
+                    Console.WriteLine(left);
+                }
+                for (int i = 0; i < left; i++)
+                {
+                    allData.Append(Convert.ToByte(left));
+                }
+                File.WriteAllBytes(@"Complists/" + name, allData);
+            }
+        }
+        static void UploadSave(string choice, string path)
+        {
+            string answer = Encrypt(choice, path);
             string url1 = "https://nyanko.ponosgames.com/?action=store&country=en";
             if (answer == "jp")
             {
@@ -820,7 +922,7 @@ namespace Battle_Cats_save_editor
             int times = 0;
             for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[i] == 0 && allData[i +1] == 0xC8 && allData[i+2] == 00)
+                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 00)
                 {
                     occurrence[times] = i + 1;
                     times++;
@@ -878,13 +980,24 @@ namespace Battle_Cats_save_editor
             int times = 0;
             for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 0)
+                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 0 && allData[i + 365] == 0x37)
                 {
                     occurrence[times] = i + 1;
                     times++;
                 }
             }
-            for (int i = occurrence[2] - 1000; i < occurrence[2]; i++)
+            byte f = 0;
+            int g = 1;
+            try
+            {
+                f = allData[occurrence[1] - 1000];
+            }
+            catch
+            {
+                f = allData[occurrence[0] - 1000];
+                g = 0;
+            }
+            for (int i = occurrence[g] - 1000; i < occurrence[g]; i++)
             {
                 if (allData[i - 1] == 0 && allData[i] == 0x36 && allData[i + 1] == 0)
                 {
@@ -1267,7 +1380,7 @@ namespace Battle_Cats_save_editor
             return bytes;
         }
 
-        static void Encrypt(string path)
+        static string Encrypt(string choice, string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -1278,8 +1391,6 @@ namespace Battle_Cats_save_editor
             byte[] toBeUsed = new byte[allData.Length - 32];
             for (int i = 0; i < allData.Length - 32; i++)
                 toBeUsed[i] = allData[i];
-            Console.WriteLine("What version of the game are you in (en or jp)?");
-            string choice = Console.ReadLine();
             byte[] bytes = Encoding.ASCII.GetBytes("battlecats");
             if (choice == "en")
             {
@@ -1293,8 +1404,8 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("Answer was not jp or en");
                 stream.Close();
-                Encrypt(path);
-                return;
+                Encrypt(choice, path);
+                return "";
             }
             int test = 32 - bytes.Length;
 
@@ -1319,6 +1430,7 @@ namespace Battle_Cats_save_editor
 
             stream.Position = allData.Length - 32;
             stream.Write(stuffs, 0, stuffs.Length);
+            return choice;
         }
 
         static string ByteArrayToString(byte[] ba)
@@ -1470,7 +1582,7 @@ namespace Battle_Cats_save_editor
 
             for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[i] == 0x2D && allData[i + 1] == 0x0 && allData[i + 2] == 0x0 && allData[i +3] == 0x0 && allData[i + 4] == 0x2E)
+                if (allData[i] == 0x2D && allData[i + 1] == 0x0 && allData[i + 2] == 0x0 && allData[i + 3] == 0x0 && allData[i + 4] == 0x2E)
                 {
                     for (int j = 1900; j < 2108; j++)
                     {
@@ -1617,7 +1729,6 @@ namespace Battle_Cats_save_editor
             }
             Console.WriteLine("Set all talents to level: {0}", level);
             stream2.Close();
-            Encrypt(path);
         }
 
         static byte Anchour(string path)
