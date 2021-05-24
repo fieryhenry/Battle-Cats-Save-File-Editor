@@ -52,12 +52,14 @@ And done have fun!
 25. Secondary menu:
 25.1 Close rank up bundle menus
 25.2 Generate new account code
-25.3 Edit account code
-25.4 Max out the blue upgrades to the right of the normal cat upgrades
+25.3 Max out the blue upgrades to the right of the normal cat upgrades
+25.4 Fix gamatoto
 27. Display your current rare gacha seed
 28. Change ItF timed scores
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
+31. Upload save into the game
+32. Decrypt .list and .pack files found in /files directory of the game (not the ones in the apk as they use a different aes key that i don't know yet)
 
 
 If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
