@@ -783,42 +783,28 @@ namespace Battle_Cats_save_editor
 
             int amount = Inputed();
             byte[] bytes = Endian(amount);
+            int pos = ThirtySix(path).Item1;
+            bool c8 = ThirtySix(path).Item2;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
             bool found = false;
-            long[] count = new long[20];
-            int loop = 0;
-            int[] occurrence = new int[20];
-            int times = 0;
-            for (int i = 0; i < allData.Length; i++)
+            if (pos > 0)
             {
-                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 0)
-                {
-                    occurrence[times] = i + 1;
-                    times++;
-                }
-            }
-            for (int i = occurrence[2] - 1000; i < occurrence[2]; i++)
-            {
-                if (allData[i - 1] == 0 && allData[i] == 0x36 && allData[i + 1] == 0)
-                {
-                    count[loop] = i;
-                    loop++;
-                }
-            }
-            if (loop != 0)
-            {
-                stream.Position = count[0] - 2367;
-                stream.WriteByte(bytes[0]);
-                stream.WriteByte(bytes[1]);
-                stream.WriteByte(bytes[2]);
-                stream.WriteByte(bytes[3]);
                 found = true;
             }
+            if (c8)
+            {
+                stream.Position = pos - 2367;
+
+            }
+            else
+            {
+                stream.Position = pos - 3087;
+            }
+            stream.WriteByte(bytes[0]);
+            stream.WriteByte(bytes[1]);
+            stream.WriteByte(bytes[2]);
+            stream.WriteByte(bytes[3]);
+
 
             if (found)
             {
@@ -826,6 +812,45 @@ namespace Battle_Cats_save_editor
             }
             if (!found) Console.WriteLine("Sorry your gamatoto xp position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
+        }
+        static Tuple<int, bool> ThirtySix(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            int[] occurrence = new int[10];
+            int[] occurrence2 = new int[10];
+            int count = 0;
+            bool c8 = false;
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0x2c && allData[i - 1] == 0x00 && allData[i + 1] == 0x01 && allData[i + 2] == 0x00)
+                {
+                    occurrence[count] = i;
+                    count++;
+                }
+            }
+            if (count < 3)
+            {
+                for (int i = 0; i < allData.Length; i++)
+                {
+                    if (allData[i] == 0xc8 && allData[i - 1] == 0x00 && allData[i + 1] == 0x00 && allData[i + 2] == 0x00 && allData[i + 3] == 0x00 && allData[i + 4] == 0x00)
+                    {
+                        occurrence[3] = i;
+                        c8 = true;
+                    }
+                }
+            }
+            for (int i = occurrence[3] - 700; i < occurrence[3] - 5; i++)
+            {
+                if (allData[i] == 0x36)
+                {
+                    return Tuple.Create(i, c8);
+                }
+            }
+            return Tuple.Create(0, c8);
         }
         static void GamHelp(string path)
         {
@@ -857,44 +882,29 @@ namespace Battle_Cats_save_editor
             }
             byte[] bytes = answerInt.SelectMany(BitConverter.GetBytes).ToArray();
 
+            int pos = ThirtySix(path).Item1;
+            bool found = false;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            bool found = false;
-            long[] count = new long[20];
-            int loop = 0;
-            int[] occurrence = new int[20];
-            int times = 0;
-            for (int i = 0; i < allData.Length; i++)
+            if (pos > 0)
             {
-                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 0)
-                {
-                    occurrence[times] = i + 1;
-                    times++;
-                }
-            }
-            for (int i = occurrence[2] - 1000; i < occurrence[2]; i++)
-            {
-                if (allData[i - 1] == 0 && allData[i] == 0x36 && allData[i + 1] == 0)
-                {
-                    count[loop] = i;
-                    loop++;
-                }
-            }
-            if (loop != 0)
-            {
-                stream.Position = count[0] - 1025;
-                stream.Write(bytes, 0, bytes.Length);
                 found = true;
             }
-
+            stream.Position = pos - 1025;
+            stream.Write(bytes, 0, bytes.Length);
             if (found)
             {
                 Console.WriteLine("Success");
-                int[] helpNums = new int[answerInt.Length];
+                int count = 0;
+                if (answerInt.Length < 5)
+                {
+                    count = 5;
+                }
+                else
+                {
+                    count = answerInt.Length;
+                }
+                int[] helpNums = new int[count];
                 for (int i = 0; i < answerInt.Length; i++)
                 {
                     if (answerInt[i] <= 53) helpNums[0]++;
@@ -967,50 +977,16 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("How many Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
             byte platCatTickets = Convert.ToByte(Console.ReadLine());
             if (platCatTickets > 9) platCatTickets = 9;
+            int pos = ThirtySix(path).Item1;
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
             bool found = false;
-            long[] count = new long[20];
-            int loop = 0;
-            int[] occurrence = new int[20];
-            int times = 0;
-            for (int i = 0; i < allData.Length; i++)
+            if (pos > 0)
             {
-                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 0 && allData[i + 365] == 0x37)
-                {
-                    occurrence[times] = i + 1;
-                    times++;
-                }
-            }
-            byte f = 0;
-            int g = 1;
-            try
-            {
-                f = allData[occurrence[1] - 1000];
-            }
-            catch
-            {
-                f = allData[occurrence[0] - 1000];
-                g = 0;
-            }
-            for (int i = occurrence[g] - 1000; i < occurrence[g]; i++)
-            {
-                if (allData[i - 1] == 0 && allData[i] == 0x36 && allData[i + 1] == 0)
-                {
-                    count[loop] = i;
-                    loop++;
-                }
-            }
-            if (loop != 0)
-            {
-                stream.Position = count[0] + 16;
-                stream.WriteByte(platCatTickets);
                 found = true;
             }
+            stream.Position = pos + 16;
+            stream.WriteByte(platCatTickets);
             if (found) Console.WriteLine("Success");
             if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
@@ -2006,11 +1982,11 @@ namespace Battle_Cats_save_editor
 
                 listA.Add(values[0]);
             }
-            string[] first = new string[600];
-            string[] second = new string[600];
-            int[] form = new int[600];
+            string[] first = new string[700];
+            string[] second = new string[700];
+            int[] form = new int[700];
             string[] f = new string[3];
-            for (int i = 0; i < 600; i++)
+            for (int i = 0; i < 700; i++)
             {
                 f = listA[i].Split('/');
                 first[i] = f[0];
