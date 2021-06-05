@@ -22,6 +22,7 @@ namespace Battle_Cats_save_editor
             try
             {
                 Console.WindowHeight = 48;
+                Console.WindowWidth = 200;
             }
             catch
             {
@@ -42,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.23.2";
+            string version = "2.24.0";
 
             if (lines[0] == version)
             {
@@ -73,7 +74,7 @@ namespace Battle_Cats_save_editor
                     ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
                 }
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25 and select generate new account code\n", fileToOpen);
+                Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->2, and set your inquiry code to a save that doesn't have that error\n", fileToOpen);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
                 Console.ForegroundColor = ConsoleColor.White;
@@ -86,18 +87,18 @@ namespace Battle_Cats_save_editor
                 }
                 ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
 
-                ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded " +
-                    "50+90\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
+                ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures\n&4.& All cats upgraded to a specific level" +
+                    "\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                     "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
                     "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& " +
                     "Change Catamins" +
-                    "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& All cats\n&17.& Get a specific cat" +
+                    "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& Get/remove All cats\n&17.& Get/remove a specific cat" +
                     "\n&18.& Upgrade a specific cat to a specific level\n" +
                     "&19.& change treasure level (game crashes when you enter the tresure menu but the effects of all those treasures are present)" +
                     "\n&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                     "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                     "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes it gives you\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes it gives you&(Warning using this option could result in the save is used elsewhere bug, so for now, use a root explorer to replace the save in the game with the edited one)&\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 byte[] anchour = new byte[20];
                 anchour[0] = Anchour(path);
                 anchour[1] = 0x02;
@@ -435,8 +436,8 @@ namespace Battle_Cats_save_editor
         }
         static void Menu(string path)
         {
-            ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Generate new account to avoid error \"Your save is being used somewhere else\" Warning " +
-                "No longer crashes your gamatoto!\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
+            ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Set new account to avoid error \"Your save is being used somewhere else\" bug " +
+                "\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
                 "(use if your gamatoto crashes your game)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             int choice = Inputed();
 
@@ -597,7 +598,17 @@ namespace Battle_Cats_save_editor
 
         static void CatUpgrades(string path)
         {
+            Console.WriteLine("What base level do you want to upgrade all of your cats to? (max 50) - plus levels will be specified later");
+            int baseLev = Inputed() - 1;
+            Console.WriteLine("What plus level do you want to upgrade all of your cats to? (max 90)");
+            int plusLev = Inputed();
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            if (baseLev > 49) baseLev = 49;
+            else if (baseLev < 0) baseLev = 0;
+
+            if (plusLev > 90) plusLev = 90;
+            else if (plusLev < 0) plusLev = 0;
 
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
@@ -614,12 +625,13 @@ namespace Battle_Cats_save_editor
                     for (int i = j + 3; i <= j + (catAmount * 4) - 2; i += 4)
                     {
                         stream.Position = i + 2;
-                        stream.WriteByte(Convert.ToByte(49));
+                        stream.WriteByte(Convert.ToByte(baseLev));
                         stream.Position = i;
-                        stream.WriteByte(Convert.ToByte(90));
+                        stream.WriteByte(Convert.ToByte(plusLev));
                     }
                 }
             }
+            Console.WriteLine("Upgraded all cats to level " + (baseLev + 1) + " +" + plusLev);
             stream.Close();
             Bundle(path);
         }
@@ -629,9 +641,9 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("Do you want to upgrade all the blue upgrades at once? (yes/no)");
             string answer = Console.ReadLine();
             byte[] bytes = { 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x00, 0x00, 0x09, 0x00,
-                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
-                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
-                    0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13 };
+                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
+                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
+                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13 };
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             if (answer == "no")
@@ -657,7 +669,7 @@ namespace Battle_Cats_save_editor
                 for (int i = 0; i < ids.Length; i++)
                 {
                     if (ids[i] > 1) ids[i]++;
-                    stream.Position = pos + (ids[i] * 4) - 4;
+                    stream.Position = pos + (ids[i] * 4) + 4;
                     stream.WriteByte((byte)idPlus[i]);
                     stream.Position++;
                     stream.WriteByte((byte)((byte)idBase[i] - 1));
@@ -666,7 +678,7 @@ namespace Battle_Cats_save_editor
             }
             if (answer == "yes")
             {
-                stream.Position = occurrence[2] + 2440;
+                stream.Position = occurrence[2] + 2448;
                 stream.Write(bytes, 0, bytes.Length);
             }
             Console.WriteLine("Success");
@@ -813,7 +825,7 @@ namespace Battle_Cats_save_editor
             if (!found) Console.WriteLine("Sorry your gamatoto xp position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
         }
-        static Tuple<int, bool> ThirtySix(string path)
+        static Tuple<int, bool, int> ThirtySix(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -847,10 +859,10 @@ namespace Battle_Cats_save_editor
             {
                 if (allData[i] == 0x36)
                 {
-                    return Tuple.Create(i, c8);
+                    return Tuple.Create(i, c8, occurrence[3]);
                 }
             }
-            return Tuple.Create(0, c8);
+            return Tuple.Create(0, c8, occurrence[3]);
         }
         static void GamHelp(string path)
         {
@@ -919,54 +931,43 @@ namespace Battle_Cats_save_editor
         }
         static void FixGam(string path)
         {
+
+
+            bool found = false;
+
+            int pos = ThirtySix(path).Item1;
+            bool c8 = ThirtySix(path).Item2;
+            int pos2 = ThirtySix(path).Item3;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-
-            bool found = false;
-            long[] count = new long[20];
-            int loop = 0;
-            int[] occurrence = new int[20];
-            int times = 0;
-            for (int i = 0; i < allData.Length; i++)
-            {
-                if (allData[i] == 0 && allData[i + 1] == 0xC8 && allData[i + 2] == 00)
-                {
-                    occurrence[times] = i + 1;
-                    times++;
-                }
-            }
-            for (int i = occurrence[2] - 2000; i < occurrence[2]; i++)
-            {
-                if (allData[i - 1] == 0 && allData[i] == 0x36 && allData[i + 1] == 0)
-                {
-                    count[loop] = i;
-                    loop++;
-                }
-            }
             Console.WriteLine("Scan Complete");
-            if (times != 0)
-            {
-                var bytess = new List<byte>(allData);
-                bytess.RemoveRange((int)count[0], (int)(occurrence[2] - count[0] + 1));
+            var bytess = new List<byte>(allData);
+            bytess.RemoveRange(pos, pos2 - (pos - 2));
 
-                stream.Position = count[0];
-                byte[] bytes = {
+            stream.Position = pos;
+            byte[] bytes = {
                         0x36, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00,
                         0x07, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00,
                         0xEC, 0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9E, 0xC7, 0x00, 0x00,
                         0x02, 0x00, 0x00, 0x00, 0xCE, 0xC7, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
                         0xCF, 0xC7, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xD4, 0xC7, 0x00, 0x00,
-                        0x03, 0x00, 0x00, 0x00, 0xC8
+                        0x03, 0x00, 0x00, 0x00, 0xC8, 0x00
                     };
-                bytess.InsertRange((int)count[0], bytes);
-                allData = bytess.ToArray();
-                stream.Close();
-                File.WriteAllBytes(path, allData);
-                found = true;
+            if (!c8)
+            {
+                bytes[bytes.Length - 2] = 0x2C;
+                bytes[bytes.Length - 1] = 0x01;
+
             }
+            bytess.InsertRange(pos, bytes);
+            allData = bytess.ToArray();
+            stream.Close();
+            File.WriteAllBytes(path, allData);
+            found = true;
+
             if (found) Console.WriteLine("Success");
             if (!found) Console.WriteLine("Sorry your gamatoto position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
@@ -1152,42 +1153,37 @@ namespace Battle_Cats_save_editor
         {
             Console.WriteLine("How many Catimins of each type do you want(max 65535)");
             int platCatTickets = Inputed();
-            Console.WriteLine("How many type A catamins do you have?");
-            int CurrentplatCatTickets = Inputed();
 
             byte[] bytes = Endian(platCatTickets);
-            byte[] bytesCurrent = Endian(CurrentplatCatTickets);
 
+
+            int pos = ThirtySix(path).Item1;
+            bool c8 = ThirtySix(path).Item2;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
             bool found = false;
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            Console.WriteLine("Scan Complete");
-            for (int j = 0; j < length - 59; j++)
+            if (pos > 0)
             {
-                if (allData[j] == Convert.ToByte(05) && allData[j + 1] == Convert.ToByte(0) && allData[j + 69] == Convert.ToByte(10) && allData[j + 73] == Convert.ToByte(01) && allData[j + 83] == Convert.ToByte(27) && allData[j + 28] == Convert.ToByte(bytesCurrent[0]) && allData[j + 29] == Convert.ToByte(bytesCurrent[1]))
-                {
-                    found = true;
+                found = true;
+            }
+            if (c8)
+            {
+                stream.Position = pos - 2388;
 
-                    stream.Position = j + 28;
-                    stream.WriteByte(bytes[0]);
-                    stream.Position = j + 29;
-                    stream.WriteByte(bytes[1]);
-                    stream.Position = j + 32;
-                    stream.WriteByte(bytes[0]);
-                    stream.Position = j + 33;
-                    stream.WriteByte(bytes[1]);
-                    stream.Position = j + 36;
-                    stream.WriteByte(bytes[0]);
-                    stream.Position = j + 37;
-                    stream.WriteByte(bytes[1]);
+            }
+            else
+            {
+                stream.Position = pos - 3108;
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                stream.Write(bytes, 0, 2);
+                stream.Position += 2;
+            }
 
-                    Console.WriteLine(j);
-                }
+
+            if (found)
+            {
+                Console.WriteLine("Success");
             }
             if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
         }
@@ -1223,50 +1219,69 @@ namespace Battle_Cats_save_editor
 
         static void Catseyes(string path)
         {
-            Console.WriteLine("How many Catseyes do you want(max 65535)");
+            Console.WriteLine("How many catseyes of each type do you want(max 65535)");
             int platCatTickets = Inputed();
-            if (platCatTickets > 65535) platCatTickets = 65535;
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            bool found = false;
-            Console.WriteLine("Scan Complete");
 
             byte[] bytes = Endian(platCatTickets);
 
-            stream.Close();
 
-            int[] occurance = OccurrenceB(path);
-
-            using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-
-            stream2.Position = occurance[7];
-
-            for (int i = (int)(stream2.Position + 500); i < stream2.Position + 8000; i++)
+            int pos = ThirtySix(path).Item1;
+            bool c8 = ThirtySix(path).Item2;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            bool found = false;
+            if (pos > 0)
             {
-                if (allData[i] == Convert.ToByte("0a", 16) && allData[i + 4] == 1 && allData[i + 5] == 1 && allData[i + 14] == Convert.ToByte("1b", 16) && !found)
-                {
-                    found = true;
-                    stream2.Position = i - 65;
-                    for (int e = 0; e < 20; e += 4)
-                    {
-                        stream2.WriteByte(bytes[0]);
-                        stream2.WriteByte(bytes[1]);
-                        stream2.Position += 2;
-                    }
-                    Console.WriteLine("Found values");
-                }
+                found = true;
+            }
+            if (c8)
+            {
+                stream.Position = pos - 2412;
+
+            }
+            else
+            {
+                stream.Position = pos - 3132;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                stream.Write(bytes, 0, 2);
+                stream.Position += 2;
+            }
+
+
+            if (found)
+            {
+                Console.WriteLine("Success");
             }
             if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
         }
+        static void RemCats(string path)
+        {
+            int[] occurrence = OccurrenceB(path);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
+            {
+                stream.Position = i;
+                stream.WriteByte(Convert.ToByte(0));
+            }
+            Console.WriteLine("Removed all cats");
+        }
 
         static void Cats(string path)
         {
+            Console.WriteLine("Do you want to add cats? (yes/no)");
+            string answer = Console.ReadLine();
+            if (answer == "no")
+            {
+                RemCats(path);
+                return;
+            }
+            else if (answer != "yes")
+            {
+                Console.WriteLine("Answer was not yes/no");
+                return;
+            }
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
@@ -1274,11 +1289,24 @@ namespace Battle_Cats_save_editor
                 stream.Position = i;
                 stream.WriteByte(Convert.ToByte(01));
             }
+            Console.WriteLine("Gave all cats");
 
         }
 
         static void SpecifiCat(string path)
         {
+            Console.WriteLine("Do you want to add cats? (yes/no)");
+            string answer = Console.ReadLine();
+            if (answer == "no")
+            {
+                RemSpecifiCat(path);
+                return;
+            }
+            else if (answer != "yes")
+            {
+                Console.WriteLine("Answer was not yes/no");
+                return;
+            }
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -1288,6 +1316,22 @@ namespace Battle_Cats_save_editor
             int startPos = occurrence[0] + 4;
             stream.Position = startPos + catID * 4;
             stream.WriteByte(01);
+            Console.WriteLine("Gave cat: " + catID);
+
+        }
+        static void RemSpecifiCat(string path)
+        {
+            int[] occurrence = OccurrenceB(path);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            Console.WriteLine("What is the cat ID?");
+            int catID = Inputed();
+
+            int startPos = occurrence[0] + 4;
+            stream.Position = startPos + catID * 4;
+            stream.WriteByte(0);
+
+            Console.WriteLine("Removed cat: " + catID);
 
         }
 
@@ -1546,14 +1590,16 @@ namespace Battle_Cats_save_editor
         }
         static void NewIQ(string path)
         {
+
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int length = (int)stream2.Length;
             byte[] allData = new byte[length];
             stream2.Read(allData, 0, length);
 
             WebClient client = new();
-            string iq = client.DownloadString("https://nyanko-backups.ponosgames.com/?action=createAccount&referenceId=");
-            byte[] bytes = Encoding.ASCII.GetBytes(iq.Substring(14, 9));
+            Console.WriteLine("What inquiry code do you want - this code must be set to an account code that actually lets you play without the save is used elsewhere bug");
+            string iq = Console.ReadLine();
+            byte[] bytes = Encoding.ASCII.GetBytes(iq);
             bool found = false;
 
             for (int i = 0; i < allData.Length; i++)
@@ -1576,7 +1622,7 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Sorry your inquiry code position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
                 return;
             }
-            Console.WriteLine("Success\nYour new account code is now: " + iq.Substring(14, 9) + " This should remove that \"save is being used elsewhere\" bug and if your account is banned, this should get you unbanned");
+            Console.WriteLine("Success\nYour new account code is now: " + iq + " This should remove that \"save is being used elsewhere\" bug and if your account is banned, this should get you unbanned");
         }
 
         static void CatFruit(string path)
