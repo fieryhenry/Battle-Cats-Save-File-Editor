@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.24.0";
+            string version = "2.24.1";
 
             if (lines[0] == version)
             {
@@ -832,37 +832,50 @@ namespace Battle_Cats_save_editor
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            int[] occurrence = new int[10];
-            int[] occurrence2 = new int[10];
+            int pos = 0;
+            int[] pos2 = new int[10];
+            bool c8 = true;
             int count = 0;
-            bool c8 = false;
             for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[i] == 0x2c && allData[i - 1] == 0x00 && allData[i + 1] == 0x01 && allData[i + 2] == 0x00)
+                if (allData[i] == 0x2c && allData[i - 1] == 0 && allData[i + 1] == 1 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i + 4] == 0)
                 {
-                    occurrence[count] = i;
                     count++;
-                }
-            }
-            if (count < 3)
-            {
-                for (int i = 0; i < allData.Length; i++)
-                {
-                    if (allData[i] == 0xc8 && allData[i - 1] == 0x00 && allData[i + 1] == 0x00 && allData[i + 2] == 0x00 && allData[i + 3] == 0x00 && allData[i + 4] == 0x00)
+                    for (int j = i - 700; j < i; j++)
                     {
-                        occurrence[3] = i;
-                        c8 = true;
+                        if (allData[j] == 0xff && allData[j + 1] == 0xff && allData[j+2] == 0xff && allData[j+3] == 0xff && allData[j+4] == 0xff)
+                        {
+                            pos = i;
+                            c8 = false;
+                        }
                     }
                 }
             }
-            for (int i = occurrence[3] - 700; i < occurrence[3] - 5; i++)
+            if (c8)
+            {
+                for (int i = 0; i < allData.Length; i++)
+                {
+                    if (allData[i] == 0xc8 && allData[i - 1] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i + 4] == 0)
+                    {
+                        for (int j = i - 700; j < i; j++)
+                        {
+                            if (allData[j] == 0xff && allData[j + 1] == 0xff && allData[j + 2] == 0xff && allData[j + 3] == 0xff && allData[j + 4] == 0xff)
+                            {
+                                pos = i;
+                            }
+                        }
+                    }
+                }
+
+            }
+            for (int i = pos - 700; i < pos; i++)
             {
                 if (allData[i] == 0x36)
                 {
-                    return Tuple.Create(i, c8, occurrence[3]);
+                    return Tuple.Create(i, c8, pos);
                 }
             }
-            return Tuple.Create(0, c8, occurrence[3]);
+            return Tuple.Create(0, c8, pos);
         }
         static void GamHelp(string path)
         {
