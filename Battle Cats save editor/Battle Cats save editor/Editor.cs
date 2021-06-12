@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             {
                 lines = File.ReadAllLines(@"newversion.txt");
             }
-            string version = "2.24.1";
+            string version = "2.24.2";
 
             if (lines[0] == version)
             {
@@ -944,10 +944,6 @@ namespace Battle_Cats_save_editor
         }
         static void FixGam(string path)
         {
-
-
-            bool found = false;
-
             int pos = ThirtySix(path).Item1;
             bool c8 = ThirtySix(path).Item2;
             int pos2 = ThirtySix(path).Item3;
@@ -979,8 +975,7 @@ namespace Battle_Cats_save_editor
             allData = bytess.ToArray();
             stream.Close();
             File.WriteAllBytes(path, allData);
-            found = true;
-
+            bool found = true;
             if (found) Console.WriteLine("Success");
             if (!found) Console.WriteLine("Sorry your gamatoto position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
 
@@ -1142,6 +1137,12 @@ namespace Battle_Cats_save_editor
             {
                 year[0] = allData[15];
                 year[1] = allData[16];
+
+                if (year[0] != 0x07)
+                {
+                    year[0] = allData[19];
+                    year[1] = allData[20];
+                }
                 stream.Close();
                 occurrence = OccurrenceE(path, year);
             }
@@ -2088,16 +2089,21 @@ namespace Battle_Cats_save_editor
 
             for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[i] == 0x05 && allData[i + 1] == 0xFA && allData[i + 2] == 0 && allData[i + 3] == 0x04)
+                if (allData[i] == 5 && allData[i + 1] == 0x2c && allData[i + 2] == 1 && allData[i + 3] == 4 && allData[i+4] == 0x0c)
                 {
-                    stream.Position = i + 5005;
-                    levels = i + 10005;
+                    stream.Position = i + 6005;
+                    levels = i + 12005;
                 }
-                else if (allData[i] == 0x2C && allData[i + 1] == 01 && allData[i + 2] == 0 && allData[i - 1] == 0)
+                else if (allData[i] == 0x2C && allData[i + 1] == 01 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i+3] == 0 && allData[i+4] == 0 && allData[i+5] == 0)
                 {
                     unlock = i;
                     break;
                 }
+            }
+            if (levels == 0 || unlock == 0|| stream.Position == 0)
+            {
+                Console.WriteLine("Sorry your SoL position couldn't be found, you are either using an old save or the editor is bugged - if that is the case please contact me on discord or in #tool-help");
+                return;
             }
             try
             {
