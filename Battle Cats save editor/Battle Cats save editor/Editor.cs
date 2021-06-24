@@ -15,8 +15,47 @@ namespace Battle_Cats_save_editor
     class Editor
     {
         static int catAmount = 0;
+        static string[] Savepaths = new string[500];
+        static string gameVer = "";
         [STAThread]
         static void Main()
+        {
+            CheckUpdate();
+            SelSave();
+            Options();
+
+        }
+        static void SelSave()
+        {
+            var FD = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "battle cats save(*.*)|*.*"
+            };
+            if (FD.ShowDialog() == DialogResult.OK)
+            {
+                string[] fileToOpen = FD.FileNames;
+                string path = Path.Combine(fileToOpen[0]);
+                for (int i = 0; i < fileToOpen.Length; i++)
+                {
+                    ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
+                }
+                Savepaths = fileToOpen;
+            }
+            else
+            {
+                ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                SelSave();
+            }
+            Console.WriteLine("What game version are you using? (en or jp)");
+            gameVer = Console.ReadLine();
+            if (gameVer != "en" && gameVer != "jp")
+            {
+                Console.WriteLine("answer was not en or jp");
+                SelSave();
+            }
+        }
+        static void CheckUpdate()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             try
@@ -39,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.25.0";
+            string version = "2.26.0";
 
             if (lines == version && !skip)
             {
@@ -56,132 +95,103 @@ namespace Battle_Cats_save_editor
                     Exit(1);
                 }
             }
-            var FD = new OpenFileDialog
-            {
-                Multiselect = true,
-                Filter = "battle cats save(*.*)|*.*"
-            };
-            if (FD.ShowDialog() == DialogResult.OK)
-            {
-                string[] fileToOpen = FD.FileNames;
-                string path = Path.Combine(fileToOpen[0]);
-                for (int i = 0; i < fileToOpen.Length; i++)
-                {
-                    ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
-                }
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->2, and set your inquiry code to a save that doesn't have that error\n", fileToOpen);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("What game version are you using? (en or jp)");
-                string choice = Console.ReadLine();
-                if (choice != "en" && choice != "jp")
-                {
-                    Console.WriteLine("answer was not en or jp");
-                    Main();
-                }
-                ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
+        }
+        static void Options()
+        {
+            string[] fileToOpen = Savepaths;
+            string path = Path.Combine(fileToOpen[0]);
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->2, and set your inquiry code to a save that doesn't have that error\n", fileToOpen);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            
+            ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
 
-                ColouredText("&What would you like to do?&\n&1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures to a specific level\n&4.& All cats upgraded to a specific level" +
-                    "\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
-                    "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
-                    "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& " +
-                    "Change Catamins" +
-                    "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& Get/remove All cats\n&17.& Get/remove a specific cat" +
-                    "\n&18.& Upgrade a specific cat to a specific level\n" +
-                    "&19.& Unlock treasures of a specific chapter\n" +
-                    "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
-                    "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
-                    "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                    "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes" +
-                    " it gives you&(Warning using this option could result in the save is used elsewhere bug, so for now, use a root explorer to replace" +
-                    " the save in the game with the edited one)&\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
-                    "apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                byte[] anchour = new byte[20];
-                anchour[0] = Anchour(path);
-                anchour[1] = 0x02;
-                catAmount = BitConverter.ToInt32(anchour, 0);
-                int Choice = Inputed();
-                for (int i = 0; i < fileToOpen.Length; i++)
-                {
-                    path = fileToOpen[i];
-                    switch (Choice)
-                    {
-                        case 1: CatFood(path); break;
-                        case 2: XP(path); break;
-                        case 19: SepecTreasures(path); break;
-                        case 4: CatUpgrades(path); break;
-                        case 5: Leadership(path); break;
-                        case 6: NP(path); break;
-                        case 7: CatTicket(path); break;
-                        case 8: CatTicketRare(path); break;
-                        case 9: PlatTicketRare(path); break;
-                        case 10: Seed(path); break;
-                        case 11: Evolve(path); break;
-                        case 12: Items(path); break;
-                        case 13: Catamin(path); break;
-                        case 14: BaseMats(path); break;
-                        case 15: Catseyes(path); break;
-                        case 16: Cats(path); break;
-                        case 17: SpecifiCat(path); break;
-                        case 18: SpecifUpgrade(path); break;
-                        case 3: MaxTreasures(path); break;
-                        case 20: EvolveSpecific(path); break;
-                        case 21: CatFruit(path); break;
-                        case 22: Talents(path); break;
-                        case 23: Stage(path); break;
-                        case 24:
-                            Encrypt(choice, path);
-                            if (i == fileToOpen.Length - 1)
-                            {
-                                Console.WriteLine("Press enter to exit");
-                                Exit(0);
-                            }
-                            break;
-                        case 25: Menu(path); break;
-                        case 26: GetSeed(path); break;
-                        case 27: TimedScore(path); break;
-                        case 28: SoL(path); break;
-                        case 29: GamHelp(path); break;
-                        case 30: GamXP(path); break;
-                        case 31: UploadSave(choice, path); break;
-                        case 32:
-                            Decrypt("b484857901742afc", "89a0f99078419c28");
-                            if (i == fileToOpen.Length - 1)
-                            {
-                                Console.WriteLine("Press enter to exit");
-                                Exit(0);
-                            }
-                            break;
-                        case 34:
-                            EncryptData(path, "b484857901742afc", "89a0f99078419c28");
-                            if (i == fileToOpen.Length - 1)
-                            {
-                                Console.WriteLine("Press enter to exit");
-                                Exit(0);
-                            }
-                            break;
-                        case 35: TalentOrbs(path); break;
-                        default: Console.WriteLine("Please input a number that is recognised"); break;
-                    }
-                    Encrypt(choice, path);
-                }
-                Console.WriteLine("Are you finished with the editor?");
-                bool ChoiceExit = OnAskUser("Are finished with the editor?", "Finished?");
-                if (ChoiceExit == false) Main();
-                else
-                {
-                    Encrypt(choice, path);
-                    Console.WriteLine("Press enter to exit");
-                    Exit(0);
-
-                }
-            }
-            else
+            ColouredText("&What would you like to do?&\n0.& Select a new save\n1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures to a specific level\n&4.& All cats upgraded to a specific level" +
+                "\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
+                "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
+                "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& " +
+                "Change Catamins" +
+                "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& Get/remove All cats\n&17.& Get/remove a specific cat" +
+                "\n&18.& Upgrade a specific cat to a specific level\n" +
+                "&19.& Unlock treasures of a specific chapter\n" +
+                "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
+                "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
+                "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes" +
+                " it gives you&(Warning using this option could result in the save is used elsewhere bug, so for now, use a root explorer to replace" +
+                " the save in the game with the edited one)&\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
+                "apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            byte[] anchour = new byte[20];
+            anchour[0] = Anchour(path);
+            anchour[1] = 0x02;
+            catAmount = BitConverter.ToInt32(anchour, 0);
+            int Choice = Inputed();
+            for (int i = 0; i < fileToOpen.Length; i++)
             {
-                ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                Main();
+                path = fileToOpen[i];
+                switch (Choice)
+                {
+                    case 0: SelSave(); Options(); break;
+                    case 1: CatFood(path); break;
+                    case 2: XP(path); break;
+                    case 19: SepecTreasures(path); break;
+                    case 4: CatUpgrades(path); break;
+                    case 5: Leadership(path); break;
+                    case 6: NP(path); break;
+                    case 7: CatTicket(path); break;
+                    case 8: CatTicketRare(path); break;
+                    case 9: PlatTicketRare(path); break;
+                    case 10: Seed(path); break;
+                    case 11: Evolve(path); break;
+                    case 12: Items(path); break;
+                    case 13: Catamin(path); break;
+                    case 14: BaseMats(path); break;
+                    case 15: Catseyes(path); break;
+                    case 16: Cats(path); break;
+                    case 17: SpecifiCat(path); break;
+                    case 18: SpecifUpgrade(path); break;
+                    case 3: MaxTreasures(path); break;
+                    case 20: EvolveSpecific(path); break;
+                    case 21: CatFruit(path); break;
+                    case 22: Talents(path); break;
+                    case 23: Stage(path); break;
+                    case 24:
+                        Encrypt(gameVer, path);
+                        if (i == fileToOpen.Length - 1)
+                        {
+                            Console.WriteLine("Press enter to exit");
+                            Exit(0);
+                        }
+                        break;
+                    case 25: Menu(path); break;
+                    case 26: GetSeed(path); break;
+                    case 27: TimedScore(path); break;
+                    case 28: SoL(path); break;
+                    case 29: GamHelp(path); break;
+                    case 30: GamXP(path); break;
+                    case 31: UploadSave(gameVer, path); break;
+                    case 32:
+                        Decrypt("b484857901742afc", "89a0f99078419c28");
+                        if (i == fileToOpen.Length - 1)
+                        {
+                            Console.WriteLine("Press enter to exit");
+                            Exit(0);
+                        }
+                        break;
+                    case 34:
+                        EncryptData(path, "b484857901742afc", "89a0f99078419c28");
+                        if (i == fileToOpen.Length - 1)
+                        {
+                            Console.WriteLine("Press enter to exit");
+                            Exit(0);
+                        }
+                        break;
+                    case 35: TalentOrbs(path); break;
+                    default: Console.WriteLine("Please input a number that is recognised"); break;
+                }
+                Encrypt(gameVer, path);
             }
         }
         static void Decrypt(string key, string key2)
@@ -199,7 +209,7 @@ namespace Battle_Cats_save_editor
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .pack and .list files");
-                Main();
+                Options();
             }
             string[] paths = fd.FileNames;
             bool hasPack = false;
@@ -347,7 +357,7 @@ namespace Battle_Cats_save_editor
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select a folder of game content!");
-                Main();
+                Options();
             }
             string path = fd.SelectedPath;
             string listFile = "";
@@ -595,7 +605,7 @@ namespace Battle_Cats_save_editor
             for (int i = 3770; i <= 4942; i += 4)
             {
                 j++;
-                if (j% 49 == 0)
+                if (j % 49 == 0)
                 {
                     id++;
                 }
@@ -1076,7 +1086,7 @@ namespace Battle_Cats_save_editor
             catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
-                Main();
+                Options();
             }
 
             Console.WriteLine("Set gacha seed to: {0}", XP);
@@ -1109,7 +1119,7 @@ namespace Battle_Cats_save_editor
             catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
-                Main();
+                Options();
             }
             byte[] seed = new byte[100];
             int j = 0;
@@ -1150,7 +1160,7 @@ namespace Battle_Cats_save_editor
             {
                 for (int i = 0; i < 24; i++)
                 {
-                    if (allData[stream2.Position + i] != 0x01 && allData[stream2.Position + i] != 0 && allData[stream2.Position + i] != 0x02)
+                    if (allData[stream2.Position + i] != 0x01 && allData[stream2.Position + i] != 0 && allData[stream2.Position + i] != 0x02 && allData[stream2.Position + i] != 0x03)
                     {
                         stop = true;
                         break;
@@ -1368,13 +1378,17 @@ namespace Battle_Cats_save_editor
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            Console.WriteLine("What is the cat ID?");
-            int catID = Inputed();
-
-            int startPos = occurrence[0] + 4;
-            stream.Position = startPos + catID * 4;
-            stream.WriteByte(01);
-            Console.WriteLine("Gave cat: " + catID);
+            Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
+            string input = Console.ReadLine();
+            string[] catIds = input.Split(' ');
+            for (int i = 0; i < catIds.Length; i++)
+            {
+                int catID = int.Parse(catIds[i]);
+                int startPos = occurrence[0] + 4;
+                stream.Position = startPos + catID * 4;
+                stream.WriteByte(01);
+                ColouredText("&Gave cat: &" + catID + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            }
 
         }
         static void RemSpecifiCat(string path)
@@ -1382,15 +1396,17 @@ namespace Battle_Cats_save_editor
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            Console.WriteLine("What is the cat ID?");
-            int catID = Inputed();
-
-            int startPos = occurrence[0] + 4;
-            stream.Position = startPos + catID * 4;
-            stream.WriteByte(0);
-
-            Console.WriteLine("Removed cat: " + catID);
-
+            Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
+            string input = Console.ReadLine();
+            string[] catIds = input.Split(' ');
+            for (int i = 0; i < catIds.Length; i++)
+            {
+                int catID = int.Parse(catIds[i]);
+                int startPos = occurrence[0] + 4;
+                stream.Position = startPos + catID * 4;
+                stream.WriteByte(0);
+                ColouredText("&Removed cat: &" + catID + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            }
         }
 
         static void SpecifUpgrade(string path)
@@ -1550,12 +1566,12 @@ namespace Battle_Cats_save_editor
             catch (OverflowException)
             {
                 ColouredText("Input number was too large\n", ConsoleColor.White, ConsoleColor.DarkRed);
-                Main();
+                Options();
             }
             catch (FormatException)
             {
                 ColouredText("Input given was not a number or it wasn't an integer\n", ConsoleColor.White, ConsoleColor.DarkRed);
-                Main();
+                Options();
             }
             return input;
         }
@@ -1617,33 +1633,23 @@ namespace Battle_Cats_save_editor
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            Console.WriteLine("What is the cat id?");
-            int id = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Is it a cat that needs cat fruit to evolve?(e.g ninja frog cat doesn't, but bishop does)(yes/no)");
-            string answer = Console.ReadLine();
-            int idPos = id * 4;
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            Console.WriteLine("Scan Complete");
+            Console.WriteLine("What is the cat id?, input multiple ids separated by spaces to evolve multiple cats ids must be 9 or above, normal cats cannot be evolved this way");
+            string[] input = Console.ReadLine().Split(' ');
 
             try
             {
-                stream.Position = occurrence[4];
+                stream.Position = occurrence[4] + 40;
             }
             catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
+            int[] form = EvolvedFormsGetter();
             int pos = (int)stream.Position;
-            stream.Position = occurrence[4] + idPos + 4;
-            if (answer.ToLower() == "yes")
+            for (int i = 0; i < input.Length; i++)
             {
-                stream.WriteByte(02);
+                stream.Position = pos + (int.Parse(input[i]) - 9) * 4;
+                stream.WriteByte((byte)form[(int.Parse(input[i]) - 9)]);
+                stream.Position--;
             }
-            else if (answer.ToLower() == "no")
-            {
-                stream.WriteByte(01);
-            }
+
 
         }
         static void NewIQ(string path)
@@ -1690,7 +1696,6 @@ namespace Battle_Cats_save_editor
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-
             stream.Close();
 
             int[] occurrence = OccurrenceB(path);
@@ -1704,11 +1709,12 @@ namespace Battle_Cats_save_editor
             catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("You either can't evolve cats or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
-                Main();
+                Options();
             }
             byte[] catfruit = new byte[4];
             int[] FruitCat = new int[15];
             string[] fruits = { "Purple Seed", "Red Seed", "Blue Seed", "Green Seed", "Yellow Seed", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seed", "Elder Fruit", "Epic Seed", "Gold Fruit" };
+
             int j = 0;
             for (int i = occurrence[6] - 60; i < occurrence[6] - 3; i += 4)
             {
@@ -1717,22 +1723,52 @@ namespace Battle_Cats_save_editor
                 FruitCat[j] = BitConverter.ToInt32(catfruit, 0);
                 j++;
             }
-            Console.WriteLine("Total catfruit/seeds: " + FruitCat.Sum() + "\nWhat do you want to edit (1-15)");
-            for (int i = 0; i < fruits.Length; i++)
+            Console.WriteLine("Total catfruit/seeds: " + FruitCat.Sum());
+            Console.WriteLine("Do you want to edit all a cat fruit/seed individually(1) or all at once? (2), (1 or 2)");
+            string input = Console.ReadLine();
+
+            if (input == "2")
             {
-                Console.WriteLine(i + 1 + ". " + fruits[i] + ": " + FruitCat[i]);
+                Console.WriteLine("How many do you want?(max 256)");
+                int num = Inputed();
+                if (num > 256) num = 256;
+                else if (num < 0) num = 0;
+
+                byte[] bytes2 = Endian(num);
+
+                for (int i = 1; i < fruits.Length + 1; i++)
+                {
+                    int choice2 = i;
+                    stream2.Position = (occurrence[6] - 60) + ((choice2 - 1) * 4);
+                    stream2.WriteByte(bytes2[0]);
+                    stream2.WriteByte(bytes2[1]);
+                    ColouredText("&Set &" + fruits[choice2 - 1] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                }
+
             }
-            int choice = Inputed();
-            if (choice > 15) choice = 15;
-            else if (choice < 1) choice = 1;
-            Console.WriteLine("How many " + fruits[choice - 1] + "s do you want (max 256)");
-            int amount = Inputed();
-            if (amount > 256) amount = 256;
-            else if (amount < 0) amount = 0;
-            byte[] bytes = Endian(amount);
-            stream2.Position = (occurrence[6] - 60) + ((choice - 1) * 4);
-            stream2.WriteByte(bytes[0]);
-            stream2.WriteByte(bytes[1]);
+            else if (input == "1")
+            {
+                for (int i = 0; i < fruits.Length; i++)
+                {
+                    Console.WriteLine(i + 1 + ". " + fruits[i] + ": " + FruitCat[i]);
+                }
+
+                int choice = Inputed();
+                if (choice > 15) choice = 15;
+                else if (choice < 1) choice = 1;
+
+                Console.WriteLine("How many " + fruits[choice - 1] + "s do you want (max 256)");
+                int amount = Inputed();
+                if (amount > 256) amount = 256;
+                else if (amount < 0) amount = 0;
+
+                byte[] bytes = Endian(amount);
+
+                stream2.Position = (occurrence[6] - 60) + ((choice - 1) * 4);
+                stream2.WriteByte(bytes[0]);
+                stream2.WriteByte(bytes[1]);
+            }
+
             Console.WriteLine("Have you finished editing cat fruits?(yes/no)");
             string answer = Console.ReadLine();
             stream2.Close();
@@ -1791,7 +1827,7 @@ namespace Battle_Cats_save_editor
             catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("You either havn't unlocked NP or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
-                Main();
+                Options();
             }
             for (int i = (int)stream2.Position; i < occurrence[0] + 5284; i += 8)
             {
