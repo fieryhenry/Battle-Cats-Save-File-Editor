@@ -1206,12 +1206,19 @@ namespace Battle_Cats_save_editor
             }
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            stream2.Position = occurrence[2] - 224;
-            for (int i = occurrence[2] - 224; i < occurrence[2] - 203; i += 4)
+            try
             {
-                stream2.Position = i;
-                stream2.WriteByte(bytes[0]);
-                stream2.WriteByte(bytes[1]);
+                stream2.Position = occurrence[2] - 224;
+                for (int i = occurrence[2] - 224; i < occurrence[2] - 203; i += 4)
+                {
+                    stream2.Position = i;
+                    stream2.WriteByte(bytes[0]);
+                    stream2.WriteByte(bytes[1]);
+                }
+            }
+            catch
+            {
+                ColouredText("You either haven't unlocked battle items yet, or the editor is bugged - if that's true please contact me on discord/the discord server in #tool-help so I can fix it", ConsoleColor.Red, ConsoleColor.White);
             }
 
             stream2.Close();
