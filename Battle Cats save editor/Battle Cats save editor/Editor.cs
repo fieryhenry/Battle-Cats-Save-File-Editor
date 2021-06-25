@@ -78,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.26.0";
+            string version = "2.26.1";
 
             if (lines == version && !skip)
             {
@@ -193,6 +193,9 @@ namespace Battle_Cats_save_editor
                 }
                 Encrypt(gameVer, path);
             }
+            ColouredText("Press enter to continue\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Console.ReadLine();
+            Options();
         }
         static void Decrypt(string key, string key2)
         {
