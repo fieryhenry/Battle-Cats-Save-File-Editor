@@ -78,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.26.1";
+            string version = "2.26.2";
 
             if (lines == version && !skip)
             {
@@ -473,11 +473,13 @@ namespace Battle_Cats_save_editor
 
             long startPos = 0;
             long endPos = 0;
+            int lengthst = 0;
             for (int i = 5; i < 1294; i++)
             {
                 if (allData[allData.Length - i] == 0x84 && allData[allData.Length - i + 1] == 0x61 && allData[allData.Length - i + 2] == 0x01)
                 {
                     startPos = allData.Length - i;
+                    lengthst = allData[startPos + 4] * 3;
                     break;
                 }
                 else if (allData[allData.Length - i] == 0x01 && allData[allData.Length - i + 1] == 0x4C && allData[allData.Length - i + 2] == 0x62 && allData[allData.Length - i + 3] == 0x01)
@@ -485,29 +487,65 @@ namespace Battle_Cats_save_editor
                     endPos = allData.Length - i;
                 }
             }
+            Console.WriteLine(lengthst);
             int[] orbs = new int[65];
+            long[] orbPos = new long[65];
             int j = 0;
             for (int i = 6; i < endPos - startPos - 2; i++)
             {
+                if (i == lengthst + 8)
+                {
+                    break;
+                }
                 if ((i - 6) % 3 == 0)
                 {
-                    orbs[allData[startPos + i - 3]] = allData[startPos + i - 1];
+                    try
+                    {
+                        orbs[allData[startPos + i - 3]] = allData[startPos + i - 1];
+                        orbPos[allData[startPos + i - 3]] = startPos + i - 1;
+                    }
+                    catch
+                    {
+                        break;
+                    }
                     j++;
                 }
             }
-            string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack ", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Green D attack", "Green C attack", "Green B attack", "Green A attack", "Green S attack ", "Green D defense", "Green C defense", "Green B defense", "Green A defense", "Green S defense ", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack ", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense ", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Yellow D attack", "Yellow C attack", "Yellow B attack", "Yellow A attack", "Yellow S attack", "Yellow D defense", "Yellow C defense", "Yellow B defense", "Yellow A defense", "Yellow S defense", "Blue D attack", "Blue C attack", "Blue B attack", "Blue A attack", "Blue S attack", "Blue D defense", "Blue C defense", "Blue B defense", "Blue A defense", "Blue S defense", "Purple D attack", "Purple C attack", "Purple B attack", "Purple A attack", "Purple S attack", "Purple D defense", "Purple C defense", "Purple B defense", "Purple A defense", "Purple S defense" };
+            string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Floating D attack", "Floating C attack", "Floating B attack", "Floating A attack", "Floating S attack", "Floating D defense", "Floating C defense", "Floating B defense", "Floating A defense", "Floating S defense", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Angel D attack", "Angel C attack", "Angel B attack", "Angel A attack", "Angel S attack", "Angel D defense", "Angel C defense", "Angel B defense", "Angel A defense", "Angel S defense", "Alien D attack", "Alien C attack", "Alien B attack", "Alien A attack", "Alien S attack", "Alien D defense", "Alien C defense", "Alien B defense", "Alien A defense", "Alien S defense", "Zombie D attack", "Zombie C attack", "Zombie B attack", "Zombie A attack", "Zombie S attack", "Zombie D defense", "Zombie C defense", "Zombie B defense", "Zombie A defense", "Zombie S defense" };
             Console.WriteLine("You have:");
             for (int i = 0; i < orbs.Length; i++)
             {
+                if (i % 5 == 0)
+                {
+                    Console.Write("\n");
+                }
                 if (orbs[i] == 1)
                 {
-                    ColouredText(orbs[i] + " " + orbList[i] + " orb\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    ColouredText(orbs[i] + " " + orbList[i] + " &orb\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 }
                 else if (orbs[i] > 1)
                 {
-                    ColouredText(orbs[i] + " " + orbList[i] + " orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    ColouredText(orbs[i] + " " + orbList[i] + " &orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 }
             }
+            var bytess = new List<byte>(allData);
+            bytess.RemoveRange((int)(startPos + 8), lengthst-4);
+            byte[] insert = new byte[64*3 -1];
+            for (int i = 0; i < 64; i++)
+            {
+                insert[i * 3+1] = (byte)(i + 1);
+                insert[i * 3] = (byte)orbs[i];
+            }
+            Console.WriteLine("What orb do you want?");
+            int id = Inputed() -1;
+
+            insert[id * 3] = 0x04;
+
+            bytess.InsertRange((int)(startPos + 8), insert);
+
+            stream.Close();
+
+            File.WriteAllBytes(path, bytess.ToArray());
 
         }
 
@@ -2138,7 +2176,14 @@ namespace Battle_Cats_save_editor
             string[] f = new string[3];
             for (int i = 0; i < 700; i++)
             {
-                f = listA[i].Split('/');
+                try
+                {
+                    f = listA[i].Split('/');
+                }
+                catch
+                {
+                    break;
+                }
                 first[i] = f[0];
                 try
                 {
