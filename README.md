@@ -50,10 +50,10 @@ And done have fun!
 23. Clear specifc or all story chapters (doesn't include SoL)
 24. Patch the save
 25. Secondary menu:
-  1. Close rank up bundle menus
-  2. Generate new account code
-  3. Max out the blue upgrades to the right of the normal cat upgrades
-  4. Fix gamatoto
+25.1. Close rank up bundle menus
+25.2. Generate new account code
+25.3. Max out the blue upgrades to the right of the normal cat upgrades
+25.4. Fix gamatoto
 26. Display your current rare gacha seed
 27. Change ItF timed scores
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
