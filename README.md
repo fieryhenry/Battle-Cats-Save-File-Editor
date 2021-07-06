@@ -53,7 +53,8 @@ And done have fun!
   25.1. Close rank up bundle menus <br>
   25.2. Generate new account code <br>
   25.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
-  25.4. Fix gamatoto
+  25.4. Fix gamatoto <br>
+  25.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up
 26. Display your current rare gacha seed
 27. Change ItF timed scores
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
