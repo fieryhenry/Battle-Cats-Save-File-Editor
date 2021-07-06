@@ -27,8 +27,8 @@ And done have fun!
 # Features
 1. Change catfood
 2. Change XP
-3. Get all treasures
-4. Max upgrade all cats
+3. Get all treasures to a specific level
+4. Max upgrade all cats to a specific level
 5. Change leadership
 6. Change NP
 7. Change normal cat tickets
@@ -40,26 +40,27 @@ And done have fun!
 13. Change catamins
 14. Change base materials
 15. Change catseyes (requires catseyes to be unlocked)
-16. Get all cats
-17. Get a specific cat
+16. Get/remove all cats
+17. Get/remove a specific cat
 18. Upgrade a specific cat to a specific level
-19. Change the level of treasures (e.g a superior treasure has a level of 3 so you can change that level)
+19. Unlock treasures of a specific chapter
 20. Evolve a specific cat
 21. Change cat fruits and cat fruit seeds
-22. Change the talent level of all cats
+22. Change the talent level of all cats(expreimental and buggy - use at your own risk)
 23. Clear specifc or all story chapters (doesn't include SoL)
-24. Patch the save (allows the save to be used in game)
+24. Patch the save
 25. Secondary menu:
-25.1 Close rank up bundle menus
-25.2 Generate new account code
-25.3 Max out the blue upgrades to the right of the normal cat upgrades
-25.4 Fix gamatoto
-27. Display your current rare gacha seed
-28. Change ItF timed scores
+  1. Close rank up bundle menus
+  2. Generate new account code
+  3. Max out the blue upgrades to the right of the normal cat upgrades
+  4. Fix gamatoto
+26. Display your current rare gacha seed
+27. Change ItF timed scores
+28. Clear SoL subchapters (doesn't include uncanny ledgends)
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
 31. Upload save into the game
-32. Decrypt .list and .pack files found in /files directory of the game (not the ones in the apk as they use a different aes key that i don't know yet)
+32. Decrypt .list and .pack files found in /files directory of the game (not the ones in the newer apks as they use a different aes key that i don't know yet)
 
 
 If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
