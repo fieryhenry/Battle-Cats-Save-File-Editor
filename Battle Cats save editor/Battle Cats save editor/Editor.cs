@@ -78,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.26.2";
+            string version = "2.27.0";
 
             if (lines == version && !skip)
             {
@@ -196,6 +196,132 @@ namespace Battle_Cats_save_editor
             ColouredText("Press enter to continue\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             Console.ReadLine();
             Options();
+        }
+        static void Elsewhere(string path2)
+        {
+            Console.WriteLine("Please select a working save that doesn't have 'Save is used elsewhere' and has never had it in the past\nPress enter to select that save");
+            Console.ReadLine();
+            var FD = new OpenFileDialog
+            {
+                Multiselect = true,
+                Filter = "working battle cats save(*.*)|*.*"
+            };
+            string path = "";
+            if (FD.ShowDialog() == DialogResult.OK)
+            {
+                string[] fileToOpen = FD.FileNames;
+                path = Path.Combine(fileToOpen[0]);
+            }
+            else
+            {
+                ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                SelSave();
+            }
+
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            byte[] codeBytes = new byte[36];
+            byte[] codeBytes2 = new byte[9];
+            byte[] iqExtra = new byte[11];
+            byte[] lastKey = new byte[40];
+            int[] found = new int[6];
+
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0 && allData[i+9] == 0x2d && allData[i+14] == 0x2d && allData[i+19] == 0x2d && allData[i+24] == 0x2d)
+                {
+                    Array.Copy(allData, i + 1, codeBytes, 0, 36);
+                    Array.Copy(allData, i - 71, codeBytes2, 0, 9);
+                    found[0] = 1;
+                    break;
+                }
+            }
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0x2D && allData[i + 1] == 0x0 && allData[i + 2] == 0x0 && allData[i + 3] == 0x0 && allData[i + 4] == 0x2E)
+                {
+                    for (int j = 1900; j < 2108; j++)
+                    {
+                        if (allData[i - j] == 09)
+                        {
+                            found[1] = 1;
+                            Array.Copy(allData, i - j + 4, iqExtra, 0, 11);
+                        }
+                    }
+                }
+            }
+            for (int i = allData.Length - 800; i < allData.Length; i++)
+            {
+                if (allData[i] == 0x78 && allData[i + 1] == 0x63 && allData[i + 2] == 1 && allData[i + 3] == 0 && allData[i - 1] == 0)
+                {
+                    Array.Copy(allData, i + 15, lastKey, 0, 40);
+                    found[2] = 1;
+                    break;
+                }
+            }
+            if (found.Sum() < 3)
+            {
+                Console.WriteLine("Sorry your a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
+                return;
+            }
+            stream.Close();
+            using var stream2 = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
+
+            length = (int)stream2.Length;
+            allData = new byte[length];
+            stream2.Read(allData, 0, length);
+
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0 && allData[i + 9] == 0x2d && allData[i + 14] == 0x2d && allData[i + 19] == 0x2d && allData[i + 24] == 0x2d)
+                {
+                    stream2.Position = i + 1;
+                    stream2.Write(codeBytes, 0, 36);
+                    stream2.Position = i -71;
+                    stream2.Write(codeBytes2, 0, 9);
+                    found[3] = 1;
+                    break;
+                }
+            }
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0x2D && allData[i + 1] == 0x0 && allData[i + 2] == 0x0 && allData[i + 3] == 0x0 && allData[i + 4] == 0x2E)
+                {
+                    for (int j = 1900; j < 2108; j++)
+                    {
+                        if (allData[i - j] == 09)
+                        {
+                            found[4] = 1;
+                            stream2.Position = i - j + 4;
+                            stream2.Write(iqExtra, 0, 11);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int i = allData.Length-800; i <allData.Length; i++)
+            {
+                if (allData[i] == 0x78 && allData[i + 1] == 0x63 && allData[i + 2] == 1 && allData[i + 3] == 0 && allData[i - 1] == 0)
+                {
+                    stream2.Position = i + 15;
+                    stream2.Write(lastKey, 0, 40);
+                    found[5] = 1;
+                    break;
+                }
+            }
+            if (found.Sum() < 6)
+            {
+                Console.WriteLine("Sorry a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Success");
+            }
         }
         static void Decrypt(string key, string key2)
         {
@@ -450,7 +576,7 @@ namespace Battle_Cats_save_editor
         {
             ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Set new account to avoid error \"Your save is being used somewhere else\" bug " +
                 "\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
-                "(use if your gamatoto crashes your game)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "(use if your gamatoto crashes your game)\n&5.&Fix save is used elsewhere error, whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that) and it should fix that error\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             int choice = Inputed();
 
             switch (choice)
@@ -459,6 +585,7 @@ namespace Battle_Cats_save_editor
                 case 2: NewIQ(path); break;
                 case 3: Blue(path); break;
                 case 4: FixGam(path); break;
+                case 5: Elsewhere(path); break;
                 default: Console.WriteLine("Please input a number that is recognised"); break;
 
             }
@@ -1708,7 +1835,6 @@ namespace Battle_Cats_save_editor
             byte[] allData = new byte[length];
             stream2.Read(allData, 0, length);
 
-            WebClient client = new();
             Console.WriteLine("What inquiry code do you want - this code must be set to an account code that actually lets you play without the save is used elsewhere bug");
             string iq = Console.ReadLine();
             byte[] bytes = Encoding.ASCII.GetBytes(iq);
