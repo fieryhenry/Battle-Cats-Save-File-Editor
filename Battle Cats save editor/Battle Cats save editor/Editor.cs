@@ -35,7 +35,6 @@ namespace Battle_Cats_save_editor
             if (FD.ShowDialog() == DialogResult.OK)
             {
                 string[] fileToOpen = FD.FileNames;
-                string path = Path.Combine(fileToOpen[0]);
                 for (int i = 0; i < fileToOpen.Length; i++)
                 {
                     ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
@@ -66,7 +65,8 @@ namespace Battle_Cats_save_editor
             catch
             {
             }
-            WebClient webClient = new();
+            WebClient webClient = new WebClient();
+            webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
             bool skip = false;
             string lines = "";
             try
@@ -78,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.27.0";
+            string version = "2.27.1";
 
             if (lines == version && !skip)
             {
@@ -119,9 +119,7 @@ namespace Battle_Cats_save_editor
                 "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                 "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Upload your save onto the ponos servers and restore it with the codes" +
-                " it gives you&(Warning using this option could result in the save is used elsewhere bug, so for now, use a root explorer to replace" +
-                " the save in the game with the edited one)&\n&32.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
                 "apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
@@ -171,8 +169,8 @@ namespace Battle_Cats_save_editor
                     case 28: SoL(path); break;
                     case 29: GamHelp(path); break;
                     case 30: GamXP(path); break;
-                    case 31: UploadSave(gameVer, path); break;
-                    case 32:
+                    case 34: UploadSave(gameVer, path); break;
+                    case 31:
                         Decrypt("b484857901742afc", "89a0f99078419c28");
                         if (i == fileToOpen.Length - 1)
                         {
@@ -180,7 +178,7 @@ namespace Battle_Cats_save_editor
                             Exit(0);
                         }
                         break;
-                    case 34:
+                    case 32:
                         EncryptData(path, "b484857901742afc", "89a0f99078419c28");
                         if (i == fileToOpen.Length - 1)
                         {
@@ -188,7 +186,7 @@ namespace Battle_Cats_save_editor
                             Exit(0);
                         }
                         break;
-                    case 35: TalentOrbs(path); break;
+                    case 33: TalentOrbs(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Encrypt(gameVer, path);
@@ -332,7 +330,7 @@ namespace Battle_Cats_save_editor
             {
                 spam = true;
             }
-            OpenFileDialog fd = new();
+            OpenFileDialog fd = new OpenFileDialog();
             fd.Multiselect = true;
             fd.Filter = "files (*.pack; .list)|*.pack;*.list";
             if (fd.ShowDialog() != DialogResult.OK)
@@ -393,9 +391,9 @@ namespace Battle_Cats_save_editor
 
                         ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                        using MemoryStream msDecrypt = new(allData);
-                        using CryptoStream csDecrypt = new(msDecrypt, decryptor, CryptoStreamMode.Read);
-                        using StreamReader srDecrypt = new(csDecrypt);
+                        using MemoryStream msDecrypt = new MemoryStream(allData);
+                        using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+                        using StreamReader srDecrypt = new StreamReader(csDecrypt);
 
                         plaintext = srDecrypt.ReadToEnd();
                         if (!Directory.Exists("Decomp_lists/"))
@@ -452,7 +450,7 @@ namespace Battle_Cats_save_editor
                             File.WriteAllBytes(@"game_files/content", content);
                             using var stream2 = new FileStream(@"game_files/content", FileMode.Open, FileAccess.ReadWrite);
 
-                            using CryptoStream csDecrypt = new(stream2, decryptor, CryptoStreamMode.Read);
+                            using CryptoStream csDecrypt = new CryptoStream(stream2, decryptor, CryptoStreamMode.Read);
                             byte[] bytes = new byte[offset[j]];
                             csDecrypt.Read(bytes, 0, offset[j]);
 
@@ -481,7 +479,7 @@ namespace Battle_Cats_save_editor
         {
             Console.WriteLine("Enter name of .pack file to be outputed");
             string name = Console.ReadLine();
-            FolderBrowserDialog fd = new();
+            FolderBrowserDialog fd = new FolderBrowserDialog();
             fd.SelectedPath = Path.GetDirectoryName(patht);
             if (fd.ShowDialog() != DialogResult.OK)
             {
@@ -495,10 +493,10 @@ namespace Battle_Cats_save_editor
             long amount = 0;
             for (int i = 0; i < files.Length; i++)
             {
-                FileInfo attributes = new(files[i]);
+                FileInfo attributes = new FileInfo(files[i]);
                 try
                 {
-                    FileInfo attributesb = new(files[i - 1]);
+                    FileInfo attributesb = new FileInfo(files[i - 1]);
                     amount += attributes.Length;
                     listFile += Path.GetFileName(files[i]) + "," + amount + "," + attributes.Length + "\n";
                 }
@@ -716,32 +714,6 @@ namespace Battle_Cats_save_editor
 
         }
 
-        static void Treasure(string path)
-        {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            int j = 0;
-            for (int i = 2986; i <= 3566; i += 4)
-            {
-                j++;
-                if (j % 49 != 0)
-                {
-                    stream.Position = i;
-                    stream.WriteByte(03);
-                }
-
-            }
-            j = 0;
-            for (int i = 3770; i <= 4942; i += 4)
-            {
-                j++;
-                if (j % 49 != 0)
-                {
-                    stream.Position = i;
-                    stream.WriteByte(03);
-                }
-            }
-            Console.WriteLine("All Treasures");
-        }
         static void SepecTreasures(string path)
         {
             Console.WriteLine("What level of treasures of you want?(max 255) I would recommend going below 60 though, 1 = inferior, 2 = normal 3 = superior, anything above 3 just aplifies the treasure effect");
@@ -752,7 +724,7 @@ namespace Battle_Cats_save_editor
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int j = 0;
             int id = 1;
-            for (int i = 2986; i <= 3566; i += 4)
+            for (int i = 2986; i <= 4942; i += 4)
             {
                 j++;
                 if (j % 49 == 0)
@@ -769,33 +741,15 @@ namespace Battle_Cats_save_editor
                 }
 
             }
-            j = 0;
-            for (int i = 3770; i <= 4942; i += 4)
-            {
-                j++;
-                if (j % 49 == 0)
-                {
-                    id++;
-                }
-                else if (j % 49 != 0)
-                {
-                    if (id == answer)
-                    {
-                        stream.Position = i;
-                        stream.WriteByte((byte)level);
-                    }
-                }
-            }
-
         }
         static void MaxTreasures(string path)
         {
-            Console.WriteLine("What level of treasures of you want?(max 255) I would recommend going below 60 though");
+            Console.WriteLine("What level of treasures of you want?(max 255) I would recommend going below 60 though, if you actually want to damage aliens, you should set this to 4 or lower");
             int level = Inputed();
             if (level > 255) level = 255;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int j = 0;
-            for (int i = 2986; i <= 3566; i += 4)
+            for (int i = 2986; i <= 4942; i += 4)
             {
                 j++;
                 if (j % 49 != 0)
@@ -804,16 +758,6 @@ namespace Battle_Cats_save_editor
                     stream.WriteByte((byte)level);
                 }
 
-            }
-            j = 0;
-            for (int i = 3770; i <= 4942; i += 4)
-            {
-                j++;
-                if (j % 49 != 0)
-                {
-                    stream.Position = i;
-                    stream.WriteByte((byte)level);
-                }
             }
             Console.WriteLine("All treasures level {0}", level);
         }
@@ -1804,6 +1748,13 @@ namespace Battle_Cats_save_editor
 
         static void EvolveSpecific(string path)
         {
+            Console.WriteLine("Do you want to evolve(1) or de-evolve(2)?:");
+            string devolve = Console.ReadLine();
+            if (devolve != "1" && devolve != "2")
+            {
+                Console.WriteLine("Answer must be 1 or 2!");
+                EvolveSpecific(path);
+            }
             int[] occurrence = OccurrenceB(path);
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1818,12 +1769,26 @@ namespace Battle_Cats_save_editor
             catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
             int[] form = EvolvedFormsGetter();
             int pos = (int)stream.Position;
-            for (int i = 0; i < input.Length; i++)
-            {
-                stream.Position = pos + (int.Parse(input[i]) - 9) * 4;
-                stream.WriteByte((byte)form[(int.Parse(input[i]) - 9)]);
-                stream.Position--;
+            try {
+                for (int i = 0; i < input.Length; i++)
+                {
+                    stream.Position = pos + (int.Parse(input[i]) - 9) * 4;
+                    if (devolve == "1")
+                    {
+                        stream.WriteByte((byte)form[int.Parse(input[i]) - 9]);
+                    }
+                    else
+                    {
+                        stream.WriteByte(0);
+                    }
+                    stream.Position--;
+                }
             }
+            catch
+            {
+                Console.WriteLine("You need to input an id that isn't a normal cat!");
+            }
+
 
 
         }
@@ -1913,7 +1878,7 @@ namespace Battle_Cats_save_editor
                 for (int i = 1; i < fruits.Length + 1; i++)
                 {
                     int choice2 = i;
-                    stream2.Position = (occurrence[6] - 60) + ((choice2 - 1) * 4);
+                    stream2.Position = occurrence[6] - 60 + ((choice2 - 1) * 4);
                     stream2.WriteByte(bytes2[0]);
                     stream2.WriteByte(bytes2[1]);
                     ColouredText("&Set &" + fruits[choice2 - 1] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
@@ -1938,7 +1903,7 @@ namespace Battle_Cats_save_editor
 
                 byte[] bytes = Endian(amount);
 
-                stream2.Position = (occurrence[6] - 60) + ((choice - 1) * 4);
+                stream2.Position = occurrence[6] - 60 + ((choice - 1) * 4);
                 stream2.WriteByte(bytes[0]);
                 stream2.WriteByte(bytes[1]);
             }
@@ -2285,10 +2250,10 @@ namespace Battle_Cats_save_editor
 
         static int[] EvolvedFormsGetter()
         {
-            WebClient client = new();
+            WebClient client = new WebClient();
             client.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/cats.csv", @"cats.csv");
             using var reader = new StreamReader(@"cats.csv");
-            List<string> listA = new();
+            List<string> listA = new List<string>();
             while (!reader.EndOfStream)
             {
                 string line = reader.ReadLine();
@@ -2377,7 +2342,7 @@ namespace Battle_Cats_save_editor
                         int id = int.Parse(answer) - 1;
                         stream.Position += id * 4;
                         stream.WriteByte(08);
-                        stream.Position = (unlock - 6152) + ((id + 1) * 4);
+                        stream.Position = unlock - 6152 + ((id + 1) * 4);
                         stream.WriteByte(03);
                         stream.Position = levels + (id * 97) - id;
                         for (int i = 0; i < levelCount[id]; i++)
@@ -2398,7 +2363,7 @@ namespace Battle_Cats_save_editor
                         {
                             stream.WriteByte(08);
                         }
-                        stream.Position = (unlock - 6152) + ((id + 1) * 4);
+                        stream.Position = unlock - 6152 + ((id + 1) * 4);
                         stream.WriteByte(03);
                         stream.Position = levels + (id * 97) - id;
                         long startpos = stream.Position;
@@ -2423,22 +2388,22 @@ namespace Battle_Cats_save_editor
                         int firstid = int.Parse(splits[0]) - 1;
                         int secondid = int.Parse(splits[1]) - 1;
                         stream.Position += firstid * 4;
-                        for (int i = 0; i < (secondid - firstid) + 1; i++)
+                        for (int i = 0; i < secondid - firstid + 1; i++)
                         {
                             stream.WriteByte(08);
                             stream.Position += 3;
 
                         }
-                        stream.Position = (unlock - 6152) + ((firstid + 1) * 4);
+                        stream.Position = unlock - 6152 + ((firstid + 1) * 4);
                         //stream.Position += firstid * 4;
-                        for (int i = 0; i < (secondid - firstid) + 1; i++)
+                        for (int i = 0; i < secondid - firstid + 1; i++)
                         {
                             stream.WriteByte(03);
                             stream.Position += 3;
                         }
                         stream.Position = levels + (firstid * 97) - firstid;
                         long startpos = stream.Position;
-                        for (int j = 0; j < (secondid - firstid) + 1; j++)
+                        for (int j = 0; j < secondid - firstid + 1; j++)
                         {
                             for (int i = 0; i < 8; i++)
                             {
@@ -2461,7 +2426,7 @@ namespace Battle_Cats_save_editor
                         long pos = stream.Position += firstid * 4;
                         stream.Position += firstid * 4;
                         if (stars > 4) stars = 4;
-                        for (int i = 0; i < (secondid - firstid) + 1; i++)
+                        for (int i = 0; i < secondid - firstid + 1; i++)
                         {
                             for (int j = 0; j < stars; j++)
                             {
@@ -2471,9 +2436,9 @@ namespace Battle_Cats_save_editor
                             }
                             pos += 4;
                         }
-                        pos = (unlock - 6152) + ((firstid + 1) * 4);
+                        pos = unlock - 6152 + ((firstid + 1) * 4);
                         //stream.Position += firstid * 4;
-                        for (int i = 0; i < (secondid - firstid) + 1; i++)
+                        for (int i = 0; i < secondid - firstid + 1; i++)
                         {
                             for (int j = 0; j < stars; j++)
                             {
@@ -2486,7 +2451,7 @@ namespace Battle_Cats_save_editor
                         stream.Position = levels + (firstid * 97) - firstid;
                         long startpos = stream.Position;
                         long pos2 = stream.Position;
-                        for (int j = 0; j < (secondid - firstid) + 1; j++)
+                        for (int j = 0; j < secondid - firstid + 1; j++)
                         {
                             for (int k = 0; k < stars; k++)
                             {
