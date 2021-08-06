@@ -78,7 +78,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.27.1";
+            string version = "2.27.2";
 
             if (lines == version && !skip)
             {
@@ -101,7 +101,7 @@ namespace Battle_Cats_save_editor
             string[] fileToOpen = Savepaths;
             string path = Path.Combine(fileToOpen[0]);
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->2, and set your inquiry code to a save that doesn't have that error\n", fileToOpen);
+            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->5, and select a save that doesn't have that error and never has\n", fileToOpen);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
             Console.ForegroundColor = ConsoleColor.White;
@@ -1868,21 +1868,29 @@ namespace Battle_Cats_save_editor
 
             if (input == "2")
             {
-                Console.WriteLine("How many do you want?(max 256)");
+                Console.WriteLine("How many do you want?(max 32)");
                 int num = Inputed();
-                if (num > 256) num = 256;
+                if (num > 32) num = 32;
                 else if (num < 0) num = 0;
 
                 byte[] bytes2 = Endian(num);
 
-                for (int i = 1; i < fruits.Length + 1; i++)
+                for (int i = 5; i < 11; i++)
                 {
                     int choice2 = i;
-                    stream2.Position = occurrence[6] - 60 + ((choice2 - 1) * 4);
+                    stream2.Position = occurrence[6] - 60 + ((choice2) * 4);
                     stream2.WriteByte(bytes2[0]);
                     stream2.WriteByte(bytes2[1]);
-                    ColouredText("&Set &" + fruits[choice2 - 1] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    ColouredText("&Set &" + fruits[choice2] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 }
+                stream2.Position = occurrence[6] - 60 + ((12) * 4);
+                stream2.WriteByte(bytes2[0]);
+                stream2.WriteByte(bytes2[1]);
+                ColouredText("&Set &" + fruits[12] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                stream2.Position = occurrence[6] - 60 + ((14) * 4);
+                stream2.WriteByte(bytes2[0]);
+                stream2.WriteByte(bytes2[1]);
+                ColouredText("&Set &" + fruits[14] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
             }
             else if (input == "1")
