@@ -16,14 +16,6 @@ Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/rel
 
 I have created an updated tutorial video that goes you through the steps: https://youtu.be/D6hPnJTlq-U
 
-:exclamation::exclamation:IMPORTANT:When you are done make sure to either select the patch save option or click "yes" when the dialog box opens asking you if you're finished with the editor
-
-Run BackupManagerEN and restore the save or overwrite the save in the game's files
-
-Take those codes and put them back into the game
-
-And done have fun!
-
 # Features
 1. Change catfood
 2. Change XP
