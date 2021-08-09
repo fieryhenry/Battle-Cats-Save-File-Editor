@@ -54,6 +54,16 @@ namespace Battle_Cats_save_editor
                 SelSave();
             }
         }
+        static string MakeRequest(WebRequest request)
+        {
+            WebResponse response = request.GetResponse();
+            using (Stream dataStream = response.GetResponseStream())
+            {
+                StreamReader reader = new StreamReader(dataStream);
+                string responseFromServer = reader.ReadToEnd();
+                return responseFromServer;
+            }
+        }
         static void CheckUpdate()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
@@ -65,20 +75,19 @@ namespace Battle_Cats_save_editor
             catch
             {
             }
-            WebClient webClient = new WebClient();
-            webClient.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
             bool skip = false;
             string lines = "";
             try
             {
-                lines = webClient.DownloadString("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt").Trim('\n');
+                string data = MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt"));
+                lines = data.Trim('\n');
             }
             catch (WebException)
             {
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.27.2";
+            string version = "2.28.0";
 
             if (lines == version && !skip)
             {
@@ -91,8 +100,16 @@ namespace Battle_Cats_save_editor
                 bool answer = OnAskUser("A new version is available would you like to update?", "Updater");
                 if (answer)
                 {
-                    System.Diagnostics.Process.Start(@"Updater.exe");
-                    Exit(1);
+                    try
+                    {
+                        System.Diagnostics.Process.Start(@"Updater.exe");
+                        Exit(1);
+                    }
+                    catch
+                    {
+                        ColouredText("Error, the updater cannot be found, please download the latest version from the github instead\n", ConsoleColor.White, ConsoleColor.Red);
+                    }
+
                 }
             }
         }
@@ -101,7 +118,7 @@ namespace Battle_Cats_save_editor
             string[] fileToOpen = Savepaths;
             string path = Path.Combine(fileToOpen[0]);
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->5, and select a save that doesn't have that error and never has\n", fileToOpen);
+            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->5, and select a save that doesn't have that error and never has had the error\n", fileToOpen);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
             Console.ForegroundColor = ConsoleColor.White;
@@ -120,7 +137,7 @@ namespace Battle_Cats_save_editor
                 "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
                 "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
-                "apk if you are using an older game version)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "apk if you are using an older game version)\n&32.& Change talent orbs(must have talent orbs unlocked)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
@@ -178,7 +195,8 @@ namespace Battle_Cats_save_editor
                             Exit(0);
                         }
                         break;
-                    case 32:
+                    case 32: TalentOrbs(path); break;
+                    case 33:
                         EncryptData(path, "b484857901742afc", "89a0f99078419c28");
                         if (i == fileToOpen.Length - 1)
                         {
@@ -186,7 +204,6 @@ namespace Battle_Cats_save_editor
                             Exit(0);
                         }
                         break;
-                    case 33: TalentOrbs(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Encrypt(gameVer, path);
@@ -262,7 +279,7 @@ namespace Battle_Cats_save_editor
             }
             if (found.Sum() < 3)
             {
-                Console.WriteLine("Sorry your a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
+                Console.WriteLine("Sorry a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
                 return;
             }
             stream.Close();
@@ -572,7 +589,7 @@ namespace Battle_Cats_save_editor
         }
         static void Menu(string path)
         {
-            ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Set new account to avoid error \"Your save is being used somewhere else\" bug " +
+            ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Set new account code" +
                 "\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
                 "(use if your gamatoto crashes your game)\n&5.&Fix save is used elsewhere error, whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that) and it should fix that error\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             int choice = Inputed();
@@ -599,6 +616,7 @@ namespace Battle_Cats_save_editor
             long startPos = 0;
             long endPos = 0;
             int lengthst = 0;
+
             for (int i = 5; i < 1294; i++)
             {
                 if (allData[allData.Length - i] == 0x84 && allData[allData.Length - i + 1] == 0x61 && allData[allData.Length - i + 2] == 0x01)
@@ -607,16 +625,17 @@ namespace Battle_Cats_save_editor
                     lengthst = allData[startPos + 4] * 3;
                     break;
                 }
-                else if (allData[allData.Length - i] == 0x01 && allData[allData.Length - i + 1] == 0x4C && allData[allData.Length - i + 2] == 0x62 && allData[allData.Length - i + 3] == 0x01)
+                else if (allData[allData.Length - i] == 0x4C && allData[allData.Length - i + 1] == 0x62 && allData[allData.Length - i + 2] == 0x01)
                 {
                     endPos = allData.Length - i;
                 }
             }
-            Console.WriteLine(lengthst);
+
             int[] orbs = new int[65];
             long[] orbPos = new long[65];
             int j = 0;
-            for (int i = 6; i < endPos - startPos - 2; i++)
+
+            for (int i = 6; i < endPos - startPos; i++)
             {
                 if (i == lengthst + 8)
                 {
@@ -638,45 +657,106 @@ namespace Battle_Cats_save_editor
             }
             string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Floating D attack", "Floating C attack", "Floating B attack", "Floating A attack", "Floating S attack", "Floating D defense", "Floating C defense", "Floating B defense", "Floating A defense", "Floating S defense", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Angel D attack", "Angel C attack", "Angel B attack", "Angel A attack", "Angel S attack", "Angel D defense", "Angel C defense", "Angel B defense", "Angel A defense", "Angel S defense", "Alien D attack", "Alien C attack", "Alien B attack", "Alien A attack", "Alien S attack", "Alien D defense", "Alien C defense", "Alien B defense", "Alien A defense", "Alien S defense", "Zombie D attack", "Zombie C attack", "Zombie B attack", "Zombie A attack", "Zombie S attack", "Zombie D defense", "Zombie C defense", "Zombie B defense", "Zombie A defense", "Zombie S defense" };
             Console.WriteLine("You have:");
+            Console.WriteLine(orbList.Length);
+            string toOutput = "";
+            string[] strippedOrbs = new string[orbList.Length];
+            for (int i = 0; i < orbList.Length; i++)
+            {
+                string[] temp = orbList[i].Split(' ');
+                strippedOrbs[i] = temp[0] + " " + temp[2];
+            }
+
             for (int i = 0; i < orbs.Length; i++)
             {
                 if (i % 5 == 0)
                 {
-                    Console.Write("\n");
+                    toOutput += "\n" + strippedOrbs[i] + ":\n";
                 }
                 if (orbs[i] == 1)
                 {
-                    ColouredText(orbs[i] + " " + orbList[i] + " &orb\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    toOutput += "&" + orbs[i] + "& " + orbList[i] + " &orb\n&";
                 }
                 else if (orbs[i] > 1)
                 {
-                    ColouredText(orbs[i] + " " + orbList[i] + " &orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    toOutput += "&" + orbs[i] + "& " + orbList[i] + " &orbs\n&";
                 }
             }
+            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+
             var bytess = new List<byte>(allData);
-            bytess.RemoveRange((int)(startPos + 8), lengthst-4);
-            byte[] insert = new byte[64*3 -1];
-            for (int i = 0; i < 64; i++)
+            if (lengthst > 0)
+            {
+                bytess.RemoveRange((int)(startPos + 8), lengthst - 4);
+            }
+            ColouredText("\n&What orbs do you want?(Enter the full name, in format - {&type&} {&letter&} {&attack/defense&}, e.g &red d attack&, or &floating s defense&, note that metal attack up orbs &don't exist&\nIf you want to edit multiple, enter 1 full" +
+                " orb name and then another orb name, separated by and underscore, e.g, &red s defense&_&alien c attack&\nYou can also enter orb ids instead if you want to. You can enter &clear& if you want to remove all of your talent orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string input = Console.ReadLine();
+            string[] orbNames = input.Split('_');
+
+            List<int> ids = new List<int>();
+            List<int> amounts = new List<int>();
+
+            bool skip = false;
+            if (orbNames[0].ToLower() == "clear")
+            {
+                skip = true;
+                for (int i = 0; i < orbs.Length; i++)
+                {
+                    orbs[i] = 0;
+                    orbPos[i] = 0;
+                }
+                ColouredText("Cleared all talent orbs from storage\n", ConsoleColor.White, ConsoleColor.Red);
+            }
+
+            byte[] insert = new byte[65*3];
+            for (int i = 0; i < 65; i++)
             {
                 insert[i * 3+1] = (byte)(i + 1);
                 insert[i * 3] = (byte)orbs[i];
             }
-            Console.WriteLine("What orb do you want?");
-            int id = Inputed() -1;
 
-            insert[id * 3] = 0x04;
-
+            for (int i = 0; i < orbNames.Length && !skip; i++)
+            {
+                try
+                {
+                    int id = int.Parse(orbNames[i]) - 1;
+                    if (id > orbList.Length +1)
+                    {
+                        Console.WriteLine("orb id is too large");
+                    }
+                    else
+                    {
+                        ids.Add(id);
+                    }
+                }
+                catch
+                {
+                    if (!Array.Exists(orbList, orb => orb.ToLower() == orbNames[i].ToLower()))
+                    {
+                        Console.WriteLine("Orb: " + orbNames[i] + " doesn't exist!");
+                    }
+                    else
+                    {
+                        ids.Add(Array.FindIndex(orbList, orb => orb.ToLower() == orbNames[i].ToLower()));
+                    }
+                }
+            }
+            for (int i = 0; i < ids.Count; i++)
+            {
+                ColouredText("&What amount of &" + orbList[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
+                amounts.Add(Inputed());
+                insert[ids[i]* 3] = (byte)amounts[i];
+            }
+            bytess[(int)startPos + 4] = 0x41;
             bytess.InsertRange((int)(startPos + 8), insert);
-
+         
             stream.Close();
-
             File.WriteAllBytes(path, bytess.ToArray());
-
         }
 
         static void CatFood(string path)
         {
-            Console.WriteLine("How much cat food do you want?(max 45000)");
+            Console.WriteLine("How much cat food do you want?(max 45000, but I recommend below 20k, to be \"safe\"");
             int CatFood = Inputed();
             if (CatFood > 45000) CatFood = 45000;
 
@@ -830,12 +910,19 @@ namespace Battle_Cats_save_editor
                 int length = (int)stream.Length;
                 byte[] allData = new byte[length];
                 stream.Read(allData, 0, length);
+                int pos = occurrence[2] + (catAmount * 4);
+                stream.Position = pos;
 
-                long pos = occurrence[2] + 2440;
                 for (int i = 0; i < ids.Length; i++)
                 {
-                    if (ids[i] > 1) ids[i]++;
-                    stream.Position = pos + (ids[i] * 4) + 4;
+                    if (ids[i] == 1)
+                    {
+                        stream.Position = pos + (ids[i] * 4);
+                    }
+                    else
+                    {
+                        stream.Position = pos + ((ids[i]+1) * 4);
+                    }
                     stream.WriteByte((byte)idPlus[i]);
                     stream.Position++;
                     stream.WriteByte((byte)((byte)idBase[i] - 1));
@@ -844,7 +931,7 @@ namespace Battle_Cats_save_editor
             }
             if (answer == "yes")
             {
-                stream.Position = occurrence[2] + 2448;
+                stream.Position = occurrence[2] + (catAmount*4) + 4;
                 stream.Write(bytes, 0, bytes.Length);
             }
             Console.WriteLine("Success");
@@ -1177,10 +1264,10 @@ namespace Battle_Cats_save_editor
 
             Console.WriteLine("Scan Complete");
 
-            Console.WriteLine("What seed do you want?(max 4294967295)");
-            long XP = Inputed();
-            if (XP > 4294967295) XP = 4294967295;
-            byte[] bytes = Endian(XP);
+            Console.WriteLine("What seed do you want?");
+            long Seed = Inputed();
+            if (Seed > 4294967295) Seed = 4294967295;
+            byte[] bytes = Endian(Seed);
 
             byte[] year = new byte[2];
             year[0] = allData[15];
@@ -1201,7 +1288,7 @@ namespace Battle_Cats_save_editor
                 Options();
             }
 
-            Console.WriteLine("Set gacha seed to: {0}", XP);
+            Console.WriteLine("Set gacha seed to: {0}", Seed);
             for (int i = 0; i < 5; i++)
                 stream2.WriteByte(bytes[i]);
         }
@@ -1285,8 +1372,10 @@ namespace Battle_Cats_save_editor
         }
         static void Items(string path)
         {
-            Console.WriteLine("Before using this feature make sure that this is a recent save otherwise your data could get corrupted!\nHow many of each item do you want?(max 65535)");
-            int CatFood = Inputed();
+            Console.WriteLine("Before using this feature make sure that this is a recent save otherwise your data could get corrupted!\nHow many of each item do you want?(max 3999)");
+            int Items = Inputed();
+            if (Items > 3999) Items = 3999;
+            if (Items < 0) Items = 0;
             _ = new byte[10];
             byte[] year = new byte[2];
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1296,7 +1385,7 @@ namespace Battle_Cats_save_editor
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
 
-            byte[] bytes = Endian(CatFood);
+            byte[] bytes = Endian(Items);
             int[] occurrence = new int[100];
 
             try
