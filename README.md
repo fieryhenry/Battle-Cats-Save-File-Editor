@@ -14,15 +14,7 @@ This got way more complicated due to added security to the transfer system, you 
 
 Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get Battle Cats Save File Editor.zip, not the exe)
 
-I have created a tutorial video that goes you through the steps: https://www.youtube.com/watch?v=T2f68SyH1Jo
-
-:exclamation::exclamation:IMPORTANT:When you are done make sure to either select the patch save option or click "yes" when the dialog box opens asking you if you're finished with the editor
-
-Run BackupManagerEN and restore the save or overwrite the save in the game's files
-
-Take those codes and put them back into the game
-
-And done have fun!
+I have created an updated tutorial video that goes you through the steps: https://youtu.be/D6hPnJTlq-U
 
 # Features
 1. Change catfood
