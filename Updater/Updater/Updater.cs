@@ -12,19 +12,18 @@ namespace Updater
 {
     class Updater
     {
+        static string application = @"Battle Cats Save Editor.exe";
         static void Main()
         {
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             File.Delete(@"Battle Cats save editor.exe");
-            string application = @"Battle Cats Save Editor.exe";
-
-            WebClient webClient = new WebClient();
 
             string lines = "";
             bool skip = false;
             try
             {
-                lines = webClient.DownloadString("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt").Trim('\n');
+                string data = (string)MakeRequest(true, WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/version.txt"));
+                lines = data.Trim('\n');
             }
             catch (WebException)
             {
@@ -36,12 +35,33 @@ namespace Updater
             {
                 string link = "https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases/download/" + lines + "/Battle.Cats.save.editor.exe";
                 Console.WriteLine(link + "\nUpdating program to newest version please wait");
-                WebClient webClient2 = new WebClient();
-                webClient2.DownloadFile(link, application);
-            }
 
+                MakeRequest(false, WebRequest.Create(link));
+                
+            }
             System.Diagnostics.Process.Start(@"Battle Cats Save Editor.exe");
 
+        }
+        static object MakeRequest(bool isString, WebRequest request)
+        {
+            WebResponse response = request.GetResponse();
+            using (Stream dataStream = response.GetResponseStream())
+            {
+                StreamReader reader = new StreamReader(dataStream);
+                if (isString)
+                {
+                    string responseFromServer = reader.ReadToEnd();
+                    return responseFromServer;
+                }
+                else
+                {
+                    using (Stream s = File.Create(application))
+                    {
+                        dataStream.CopyTo(s);
+                    }
+                    return dataStream;
+                }
+            }
         }
 
     }
