@@ -52,8 +52,8 @@ I have created an updated tutorial video that goes you through the steps: https:
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
-31. Upload save into the game
-32. Decrypt .list and .pack files found in /files directory of the game (not the ones in the newer apks as they use a different aes key that i don't know yet)
+31. Decrypt .list and .pack files found in /files directory of the game (not the ones in the newer apks as they use a different aes key that i don't know yet)
+32. Edit talent orbs
 
 
 If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
