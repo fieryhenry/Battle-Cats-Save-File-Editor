@@ -87,7 +87,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.28.0";
+            string version = "2.29.0";
 
             if (lines == version && !skip)
             {
@@ -136,8 +136,7 @@ namespace Battle_Cats_save_editor
                 "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                 "&23.& Clear story chapters\n&24.& Patch data\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files in /files directory of the game (also the ones in the " +
-                "apk if you are using an older game version)\n&32.& Change talent orbs(must have talent orbs unlocked)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.&Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
@@ -186,9 +185,8 @@ namespace Battle_Cats_save_editor
                     case 28: SoL(path); break;
                     case 29: GamHelp(path); break;
                     case 30: GamXP(path); break;
-                    case 34: UploadSave(gameVer, path); break;
                     case 31:
-                        Decrypt("b484857901742afc", "89a0f99078419c28");
+                        Decrypt("b484857901742afc");
                         if (i == fileToOpen.Length - 1)
                         {
                             Console.WriteLine("Press enter to exit");
@@ -196,7 +194,8 @@ namespace Battle_Cats_save_editor
                         }
                         break;
                     case 32: TalentOrbs(path); break;
-                    case 33:
+                    case 33: VerySpecificTreasures(path); break;
+                    case 34:
                         EncryptData(path, "b484857901742afc", "89a0f99078419c28");
                         if (i == fileToOpen.Length - 1)
                         {
@@ -338,10 +337,12 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Success");
             }
         }
-        static void Decrypt(string key, string key2)
+        static void Decrypt(string key)
         {
             Console.WriteLine("Do you want the lists of the files contained within the .pack files to be outputed in the console?(yes/no) When slecting .pack and .list files, make sure the names match, you can select multiple packs and lists at the same time");
             string answer = Console.ReadLine();
+            Console.WriteLine("Are you running game version 10.8 and up? (yes, no)?");
+            string ver = Console.ReadLine();
             bool spam = false;
             if (answer == "yes")
             {
@@ -448,15 +449,29 @@ namespace Battle_Cats_save_editor
                         {
                             byte[] content = new byte[offset[j]];
                             Array.Copy(allData, startpos[j], content, 0, offset[j]);
-
                             byte[] IV = new byte[16];
-                            byte[] Key = Encoding.ASCII.GetBytes(key2);
+                            byte[] Key = new byte[16];
+
+                            if (ver.ToLower() == "yes")
+                            {
+                                byte[] ivtemp = { 0x40, 0xb2, 0x13, 0x1a, 0x9f, 0x38, 0x8a, 0xd4, 0xe5, 0x00, 0x2a, 0x98, 0x11, 0x8f, 0x61, 0x28 };
+                                byte[] keytemp = { 0xd7, 0x54, 0x86, 0x8d, 0xe8, 0x9d, 0x71, 0x7f, 0xa9, 0xe7, 0xb0, 0x6d, 0xa4, 0x5a, 0xe9, 0xe3 };
+                                Key = keytemp;
+                                IV = ivtemp;
+                            }
+                            else
+                            {
+                                byte[] leytemp = { 0x0a, 0xd3, 0x9e, 0x4a, 0xea, 0xf5, 0x5a, 0xa7, 0x17, 0xfe, 0xb1, 0x82, 0x5e, 0xde, 0xf5, 0x21 };
+                                byte[] ivtemp = { 0xd1, 0xd7, 0xe7, 0x08, 0x09, 0x19, 0x41, 0xd9, 0x0c, 0xdf, 0x8a, 0xa5, 0xf3, 0x0b, 0xb0, 0xc2 };
+                                Key = leytemp;
+                                IV = ivtemp;
+                            }
 
                             using Aes aesAlg = Aes.Create();
                             aesAlg.Key = Key;
                             aesAlg.IV = IV;
                             aesAlg.Padding = PaddingMode.None;
-                            aesAlg.Mode = CipherMode.ECB;
+                            aesAlg.Mode = CipherMode.CBC;
 
                             ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
@@ -605,6 +620,179 @@ namespace Battle_Cats_save_editor
 
             }
         }
+        static void VerySpecificTreasures(string path)
+        {
+            string[] treasrureTypes1 = 
+            {
+                "Energy Drink", "Giant Safe", "Relativity Clock", "Philosopher's Stone", "Smart Material Wall", "Super Register", "Legendary Cat Shield", "Legendary Cat Sword", "Energy Core", "Turbo Machine", "Management Bible",
+            };
+            string[] treasureTypes2 =
+            {
+                "Aqua Crystal", "Plasma Crystal", "Ancient Tablet", "Mysterious Force", "Cosmic Energy", "Void Fruit", "Blood Fruit", "Sky Fruit", "Heaven's Fruit", "Time Machine", "Future Tech",
+            };
+            string[] treasureTypes3 =
+            {
+                "Stellar Garnet", "Phoebe Beryl", "Lunar Citrine", "Ganymede Topaz", "Callisto Amethyst", "Titanium Fruit", "Antimatter Fruit", "Enigma Fruit", "Neutrino Fruit", "Mystery Mask"
+            };
+            int[][] treasureLevels1 = new int[][]
+            {
+            new int[] { 46, 45, 44, 43, 42, 41, 40 },
+            new int[] { 39, 38, 37, 36 },
+            new int[] { 35, 34, 33, 32, 31 },
+            new int[] {30, 29, 28, 27, 26, 25, 24},
+            new int[] {23, 22, 19},
+            new int[] {20, 21, 18},
+            new int[] {17, 16, 15},
+            new int[] {14, 13, 12, 11, 10, 9, 8},
+            new int[] {7, 6, 5, 4, 3, 2},
+            new int[] {1},
+            new int[] {47, 48}
+
+            };
+            int[][] treasureLevels2 = new int[][]
+            {
+            new int[] { 46, 42, 39, 36, 33, 30, 27, 24},
+            new int[] { 22, 19, 16, 13, 10, 7, 4, 1},
+            new int[] {45, 44, 43},
+            new int[] {23},
+            new int[] { 41, 40, 38, 37, 35 },
+            new int[] { 18, 17, 15, 14},
+            new int[] { 26, 25, 21, 20 },
+            new int[] { 12, 11, 9, 8 },
+            new int[] { 6, 5, 4, 3 },
+            new int[] { 34, 32, 31, 29, 28 },
+            new int[] {47, 48}
+            };
+            int[][] treasureLevels3 = new int[][]
+            {
+            new int[] {46, 45, 44, 43, 42},
+            new int[] {37, 36, 35, 34, 33},
+            new int[] {28, 27, 26, 25, 24},
+            new int[] {19, 18, 17, 16, 15},
+            new int[] {10, 9, 8, 7, 6},
+            new int[] {41, 40, 39, 38},
+            new int[] {32, 31, 30, 29},
+            new int[] {23, 22, 21, 20},
+            new int[] {14, 13, 12, 11},
+            new int[] {5, 3, 1, 48},
+            new int[] {44, 42, 47}
+            };
+
+            Console.WriteLine("What level of treasures of you want?(max 255) 1 = inferior, 2 = normal 3 = superior, anything above 3 just aplifies the treasure effect");
+            int level = Inputed();
+            if (level > 255) level = 255;
+            Console.WriteLine("Do you want a list of the types of treasures?(yes,no):");
+            if (Console.ReadLine().ToLower() == "yes")
+            {
+                ColouredText("Empire of Cats:&" + "\n" + "\n    &Energy Drink& – Worker Cat Efficiency increased! (EoC 1-7) (East Asia Quarantine Zone for Zombie Outbreaks)" + "\n    &Giant Safe& – Worker Cat Wallet Capacity increased! (EoC 8-11) (Indian Ocean QZ for ZO)" + "\n    &Relativity Clock& – Production Speed of Cats increased! (EoC 12-16) (Himalaya-Rift QZ for ZO)" + "\n    &Philosopher's Stone& – XP obtained from battle increased! (EoC 17-23) (Afro-Mediterranean QZ for ZO)" + "\n    &Smart Material Wall& – Cat Base health increased! (EoC 24, 25, 28) (Alps QZ for ZO)" + "\n    &Super Register& – Money for defeating enemies increased! (EoC 27, 26, 29) (West Europe QZ for ZO)" + "\n    &Legendary Cat Shield& – Cat Health increased! (EoC 30-32) (North Atlantic QZ for ZO)" + "\n    &Legendary Cat Sword& – Cat ATK increased! (EoC 33-39) (East Americas QZ for ZO)" + "\n    &Energy Core& – Cat Cannon ATK increased! (EoC 40-45) (Pacific QZ for ZO)" + "\n    &Turbo Machine& – Cat Cannon recharge speed increased! (EoC 46) (Fairbanks QZ for ZO)" + "\n    &Management Bible& – Max Cat Energy increased! (EoC 47-48) (Mauna Kea QZ for ZO)" + "\n" + "\n&Into the Future:&" + "\n" + "\n    &Aqua Crystal& – Attacks against unstarred Aliens are much more powerful! (ItF 1, 5, 8, 11, 14, 17, 20, 23) (? QZ for ZO)" + "\n    &Plasma Crystal& – Attacks against unstarred Aliens are much more powerful! (ItF 25, 28, 31, 34, 37, 40, 43, 46) (? QZ for ZO)" + "\n    &Ancient Tablet& – Your Cat Base's defense is increased! (ItF 2-4) (? QZ for ZO)" + "\n    &Mysterious Force& – Cat Cannon recharge time is decreased. (ItF 24) (? QZ for ZO)" + "\n    &Cosmic Energy& – Cat Cannon attacks are now more powerful! (ItF 6, 7, 9, 10, 12) (? QZ for ZO)" + "\n    &Void Fruit& – Abilities used on Black enemies are more effective! (ItF 29, 30, 32-33) (? QZ for ZO)" + "\n    &Blood Fruit& – Abilities used on Red enemies are more effective! (ItF 21, 22, 26, 27) (? QZ for ZO)" + "\n    &Sky Fruit& – Abilities used on Floating enemies are more effective! (ItF 35, 36, 38, 39) (? QZ for ZO)" + "\n    &Heaven's Fruit& – Abilities used on Angel enemies enemies are more effective! (ItF 41, 42, 44, 45) (? QZ for ZO)" + "\n    &Time Machine& – Energy recovery speed is increased! (ItF 13, 15, 16, 18, 19) (? QZ for ZO)" + "\n    &Future Tech& – Maximum energy total increased! (ItF 47, 48) (? QZ for ZO)" + "\n" + "\n&Cats of the Cosmos:&" + "\n" + "\n    &Stellar Garnet& – Attacks against Starred Aliens are much more powerful! (CotC 1-5)" + "\n    &Phoebe Beryl& – Attacks against Starred Aliens are much more powerful! (CotC 10-14)" + "\n    &Lunar Citrine& – Attacks against Starred Aliens are much more powerful! (CotC 19-23)" + "\n    &Ganymede Topaz& – Attacks against Starred Aliens are much more powerful! (CotC 28-32)" + "\n    &Callisto Amethyst& – Attacks against Starred Aliens are much more powerful! (CotC 37-41)" + "\n    &Titanium Fruit& – Anti-Metal abilities have increased effect! (CotC 6-9)" + "\n    &Antimatter Fruit& – Anti-Zombie abilities have increased effect! (CotC 15-18)" + "\n    &Enigma Fruit& – Anti-Alien abilities have increased effect! (CotC 24-27)" + "\n    &Dark Matter& – Maximum energy total is increased! (CotC 33-36)" + "\n    &Neutrino& – XP received from battle increased! (CotC 42, 44, 46, 48)" + "\n    &Mystery Mask& – A strange effect will activate when Ch.X is cleared! (CotC 43, 45, 47)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            }
+            ColouredText("\nWhat treasures do you want to edit(enter the name of the treasures,e.g energy drink,or ancient tablet), you can enter multiple treasures,separated by underscores, e.g giant safe_neutrino_Energy drink:\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] answer = Console.ReadLine().Trim(' ').Split('_');
+            for (int i = 0; i < answer.Length; i++)
+            {
+                int chatperToEdit = -1;
+                bool skip = false;
+                int one = Array.FindIndex(treasrureTypes1, type => type.ToLower() == answer[i].ToLower());
+                int two = Array.FindIndex(treasureTypes2, type => type.ToLower() == answer[i].ToLower());
+                int three = Array.FindIndex(treasureTypes3, type => type.ToLower() == answer[i].ToLower());
+                if (one != -1)
+                {
+                    chatperToEdit = 0;
+                }
+                else if (two != -1)
+                {
+                    chatperToEdit = 3;
+                }
+                else if (three != -1)
+                {
+                    chatperToEdit = 6;
+                }
+                else
+                {
+                    skip = true;
+                    Console.WriteLine("Treasure type " + answer[i] + " doesn't exist!");
+                }
+                if (!skip)
+                {
+                    ColouredText("&What chapters for treasure type &" + answer[i] + "& do you want? (1, 2 or 3) you can enter more chapters separated by spaces:", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    string[] anS = Console.ReadLine().Trim(' ').Split(' ');
+                    for (int v = 0; v < anS.Length; v++)
+                    {
+                        bool end = false;
+                        int chapNum = 0;
+                        try
+                        {
+                            chapNum = int.Parse(anS[v]);
+                            if (chapNum > 3) chapNum = 3;
+                            else if (chapNum < 1) chapNum = 1;
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Input string was not in the correct format");
+                            end = true;
+                        }
+                        chapNum = chatperToEdit + chapNum;
+                        if (chapNum > 3)
+                        {
+                            chapNum++;
+                        }
+                        using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                        int j = 0;
+                        int id = 1;
+                        for (int k = 2986; k <= 4942 && !end; k += 4)
+                        {
+                            j++;
+                            if (j % 49 == 0)
+                            {
+                                id++;
+                            }
+                            else if (j % 49 != 0)
+                            {
+                                if (id == chapNum)
+                                {
+                                    switch (chatperToEdit)
+                                    {
+                                        case 0:
+                                            {
+                                                for (int g = 0; g < treasureLevels1[one].Length; g++)
+                                                {
+                                                    stream.Position = k - 4 + (treasureLevels1[one][g] * 4);
+                                                    stream.WriteByte((byte)level);
+                                                }
+                                                end = true;
+                                                break;
+                                            }
+                                        case 3:
+                                            {
+                                                for (int g = 0; g < treasureLevels2[two].Length; g++)
+                                                {
+                                                    stream.Position = k - 4 + (treasureLevels2[two][g] * 4);
+                                                    stream.WriteByte((byte)level);
+                                                }
+                                                end = true;
+                                                break;
+                                            }
+                                        case 6:
+                                            {
+                                                for (int g = 0; g < treasureLevels3[three].Length; g++)
+                                                {
+                                                    stream.Position = k - 4 + (treasureLevels3[three][g] * 4);
+                                                    stream.WriteByte((byte)level);
+                                                }
+                                                end = true;
+                                                break;
+                                            }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    
+                }
+            }
+
+        }
         static void TalentOrbs(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -617,7 +805,7 @@ namespace Battle_Cats_save_editor
             long endPos = 0;
             int lengthst = 0;
 
-            for (int i = 5; i < 1294; i++)
+            for (int i = 5; i < 1500; i++)
             {
                 if (allData[allData.Length - i] == 0x84 && allData[allData.Length - i + 1] == 0x61 && allData[allData.Length - i + 2] == 0x01)
                 {
@@ -631,8 +819,8 @@ namespace Battle_Cats_save_editor
                 }
             }
 
-            int[] orbs = new int[65];
-            long[] orbPos = new long[65];
+            int[] orbs = new int[155];
+            long[] orbPos = new long[155];
             int j = 0;
 
             for (int i = 6; i < endPos - startPos; i++)
@@ -656,40 +844,49 @@ namespace Battle_Cats_save_editor
                 }
             }
             string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Floating D attack", "Floating C attack", "Floating B attack", "Floating A attack", "Floating S attack", "Floating D defense", "Floating C defense", "Floating B defense", "Floating A defense", "Floating S defense", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Angel D attack", "Angel C attack", "Angel B attack", "Angel A attack", "Angel S attack", "Angel D defense", "Angel C defense", "Angel B defense", "Angel A defense", "Angel S defense", "Alien D attack", "Alien C attack", "Alien B attack", "Alien A attack", "Alien S attack", "Alien D defense", "Alien C defense", "Alien B defense", "Alien A defense", "Alien S defense", "Zombie D attack", "Zombie C attack", "Zombie B attack", "Zombie A attack", "Zombie S attack", "Zombie D defense", "Zombie C defense", "Zombie B defense", "Zombie A defense", "Zombie S defense" };
-            Console.WriteLine("You have:");
-            Console.WriteLine(orbList.Length);
-            string toOutput = "";
-            string[] strippedOrbs = new string[orbList.Length];
-            for (int i = 0; i < orbList.Length; i++)
-            {
-                string[] temp = orbList[i].Split(' ');
-                strippedOrbs[i] = temp[0] + " " + temp[2];
-            }
+            string[] orbTargets = { "Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie"};
+            string[] orbGrades = { "D", "C", "B", "A", "S" };
+            string[] orbTypes = {"Strong", "Massive", "Tough",};
 
+            List<string> orbS = new List<string>();
+
+            orbS.AddRange(orbList);
+            int length2 = orbS.Count;
+
+            for (int i = 0; i < orbTargets.Length; i++)
+            {
+                if (orbTargets[i] != "Metal")
+                {
+                    for (int k = 0; k < orbTypes.Length; k++)
+                    {
+                        for (int l = 0; l < orbGrades.Length; l++)
+                        {
+                            orbS.Add(orbTargets[i] + " " + orbGrades[l] + " " + orbTypes[k]);
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("You have:");
+            string toOutput = "";
             for (int i = 0; i < orbs.Length; i++)
             {
-                if (i % 5 == 0)
-                {
-                    toOutput += "\n" + strippedOrbs[i] + ":\n";
-                }
                 if (orbs[i] == 1)
                 {
-                    toOutput += "&" + orbs[i] + "& " + orbList[i] + " &orb\n&";
+                    toOutput += "&" + orbs[i] + "& " + orbS[i] + " &orb\n&";
                 }
                 else if (orbs[i] > 1)
                 {
-                    toOutput += "&" + orbs[i] + "& " + orbList[i] + " &orbs\n&";
+                    toOutput += "&" + orbs[i] + "& " + orbS[i] + " &orbs\n&";
                 }
             }
             ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
-
             var bytess = new List<byte>(allData);
             if (lengthst > 0)
             {
-                bytess.RemoveRange((int)(startPos + 8), lengthst - 4);
+                bytess.RemoveRange((int)(startPos + 8), lengthst);
             }
-            ColouredText("\n&What orbs do you want?(Enter the full name, in format - {&type&} {&letter&} {&attack/defense&}, e.g &red d attack&, or &floating s defense&, note that metal attack up orbs &don't exist&\nIf you want to edit multiple, enter 1 full" +
-                " orb name and then another orb name, separated by and underscore, e.g, &red s defense&_&alien c attack&\nYou can also enter orb ids instead if you want to. You can enter &clear& if you want to remove all of your talent orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText("\n&What orbs do you want?(Enter the full name, in format - {&type&} {&letter&} {&attack&/&defense&/&strong&/&massive&/&tough&}, e.g &red d attack&, or &floating s defense&, note that for metal, &only defense up orbs exist&\nIf you want to edit multiple, enter 1 full" +
+                " orb name and then another orb name, separated by and underscore, e.g, &red s strong&_&alien c tough&\nYou can also enter orb ids instead if you want to. You can enter &clear& if you want to remove all of your talent orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             string input = Console.ReadLine();
             string[] orbNames = input.Split('_');
 
@@ -708,10 +905,10 @@ namespace Battle_Cats_save_editor
                 ColouredText("Cleared all talent orbs from storage\n", ConsoleColor.White, ConsoleColor.Red);
             }
 
-            byte[] insert = new byte[65*3];
-            for (int i = 0; i < 65; i++)
+            byte[] insert = new byte[155 * 3];
+            for (int i = 0; i < 155; i++)
             {
-                insert[i * 3+1] = (byte)(i + 1);
+                insert[(i * 3)+1] = (byte)(i + 1);
                 insert[i * 3] = (byte)orbs[i];
             }
 
@@ -720,7 +917,7 @@ namespace Battle_Cats_save_editor
                 try
                 {
                     int id = int.Parse(orbNames[i]) - 1;
-                    if (id > orbList.Length +1)
+                    if (id > orbS.Count +1)
                     {
                         Console.WriteLine("orb id is too large");
                     }
@@ -731,23 +928,23 @@ namespace Battle_Cats_save_editor
                 }
                 catch
                 {
-                    if (!Array.Exists(orbList, orb => orb.ToLower() == orbNames[i].ToLower()))
+                    if (!orbS.Exists(orb => orb.ToLower() == orbNames[i].ToLower()))
                     {
                         Console.WriteLine("Orb: " + orbNames[i] + " doesn't exist!");
                     }
                     else
                     {
-                        ids.Add(Array.FindIndex(orbList, orb => orb.ToLower() == orbNames[i].ToLower()));
+                        ids.Add(orbS.FindIndex(orb => orb.ToLower() == orbNames[i].ToLower()));
                     }
                 }
             }
             for (int i = 0; i < ids.Count; i++)
             {
-                ColouredText("&What amount of &" + orbList[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
+                ColouredText("&What amount of &" + orbS[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
                 amounts.Add(Inputed());
                 insert[ids[i]* 3] = (byte)amounts[i];
             }
-            bytess[(int)startPos + 4] = 0x41;
+            bytess[(int)startPos + 4] = 0x9B;
             bytess.InsertRange((int)(startPos + 8), insert);
          
             stream.Close();
