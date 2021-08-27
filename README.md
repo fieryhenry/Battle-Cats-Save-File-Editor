@@ -42,7 +42,7 @@ I have created an updated tutorial video that goes you through the steps: https:
 24. Patch the save
 25. Secondary menu:  <br>
   25.1. Close rank up bundle menus <br>
-  25.2. Generate new account code <br>
+  25.2. Change account code <br>
   25.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
   25.4. Fix gamatoto <br>
   25.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up
