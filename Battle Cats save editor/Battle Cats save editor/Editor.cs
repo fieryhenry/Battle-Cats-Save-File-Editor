@@ -87,7 +87,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.29.1";
+            string version = "2.30.0";
 
             if (lines == version && !skip)
             {
@@ -122,7 +122,7 @@ namespace Battle_Cats_save_editor
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
             Console.ForegroundColor = ConsoleColor.White;
-            
+
             ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
 
             ColouredText("&What would you like to do?&\n0.& Select a new save\n1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures to a specific level\n&4.& All cats upgraded to a specific level" +
@@ -136,7 +136,7 @@ namespace Battle_Cats_save_editor
                 "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                 "&23.& Clear story chapters\n&24.& Patch data(not necessary to use, because your save is automatically patched after every edit)\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.& Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files\n&32.& Encrypt .pack and .list files\n&33.& Change talent orbs(must have talent orbs unlocked)\n&34.& Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
@@ -187,21 +187,11 @@ namespace Battle_Cats_save_editor
                     case 30: GamXP(path); break;
                     case 31:
                         Decrypt("b484857901742afc");
-                        if (i == fileToOpen.Length - 1)
-                        {
-                            Console.WriteLine("Press enter to exit");
-                            Exit(0);
-                        }
                         break;
-                    case 32: TalentOrbs(path); break;
-                    case 33: VerySpecificTreasures(path); break;
-                    case 34:
-                        EncryptData(path, "b484857901742afc", "89a0f99078419c28");
-                        if (i == fileToOpen.Length - 1)
-                        {
-                            Console.WriteLine("Press enter to exit");
-                            Exit(0);
-                        }
+                    case 33: TalentOrbs(path); break;
+                    case 34: VerySpecificTreasures(path); break;
+                    case 32:
+                        EncryptData("b484857901742afc");
                         break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
@@ -295,7 +285,7 @@ namespace Battle_Cats_save_editor
                 }
             }
 
-            for (int i = allData.Length-800; i <allData.Length; i++)
+            for (int i = allData.Length - 800; i < allData.Length; i++)
             {
                 if (allData[i] == 0x78 && allData[i + 1] == 0x63 && allData[i + 2] == 1 && allData[i + 3] == 0 && allData[i - 1] == 0)
                 {
@@ -422,75 +412,132 @@ namespace Battle_Cats_save_editor
                         int length = (int)stream.Length;
                         byte[] allData = new byte[length];
                         stream.Read(allData, 0, length);
-
-                        for (int j = 1; j < listLines.Length - 1; j++)
+                        if (paths[i].Contains("Server"))
                         {
-                            byte[] content = new byte[offset[j]];
-                            Array.Copy(allData, startpos[j], content, 0, offset[j]);
-                            byte[] IV = new byte[16];
-                            byte[] Key = new byte[16];
-
-                            if (ver.ToLower() == "yes")
+                            for (int j = 1; j < listLines.Length - 1; j++)
                             {
-                                byte[] ivtemp = { 0x40, 0xb2, 0x13, 0x1a, 0x9f, 0x38, 0x8a, 0xd4, 0xe5, 0x00, 0x2a, 0x98, 0x11, 0x8f, 0x61, 0x28 };
-                                byte[] keytemp = { 0xd7, 0x54, 0x86, 0x8d, 0xe8, 0x9d, 0x71, 0x7f, 0xa9, 0xe7, 0xb0, 0x6d, 0xa4, 0x5a, 0xe9, 0xe3 };
-                                Key = keytemp;
-                                IV = ivtemp;
-                            }
-                            else
-                            {
-                                byte[] leytemp = { 0x0a, 0xd3, 0x9e, 0x4a, 0xea, 0xf5, 0x5a, 0xa7, 0x17, 0xfe, 0xb1, 0x82, 0x5e, 0xde, 0xf5, 0x21 };
-                                byte[] ivtemp = { 0xd1, 0xd7, 0xe7, 0x08, 0x09, 0x19, 0x41, 0xd9, 0x0c, 0xdf, 0x8a, 0xa5, 0xf3, 0x0b, 0xb0, 0xc2 };
-                                Key = leytemp;
-                                IV = ivtemp;
-                            }
+                                byte[] content = new byte[offset[j]];
+                                Array.Copy(allData, startpos[j], content, 0, offset[j]);
 
-                            using Aes aesAlg = Aes.Create();
-                            aesAlg.Key = Key;
-                            aesAlg.IV = IV;
-                            aesAlg.Padding = PaddingMode.None;
-                            aesAlg.Mode = CipherMode.CBC;
+                                byte[] IV = new byte[16];
+                                byte[] Key = Encoding.ASCII.GetBytes("89a0f99078419c28");
 
-                            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                                using Aes aesAlg = Aes.Create();
+                                aesAlg.Key = Key;
+                                aesAlg.IV = IV;
+                                aesAlg.Padding = PaddingMode.None;
+                                aesAlg.Mode = CipherMode.ECB;
 
-                            if (!Directory.Exists("game_files/"))
-                            {
-                                Directory.CreateDirectory("game_files");
+                                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                                if (!Directory.Exists("game_files/"))
+                                {
+                                    Directory.CreateDirectory("game_files");
+                                }
+                                File.WriteAllBytes(@"game_files/content", content);
+                                using var stream2 = new FileStream(@"game_files/content", FileMode.Open, FileAccess.ReadWrite);
+
+                                using CryptoStream csDecrypt = new(stream2, decryptor, CryptoStreamMode.Read);
+                                byte[] bytes = new byte[offset[j]];
+                                csDecrypt.Read(bytes, 0, offset[j]);
+
+                                try
+                                {
+                                    Directory.CreateDirectory(@"game_files/" + Path.GetFileName(paths[i]));
+                                    File.WriteAllBytes(@"game_files/" + Path.GetFileName(paths[i]) + "/" + names[j], bytes);
+                                }
+                                catch
+                                {
+
+                                }
+                                if (spam)
+                                {
+                                    ColouredText("&Extracted: &" + names[j] + " &from &" + Path.GetFileName(paths[i]) + " &" + j + "&/&" + (listLines.Length - 2) + " - " + (i + 1) / 2 + "/" + paths.Length / 2 + "\n", ConsoleColor.White, ConsoleColor.Green);
+                                }
                             }
-                            File.WriteAllBytes(@"game_files/content", content);
-                            using var stream2 = new FileStream(@"game_files/content", FileMode.Open, FileAccess.ReadWrite);
-
-                            using CryptoStream csDecrypt = new CryptoStream(stream2, decryptor, CryptoStreamMode.Read);
-                            byte[] bytes = new byte[offset[j]];
-                            csDecrypt.Read(bytes, 0, offset[j]);
-
-                            try
-                            {
-                                Directory.CreateDirectory(@"game_files/" + Path.GetFileName(paths[i]));
-                                File.WriteAllBytes(@"game_files/" + Path.GetFileName(paths[i]) + "/" + names[j], bytes);
-                            }
-                            catch
-                            {
-
-                            }
-                            if (spam)
-                            {
-                                ColouredText("&Extracted: &" + names[j] + " &from &" + Path.GetFileName(paths[i]) + " &" + j + "&/&" + (listLines.Length - 2) + " - " + (i + 1) / 2 + "/" + paths.Length / 2 + "\n", ConsoleColor.White, ConsoleColor.Green);
-                            }
+                            Console.WriteLine("Decrypted: " + Path.GetFileName(paths[i]) + " " + (i + 1) / 2 + "/" + paths.Length / 2);
                         }
-                        Console.WriteLine("Decompiled: " + Path.GetFileName(paths[i]) + " " + (i + 1) / 2 + "/" + paths.Length / 2);
+                        else if (paths[i].Contains("Local"))
+                        {
+                            for (int j = 1; j < listLines.Length - 1; j++)
+                            {
+                                byte[] content = new byte[offset[j]];
+                                Array.Copy(allData, startpos[j], content, 0, offset[j]);
+                                byte[] IV = new byte[16];
+                                byte[] Key = new byte[16];
 
+                                if (ver.ToLower() == "yes")
+                                {
+                                    byte[] ivtemp = { 0x40, 0xb2, 0x13, 0x1a, 0x9f, 0x38, 0x8a, 0xd4, 0xe5, 0x00, 0x2a, 0x98, 0x11, 0x8f, 0x61, 0x28 };
+                                    byte[] keytemp = { 0xd7, 0x54, 0x86, 0x8d, 0xe8, 0x9d, 0x71, 0x7f, 0xa9, 0xe7, 0xb0, 0x6d, 0xa4, 0x5a, 0xe9, 0xe3 };
+                                    Key = keytemp;
+                                    IV = ivtemp;
+                                }
+                                else
+                                {
+                                    byte[] leytemp = { 0x0a, 0xd3, 0x9e, 0x4a, 0xea, 0xf5, 0x5a, 0xa7, 0x17, 0xfe, 0xb1, 0x82, 0x5e, 0xde, 0xf5, 0x21 };
+                                    byte[] ivtemp = { 0xd1, 0xd7, 0xe7, 0x08, 0x09, 0x19, 0x41, 0xd9, 0x0c, 0xdf, 0x8a, 0xa5, 0xf3, 0x0b, 0xb0, 0xc2 };
+                                    Key = leytemp;
+                                    IV = ivtemp;
+                                }
+
+                                using Aes aesAlg = Aes.Create();
+                                aesAlg.Key = Key;
+                                aesAlg.IV = IV;
+                                aesAlg.Padding = PaddingMode.None;
+                                aesAlg.Mode = CipherMode.CBC;
+
+                                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                                if (!Directory.Exists("game_files/"))
+                                {
+                                    Directory.CreateDirectory("game_files");
+                                }
+                                File.WriteAllBytes(@"game_files/content", content);
+                                try
+                                {
+                                    Directory.CreateDirectory(@"game_files/" + Path.GetFileName(paths[i]));
+                                }
+                                catch { }
+                                if (paths[i].Contains("ImageData"))
+                                {
+                                    File.WriteAllBytes(@"game_files/" + Path.GetFileName(paths[i]) + "/" + names[j], content);
+                                }
+                                else
+                                {
+                                    using var stream2 = new FileStream(@"game_files/content", FileMode.Open, FileAccess.ReadWrite);
+
+                                    using CryptoStream csDecrypt = new CryptoStream(stream2, decryptor, CryptoStreamMode.Read);
+                                    byte[] bytes = new byte[offset[j]];
+                                    csDecrypt.Read(bytes, 0, offset[j]);
+
+                                    try
+                                    {
+
+                                        File.WriteAllBytes(@"game_files/" + Path.GetFileName(paths[i]) + "/" + names[j], bytes);
+                                    }
+                                    catch { }
+                                }
+                                if (spam)
+                                {
+                                    ColouredText("&Extracted: &" + names[j] + " &from &" + Path.GetFileName(paths[i]) + " &" + j + "&/&" + (listLines.Length - 2) + " - " + (i + 1) / 2 + "/" + paths.Length / 2 + "\n", ConsoleColor.White, ConsoleColor.Green);
+                                }
+                            }
+                            Console.WriteLine("Decrypted: " + Path.GetFileName(paths[i]) + " " + (i + 1) / 2 + "/" + paths.Length / 2);
+                        }
                     }
                 }
                 Console.WriteLine("Finished: files can be found in " + Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/game_files/");
             }
         }
-        static void EncryptData(string patht, string key, string key2)
+        static void EncryptData(string key)
         {
-            Console.WriteLine("Enter name of .pack file to be outputed");
+            Console.WriteLine("Enter name of .pack file name to be outputed, e.g datalocal, ImapServer (don't include .pack)");
             string name = Console.ReadLine();
             FolderBrowserDialog fd = new FolderBrowserDialog();
-            fd.SelectedPath = Path.GetDirectoryName(patht);
+            fd.SelectedPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\game_files";
+            fd.Description = "Select a folder of game files to be encrypted into .pack and .list files";
+            fd.ShowNewFolderButton = false;
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select a folder of game content!");
@@ -500,51 +547,136 @@ namespace Battle_Cats_save_editor
             string listFile = "";
             string[] files = Directory.GetFiles(path);
             listFile += files.Length + "\n";
-            long amount = 0;
+            int previous = 0;
+            Console.WriteLine("Making .list file, this may take a minute depending on how many files are used...");
             for (int i = 0; i < files.Length; i++)
             {
-                FileInfo attributes = new FileInfo(files[i]);
-                try
-                {
-                    FileInfo attributesb = new FileInfo(files[i - 1]);
-                    amount += attributes.Length;
-                    listFile += Path.GetFileName(files[i]) + "," + amount + "," + attributes.Length + "\n";
-                }
-                catch
-                {
-                    listFile += Path.GetFileName(files[i]) + "," + "0" + "," + attributes.Length + "\n";
-                }
-                Console.WriteLine("Done: " + files[i] + ", " + i + "/" + files.Length);
+                string fileName = Path.GetFileName(files[i]);
+                int FileLength = File.ReadAllBytes(files[i]).Length;
+                listFile += fileName;
+                listFile += "," + previous + "," + FileLength + "\n";
+                previous += FileLength;
+                //ColouredText($"&Created list line: &{i}& for &{fileName}& - &{i}&/&{files.Length}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
 
             }
-            if (!Directory.Exists("Complists/"))
+            Console.WriteLine("Done");
+            List<byte> ls = Encoding.ASCII.GetBytes(listFile).ToList();
+            int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
+            rem *= 16;
+            rem -= ls.Count;
+            for (int i = 0; i < rem && rem != 16; i++)
             {
-                Directory.CreateDirectory("Complists/");
+                ls.Add((byte)rem);
             }
-            File.WriteAllText(@"Complists/" + name, listFile);
+            if (!Directory.Exists("CompFiles/"))
+            {
+                Directory.CreateDirectory("CompFiles/");
+            }
+            Console.WriteLine("List file successfully created");
+            File.WriteAllBytes(@"CompFiles/" + name + ".list", ls.ToArray());
 
-
-            using var stream = new FileStream(@"Complists/" + name, FileMode.Open, FileAccess.ReadWrite);
+            using var stream = new FileStream(@"CompFiles/" + name + ".list", FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            int left = 0;
+
+            byte[] IV = new byte[16];
+            byte[] Key = Encoding.ASCII.GetBytes(key);
+
+
+            string result = name + ".list";
+
+            using Aes aesAlg = Aes.Create();
+            aesAlg.Key = Key;
+            aesAlg.IV = IV;
+            aesAlg.Padding = PaddingMode.None;
+            aesAlg.Mode = CipherMode.ECB;
+
+            ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+            using MemoryStream msEncrypt = new MemoryStream(allData);
+            using CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Read);
+
+            byte[] bytess = new byte[length];
+
+            csEncrypt.Read(bytess, 0, length);
             stream.Close();
-            if (allData.Length % 16 != 0)
+
+            File.WriteAllBytes(@"CompFiles/" + result, bytess);
+            byte[] PackBytes = new byte[previous];
+            int preIndex = 0;
+            Console.WriteLine("Are you using jp 10.8 and up?(yes/no)");
+            string ver = Console.ReadLine();
+            Console.WriteLine("Making .pack file, this may take a minute depending on how many files are used...");
+            for (int i = 0; i < files.Length; i++)
             {
-                for (int i = 0; i < 16 - (allData.Length % 16); i++)
+                byte[] bytef = File.ReadAllBytes(files[i]);
+                int FileLen = File.ReadAllBytes(files[i]).Length;
+                if (name.Contains("Server"))
                 {
-                    Console.WriteLine(allData.Length + i);
-                    left++;
-                    Console.WriteLine(left);
+                    byte[] IV2 = new byte[16];
+                    byte[] Key2 = Encoding.ASCII.GetBytes("89a0f99078419c28");
+
+                    using Aes aesAlg2 = Aes.Create();
+                    aesAlg2.Key = Key2;
+                    aesAlg2.IV = IV2;
+                    aesAlg2.Padding = PaddingMode.None;
+                    aesAlg2.Mode = CipherMode.ECB;
+
+                    ICryptoTransform encryptor2 = aesAlg2.CreateEncryptor(aesAlg2.Key, aesAlg2.IV);
+
+                    using MemoryStream ms = new MemoryStream(bytef);
+                    using CryptoStream cs = new CryptoStream(ms, encryptor2, CryptoStreamMode.Read);
+
+                    cs.Read(bytef, 0, FileLen);
+
+                    //Console.WriteLine($"Decrypted: {Path.GetFileName(files[i])} {i}/{files.Length}");
                 }
-                for (int i = 0; i < left; i++)
+                else if (name.Contains("Local"))
                 {
-                    allData.Append(Convert.ToByte(left));
+                    if (!name.Contains("ImageData"))
+                    {
+                        byte[] IV2 = new byte[16];
+                        byte[] Key2 = new byte[16];
+
+                        if (ver.ToLower() == "yes")
+                        {
+                            byte[] ivtemp = { 0x40, 0xb2, 0x13, 0x1a, 0x9f, 0x38, 0x8a, 0xd4, 0xe5, 0x00, 0x2a, 0x98, 0x11, 0x8f, 0x61, 0x28 };
+                            byte[] keytemp = { 0xd7, 0x54, 0x86, 0x8d, 0xe8, 0x9d, 0x71, 0x7f, 0xa9, 0xe7, 0xb0, 0x6d, 0xa4, 0x5a, 0xe9, 0xe3 };
+                            Key = keytemp;
+                            IV = ivtemp;
+                        }
+                        else
+                        {
+                            byte[] leytemp = { 0x0a, 0xd3, 0x9e, 0x4a, 0xea, 0xf5, 0x5a, 0xa7, 0x17, 0xfe, 0xb1, 0x82, 0x5e, 0xde, 0xf5, 0x21 };
+                            byte[] ivtemp = { 0xd1, 0xd7, 0xe7, 0x08, 0x09, 0x19, 0x41, 0xd9, 0x0c, 0xdf, 0x8a, 0xa5, 0xf3, 0x0b, 0xb0, 0xc2 };
+                            Key = leytemp;
+                            IV = ivtemp;
+                        }
+
+                        using Aes aesAlg2 = Aes.Create();
+                        aesAlg2.Key = Key;
+                        aesAlg2.IV = IV;
+                        aesAlg2.Padding = PaddingMode.None;
+                        aesAlg2.Mode = CipherMode.CBC;
+
+                        ICryptoTransform encryptor2 = aesAlg2.CreateEncryptor(aesAlg2.Key, aesAlg2.IV);
+
+                        using MemoryStream ms = new MemoryStream(bytef);
+                        using CryptoStream cs = new CryptoStream(ms, encryptor2, CryptoStreamMode.Read);
+
+                        cs.Read(bytef, 0, FileLen);
+                    }
+
+                    //Console.WriteLine($"Decrypted: {Path.GetFileName(files[i])} {i}/{files.Length}");
                 }
-                File.WriteAllBytes(@"Complists/" + name, allData);
+                bytef.CopyTo(PackBytes, preIndex);
+                preIndex += bytef.Length;
             }
+            File.WriteAllBytes(@"CompFiles/" + name + ".pack", PackBytes);
+            Console.WriteLine("Done\nThe .list and .pack file can be found in " + Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/CompFiles/");
+
         }
         static void UploadSave(string choice, string path)
         {
@@ -600,7 +732,7 @@ namespace Battle_Cats_save_editor
         }
         static void VerySpecificTreasures(string path)
         {
-            string[] treasrureTypes1 = 
+            string[] treasrureTypes1 =
             {
                 "Energy Drink", "Giant Safe", "Relativity Clock", "Philosopher's Stone", "Smart Material Wall", "Super Register", "Legendary Cat Shield", "Legendary Cat Sword", "Energy Core", "Turbo Machine", "Management Bible",
             };
@@ -766,7 +898,7 @@ namespace Battle_Cats_save_editor
 
                         }
                     }
-                    
+
                 }
             }
 
@@ -822,9 +954,9 @@ namespace Battle_Cats_save_editor
                 }
             }
             string[] orbList = { "Red D attack", "Red C attack", "Red B attack", "Red A attack", "Red S attack", "Red D defense", "Red C defense", "Red B defense", "Red A defense", "Red S defense", "Floating D attack", "Floating C attack", "Floating B attack", "Floating A attack", "Floating S attack", "Floating D defense", "Floating C defense", "Floating B defense", "Floating A defense", "Floating S defense", "Black D attack", "Black C attack", "Black B attack", "Black A attack", "Black S attack", "Black D defense", "Black C defense", "Black B defense", "Black A defense", "Black S defense", "Metal D defense", "Metal C defense", "Metal B defense", "Metal A defense", "Metal S defense", "Angel D attack", "Angel C attack", "Angel B attack", "Angel A attack", "Angel S attack", "Angel D defense", "Angel C defense", "Angel B defense", "Angel A defense", "Angel S defense", "Alien D attack", "Alien C attack", "Alien B attack", "Alien A attack", "Alien S attack", "Alien D defense", "Alien C defense", "Alien B defense", "Alien A defense", "Alien S defense", "Zombie D attack", "Zombie C attack", "Zombie B attack", "Zombie A attack", "Zombie S attack", "Zombie D defense", "Zombie C defense", "Zombie B defense", "Zombie A defense", "Zombie S defense" };
-            string[] orbTargets = { "Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie"};
+            string[] orbTargets = { "Red", "Floating", "Black", "Metal", "Angel", "Alien", "Zombie" };
             string[] orbGrades = { "D", "C", "B", "A", "S" };
-            string[] orbTypes = {"Strong", "Massive", "Tough",};
+            string[] orbTypes = { "Strong", "Massive", "Tough", };
 
             List<string> orbS = new List<string>();
 
@@ -886,7 +1018,7 @@ namespace Battle_Cats_save_editor
             byte[] insert = new byte[155 * 3];
             for (int i = 0; i < 155; i++)
             {
-                insert[(i * 3)+1] = (byte)(i + 1);
+                insert[(i * 3) + 1] = (byte)(i + 1);
                 insert[i * 3] = (byte)orbs[i];
             }
 
@@ -895,7 +1027,7 @@ namespace Battle_Cats_save_editor
                 try
                 {
                     int id = int.Parse(orbNames[i]) - 1;
-                    if (id > orbS.Count +1)
+                    if (id > orbS.Count + 1)
                     {
                         Console.WriteLine("orb id is too large");
                     }
@@ -920,11 +1052,11 @@ namespace Battle_Cats_save_editor
             {
                 ColouredText("&What amount of &" + orbS[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
                 amounts.Add(Inputed());
-                insert[ids[i]* 3] = (byte)amounts[i];
+                insert[ids[i] * 3] = (byte)amounts[i];
             }
             bytess[(int)startPos + 4] = 0x9B;
             bytess.InsertRange((int)(startPos + 8), insert);
-         
+
             stream.Close();
             File.WriteAllBytes(path, bytess.ToArray());
         }
@@ -1094,7 +1226,7 @@ namespace Battle_Cats_save_editor
                     }
                     else
                     {
-                        stream.Position = pos + ((ids[i]+1) * 4);
+                        stream.Position = pos + ((ids[i] + 1) * 4);
                     }
                     stream.WriteByte((byte)idPlus[i]);
                     stream.Position++;
@@ -1104,7 +1236,7 @@ namespace Battle_Cats_save_editor
             }
             if (answer == "yes")
             {
-                stream.Position = occurrence[2] + (catAmount*4) + 4;
+                stream.Position = occurrence[2] + (catAmount * 4) + 4;
                 stream.Write(bytes, 0, bytes.Length);
             }
             Console.WriteLine("Success");
@@ -1550,7 +1682,7 @@ namespace Battle_Cats_save_editor
         }
         static void Items(string path)
         {
-            Console.WriteLine("Before using this feature make sure that this is a recent save otherwise your data could get corrupted!\nHow many of each item do you want?(max 3999)");
+            Console.WriteLine("\nHow many of each item do you want?(max 3999)");
             int Items = Inputed();
             if (Items > 3999) Items = 3999;
             if (Items < 0) Items = 0;
@@ -2036,7 +2168,8 @@ namespace Battle_Cats_save_editor
             catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
             int[] form = EvolvedFormsGetter();
             int pos = (int)stream.Position;
-            try {
+            try
+            {
                 for (int i = 0; i < input.Length; i++)
                 {
                     stream.Position = pos + (int.Parse(input[i]) - 9) * 4;
