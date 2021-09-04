@@ -1,11 +1,10 @@
 # Battle Cats Save File Editor
 
-I have a discord server:https://discord.gg/DvmMgvn5ZB You can become a developer there and give me your pre-backed up save files
-and is the best way to report bugs + contact me.
+I have a discord server:https://discord.gg/DvmMgvn5ZB, it's the best way report bugs and you can leave your suggestions for new features to be implemented in the editor<br>
+If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi here:https://ko-fi.com/fieryhenry
 
-Thanks to:
-
-Lethal's editor for giving me inspiration to start the project and it helped me work out how to patch the save data and edit cf/xp and I used it to figure out how to upload saves onto the ponos servers: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+## Thanks to:
+Lethal's editor for giving me inspiration to start the project and it helped me work out how to patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
 
 Beeven and csehydrogen's open source code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats, https://github.com/csehydrogen/BattleCatsHacker
 
@@ -43,7 +42,7 @@ I have created an updated tutorial video that goes you through the steps: https:
 24. Patch the save
 25. Secondary menu:  <br>
   25.1. Close rank up bundle menus <br>
-  25.2. Generate new account code <br>
+  25.2. Change account code <br>
   25.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
   25.4. Fix gamatoto <br>
   25.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up
@@ -52,9 +51,6 @@ I have created an updated tutorial video that goes you through the steps: https:
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
-31. Decrypt .list and .pack files found in /files directory of the game (not the ones in the newer apks as they use a different aes key that i don't know yet)
+31. Decrypt .list and .pack files found in /files directory of the game and the ones found in the apk
 32. Edit talent orbs
 33. Change type of treasures, e.g giant safe, energy drink, ancient tablet
-
-
-If you want to support my work and keep me motivated to continue to work on this project then maybe consider gifting me some ko-fi:https://ko-fi.com/fieryhenry
