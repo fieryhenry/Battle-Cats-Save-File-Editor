@@ -51,6 +51,7 @@ I have created an updated tutorial video that goes you through the steps: https:
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
-31. Decrypt .list and .pack files found in /files directory of the game and the ones found in the apk
-32. Edit talent orbs
-33. Change type of treasures, e.g giant safe, energy drink, ancient tablet
+31. Decrypt .list and .pack files found in /files directory of the game and the local ones stored in the apk
+32. Encrypt .list and .pack files found in /files directory of the game and the local ones stored in the apk
+33. Edit talent orbs
+34. Change type of treasures, e.g giant safe, energy drink, ancient tablet
