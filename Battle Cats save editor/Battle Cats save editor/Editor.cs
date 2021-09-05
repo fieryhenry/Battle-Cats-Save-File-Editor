@@ -57,12 +57,10 @@ namespace Battle_Cats_save_editor
         static string MakeRequest(WebRequest request)
         {
             WebResponse response = request.GetResponse();
-            using (Stream dataStream = response.GetResponseStream())
-            {
-                StreamReader reader = new StreamReader(dataStream);
-                string responseFromServer = reader.ReadToEnd();
-                return responseFromServer;
-            }
+            using Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            return responseFromServer;
         }
         static void CheckUpdate()
         {
@@ -87,7 +85,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.30.0";
+            string version = "2.31.0";
 
             if (lines == version && !skip)
             {
@@ -136,7 +134,7 @@ namespace Battle_Cats_save_editor
                 "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                 "&23.& Clear story chapters\n&24.& Patch data(not necessary to use, because your save is automatically patched after every edit)\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Decrypt .pack and .list files\n&32.& Encrypt .pack and .list files\n&33.& Change talent orbs(must have talent orbs unlocked)\n&34.& Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Enter game modding menu, contains stuff on .packs and .lists\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.& Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
@@ -185,14 +183,9 @@ namespace Battle_Cats_save_editor
                     case 28: SoL(path); break;
                     case 29: GamHelp(path); break;
                     case 30: GamXP(path); break;
-                    case 31:
-                        Decrypt("b484857901742afc");
-                        break;
-                    case 33: TalentOrbs(path); break;
-                    case 34: VerySpecificTreasures(path); break;
-                    case 32:
-                        EncryptData("b484857901742afc");
-                        break;
+                    case 31: GameModdingMenu(); break;
+                    case 32: TalentOrbs(path); break;
+                    case 33: VerySpecificTreasures(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Encrypt(gameVer, path);
@@ -200,6 +193,18 @@ namespace Battle_Cats_save_editor
             ColouredText("Press enter to continue\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             Console.ReadLine();
             Options();
+        }
+        static void GameModdingMenu()
+        {
+            ColouredText("&Welcome to the game modding menu&\n&1.&Decrypt .list and .pack files\n&2.&Encrypt a folder of game files and turn them into encrypted .pack and .list files\n&3.&Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            int choice = Inputed();
+
+            switch (choice)
+            {
+                case 1: Decrypt("b484857901742afc"); break;
+                case 2: EncryptData("b484857901742afc"); break;
+                case 3: MD5Lib(); break;
+            }
         }
         static void Elsewhere(string path2)
         {
@@ -676,7 +681,122 @@ namespace Battle_Cats_save_editor
             }
             File.WriteAllBytes(@"CompFiles/" + name + ".pack", PackBytes);
             Console.WriteLine("Done\nThe .list and .pack file can be found in " + Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/CompFiles/");
+        }
+        static void MD5Lib()
+        {
+            Console.WriteLine("Please select an so file");
+            OpenFileDialog fd = new OpenFileDialog();
+            fd.Filter = "files (*.so)|*.so";
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                Console.WriteLine("Please select .so files");
+                Options();
+            }
+            string path = fd.FileName;
 
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            List<KeyValuePair<string, byte[]>> listsHash = new List<KeyValuePair<string, byte[]>>();
+
+            string[] order =
+                {"DataLocal.list", "ImageDataLocal.list", "ImageLocal.list", "MapLocal.list", "NumberLocal.list", "resLocal.list", "UnitLocal.list", "ImageDataLocal_fr.list", "ImageLocal_fr.list", "MapLocal_fr.list", "NumberLocal_fr.list", "resLocal_fr.list", "ImageDataLocal_it.list", "ImageLocal_it.list", "MapLocal_it.list", "NumberLocal_it.list", "resLocal_it.list", "ImageDataLocal_de.list", "ImageLocal_de.list", "MapLocal_de.list", "NumberLocal_de.list", "resLocal_de.list", "ImageDataLocal_es.list", "ImageLocal_es.list", "MapLocal_es.list", "NumberLocal_es.list", "resLocal_es.list", "DataLocal.pack", "ImageDataLocal.pack", "ImageLocal.pack", "MapLocal.pack", "NumberLocal.pack", "resLocal.pack", "UnitLocal.pack", "ImageDataLocal_fr.pack", "ImageLocal_fr.pack", "MapLocal_fr.pack", "NumberLocal_fr.pack", "resLocal_fr.pack", "ImageDataLocal_it.pack", "ImageLocal_it.pack", "MapLocal_it.pack", "NumberLocal_it.pack", "resLocal_it.pack", "ImageDataLocal_de.pack", "ImageLocal_de.pack", "MapLocal_de.pack", "NumberLocal_de.pack", "resLocal_de.pack", "ImageDataLocal_es.pack", "ImageLocal_es.pack", "MapLocal_es.pack", "NumberLocal_es.pack", "resLocal_es.pack",
+                "ImageServer_100800_00_en.list", "MapServer_100800_00_en.list", "NumberServer_100800_00_en", "UnitServer_100800_00_en.list", "ImageServer_100700_00_en.list", "MapServer_100700_00_en.list", "NumberServer_100700_00_en.list", "UnitServer_100700_00_en.list", "ImageDataServer_100600_00_en.list", "ImageServer_100600_01_en.list", "MapServer_100600_02_en.list", "NumberServer_100600_03_en.list", "UnitServer_100600_04_en.list", "LImageServer.list", "LMapServer.list", "LNumberServer.list", "LUnitServer.list", "KImageServer.list", "KMapServer.list", "KNumberServer.list", "KUnitServer.list", "JImageServer.list", "JMapServer.list", "JNumberServer.list", "JUnitServer.list", "IImageServer.list", "IMapServer.list", "INumberServer.list", "IUnitServer.list", "HImageServer.list", "HMapServer.list", "HNumberServer.list", "HUnitServer.list", "GImageServer.list", "GMapServer.list", "GNumberServer.list", "GUnitServer.list", "FImageServer.list", "FMapServer.list", "FNumberServer.list", "FUnitServer.list", "EImageServer.list", "EMapServer.list", "ENumberServer.list", "EUnitServer.list", "DImageServer.list", "DMapServer.list", "DNumberServer.list", "DUnitServer.list", "CImageServer.list", "CMapServer.list", "CNumberServer.list", "CUnitServer.list", "BNumberServer.list", "BUnitServer.list", "AMapServer.list", "ANumberServer.list", "AUnitServer.list", "ImageServer.list", "MapServer.list"};
+
+            int prevIndex = 0;
+            for (int i = 6000000; i < length - 10000; i++)
+            {
+                if (allData[i] == 0x2e && allData[i + 1] == 0x70 && allData[i + 2] == 0x61 && allData[i + 3] == 0x63 && allData[i + 4] == 0x6b)
+                {
+                    prevIndex = i + 6;
+                    for (int j = i + 4; j > i - 64; j--)
+                    {
+                        if (allData[j] == 0x00)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            int count = 0;
+            int num = 0;
+            int pos = 0;
+            for (int i = prevIndex; i < length; i++)
+            {
+                num++;
+                string listName = "";
+                try
+                {
+                    listName = order[count];
+                }
+                catch
+                {
+                    pos = i;
+                    break;
+                }
+                string hash = "";
+                if (num % 33 == 0)
+                {
+                    for (int j = i - 32; j < i; j++)
+                    {
+                        hash += Convert.ToChar(allData[j]);
+                    }
+                    count++;
+                    byte[] hash3 = Encoding.ASCII.GetBytes(hash);
+                    listsHash.Add(new KeyValuePair<string, byte[]>(listName, hash3));
+                }
+            }
+            Console.WriteLine("Please select .pack and .list files, you can select multiple at once");
+            OpenFileDialog fd2 = new OpenFileDialog();
+            fd2.Filter = "files (*.pack; .list)|*.pack;*.list";
+            fd.Multiselect = true;
+            if (fd2.ShowDialog() != DialogResult.OK)
+            {
+                Console.WriteLine("Please select .pack/.list files");
+                Options();
+            }
+            string[] paths = fd2.FileNames;
+            foreach (string path2 in paths)
+            {
+                string hash2 = CalculateMD5(path2);
+                byte[] hashBytes = Encoding.ASCII.GetBytes(hash2);
+                bool found = false;
+                for (int i = 0; i < listsHash.Count; i++)
+                {
+                    if (Path.GetFileName(path2) == listsHash[i].Key)
+                    {
+                        found = true;
+                        for (int j = prevIndex; j < length - 10000; j++)
+                        {
+                            if (allData[j] == listsHash[i].Value[0] && allData[j + 1] == listsHash[i].Value[1] && allData[j + 2] == listsHash[i].Value[2] && allData[j + 3] == listsHash[i].Value[3] && allData[j + 4] == listsHash[i].Value[4] && allData[j + 5] == listsHash[i].Value[5] && allData[j + 6] == listsHash[i].Value[6] && allData[j + 7] == listsHash[i].Value[7] && allData[j + 8] == listsHash[i].Value[8] && allData[j + 9] == listsHash[i].Value[9] && allData[j + 10] == listsHash[i].Value[10] && allData[j + 11] == listsHash[i].Value[11] && allData[j + 12] == listsHash[i].Value[12] && allData[j + 13] == listsHash[i].Value[13] && allData[j + 14] == listsHash[i].Value[14] && allData[j + 15] == listsHash[i].Value[15])
+                            {
+                                stream.Position = j;
+                                stream.Write(hashBytes, 0, hashBytes.Length);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!found)
+                {
+                    Console.WriteLine("The .pack/.list's md5 sum doesn't get checked(so is good to use without getting an error), or the file name is spelt wrong");
+                }
+                Console.WriteLine("Done!, you should now be able to put the lib file and the .pack/.lists into the game without data read error h01");
+            }
+        }
+        static string CalculateMD5(string filename)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
+            }
         }
         static void UploadSave(string choice, string path)
         {
