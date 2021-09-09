@@ -13,7 +13,7 @@ This got way more complicated due to added security to the transfer system, you 
 
 Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get Battle Cats Save File Editor.zip, not the exe)
 
-I have created an updated tutorial video that goes you through the steps: https://youtu.be/D6hPnJTlq-U
+I have created an updated tutorial video that goes you through the steps of getting the save from the game, editing it, putting it back in, and fixing save data is used elsewhere bug: https://youtu.be/D6hPnJTlq-U
 
 # Features
 1. Change catfood
