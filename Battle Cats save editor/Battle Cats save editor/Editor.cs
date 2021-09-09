@@ -46,13 +46,8 @@ namespace Battle_Cats_save_editor
                 ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 SelSave();
             }
-            Console.WriteLine("What game version are you using? (en or jp)");
+            Console.WriteLine("What game version are you using? (enter your country code, e.g en, jp, vn, kr), note: en currently has the most support with the editor, so features may not work in other versions");
             gameVer = Console.ReadLine();
-            if (gameVer != "en" && gameVer != "jp")
-            {
-                Console.WriteLine("answer was not en or jp");
-                SelSave();
-            }
         }
         static string MakeRequest(WebRequest request)
         {
@@ -85,7 +80,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.31.0";
+            string version = "2.31.1";
 
             if (lines == version && !skip)
             {
@@ -121,7 +116,7 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
             Console.ForegroundColor = ConsoleColor.White;
 
-            ColouredText("Warning: if you are using a jp save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
+            ColouredText("Warning: if you are using a non en save, many features won't work, or they might corrupt your save data, so make sure you back up your saves!\n", ConsoleColor.White, ConsoleColor.Red);
 
             ColouredText("&What would you like to do?&\n0.& Select a new save\n1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures to a specific level\n&4.& All cats upgraded to a specific level" +
                 "\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
@@ -752,7 +747,7 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("Please select .pack and .list files, you can select multiple at once");
             OpenFileDialog fd2 = new OpenFileDialog();
             fd2.Filter = "files (*.pack; .list)|*.pack;*.list";
-            fd.Multiselect = true;
+            fd2.Multiselect = true;
             if (fd2.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .pack/.list files");
@@ -2114,6 +2109,17 @@ namespace Battle_Cats_save_editor
 
         static string Encrypt(string choice, string path)
         {
+            string name = Path.GetFileName(path);
+            if (name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so"))
+            {
+                Console.WriteLine("Are you sure you want to patch this type of file?, it might corrupt it, (yes/no)");
+                string answer = Console.ReadLine().ToLower();
+                if (answer == "no")
+                {
+                    return "";
+                }
+            }
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -2124,20 +2130,9 @@ namespace Battle_Cats_save_editor
             for (int i = 0; i < allData.Length - 32; i++)
                 toBeUsed[i] = allData[i];
             byte[] bytes = Encoding.ASCII.GetBytes("battlecats");
-            if (choice == "en")
+            if (choice != "jp")
             {
-                bytes = Encoding.ASCII.GetBytes("battlecatsen");
-            }
-            else if (choice == "jp")
-            {
-                bytes = Encoding.ASCII.GetBytes("battlecats");
-            }
-            else
-            {
-                Console.WriteLine("Answer was not jp or en");
-                stream.Close();
-                Encrypt(choice, path);
-                return "";
+                bytes = Encoding.ASCII.GetBytes("battlecats" + choice);
             }
             int test = 32 - bytes.Length;
 
@@ -2295,7 +2290,23 @@ namespace Battle_Cats_save_editor
                     stream.Position = pos + (int.Parse(input[i]) - 9) * 4;
                     if (devolve == "1")
                     {
-                        stream.WriteByte((byte)form[int.Parse(input[i]) - 9]);
+                        if (form[int.Parse(input[i]) - 9] == 0)
+                        {
+                            Console.WriteLine("Does the cat need catfruit/catfruit seeds to evolve?(yes/no)");
+                            string answer = Console.ReadLine().ToLower();
+                            if (answer == "yes")
+                            {
+                                stream.WriteByte(2);
+                            }
+                            else
+                            {
+                                stream.WriteByte(1);
+                            }
+                        }
+                        else
+                        {
+                            stream.WriteByte((byte)form[int.Parse(input[i]) - 9]);
+                        }
                     }
                     else
                     {
@@ -2795,8 +2806,10 @@ namespace Battle_Cats_save_editor
 
         static int[] EvolvedFormsGetter()
         {
+            Console.WriteLine("Downloading cat data...");
             WebClient client = new WebClient();
             client.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/cats.csv", @"cats.csv");
+            Console.WriteLine("Done\nParsing cat evolve forms...");
             using var reader = new StreamReader(@"cats.csv");
             List<string> listA = new List<string>();
             while (!reader.EndOfStream)
@@ -2834,6 +2847,7 @@ namespace Battle_Cats_save_editor
                 if (listA[i].Contains("EX,rarity,") && form[i] == 2) form[i] = 1;
                 if (listA[i].Contains("Cat God the Awesome") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Ururun Cat ") || listA[i].Contains("Dark Emperor Catdam") || listA[i].Contains("Crimson Mina") || listA[i].Contains("Heroic Musashi") || listA[i].Contains("Mecha-Bun Mk II")) form[i] = 2;
             }
+            Console.WriteLine("Done\nEditing your save...");
             return form;
         }
         static byte[] Levels()
