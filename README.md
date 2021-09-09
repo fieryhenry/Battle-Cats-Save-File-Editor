@@ -51,7 +51,9 @@ I have created an updated tutorial video that goes you through the steps: https:
 28. Clear SoL subchapters (doesn't include uncanny ledgends)
 29. Edit amount of gamatoto helpers
 30. Edit gamatoto xp
-31. Decrypt .list and .pack files found in /files directory of the game and the local ones stored in the apk
-32. Encrypt .list and .pack files found in /files directory of the game and the local ones stored in the apk
+31. Secondary modding menu: <br>
+  31.1 Decrypt .list and .pack files <br>
+  32.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
+  32.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br> 
 33. Edit talent orbs
 34. Change type of treasures, e.g giant safe, energy drink, ancient tablet
