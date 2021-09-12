@@ -30,7 +30,9 @@ namespace Battle_Cats_save_editor
             var FD = new OpenFileDialog
             {
                 Multiselect = true,
-                Filter = "battle cats save(*.*)|*.*"
+                Filter = "battle cats save(*.*)|*.*",
+                Title = "Select save"
+                
             };
             if (FD.ShowDialog() == DialogResult.OK)
             {
@@ -46,7 +48,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 SelSave();
             }
-            Console.WriteLine("What game version are you using? (enter your country code, e.g en, jp, vn, kr), note: en currently has the most support with the editor, so features may not work in other versions");
+            Console.WriteLine("What game version are you using? (e.g en, jp, vn, kr), note: en currently has the most support with the editor, so features may not work in other versions");
             gameVer = Console.ReadLine();
         }
         static string MakeRequest(WebRequest request)
@@ -80,7 +82,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.31.1";
+            string version = "2.31.2";
 
             if (lines == version && !skip)
             {
@@ -89,8 +91,8 @@ namespace Battle_Cats_save_editor
             }
             else if (lines != version && !skip)
             {
-                ColouredText("A new version is available would you like to update?\n", ConsoleColor.White, ConsoleColor.Green);
-                bool answer = OnAskUser("A new version is available would you like to update?", "Updater");
+                ColouredText($"A new version is available would you like to update to release {lines}?\n", ConsoleColor.White, ConsoleColor.Green);
+                bool answer = OnAskUser($"A new version is available would you like to update to release {lines}?", "Updater");
                 if (answer)
                 {
                     try
@@ -1359,7 +1361,7 @@ namespace Battle_Cats_save_editor
 
         static void Leadership(string path)
         {
-            Console.WriteLine("How much leadership do you want(max 65535)");
+            Console.WriteLine("How much leadership do you want(max 32767)");
             int CatFood = Inputed();
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -1370,7 +1372,7 @@ namespace Battle_Cats_save_editor
             bool found = false;
 
             Console.WriteLine("Scan Complete");
-            byte[] bytes = Endian(CatFood);
+            byte[] bytes = BitConverter.GetBytes(CatFood);
 
             for (int j = 0; j < length - 12; j++)
             {
@@ -2736,15 +2738,27 @@ namespace Battle_Cats_save_editor
 
         static void Bundle(string path)
         {
-            int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
+            bool found = false;
 
-            stream.Position = occurrence[5] - 16;
-            stream.WriteByte(0xff);
-            stream.WriteByte(0xff);
+            for (int i = 0; i < length; i++)
+            {
+                if (allData[i] == 0x31 && allData[i+1] == 0 && allData[i+2] == 0 && allData[i+3] == 0 && allData[i+4] == 0x32 && allData[i+5] == 0 && allData[i+6] == 0 && allData[i+7] == 0 && allData[i+8] == 0x33 && allData[i+9] == 0 && allData[i+10] == 0 && allData[i+11] == 0)
+                {
+                    stream.Position = i - 4;
+                    stream.WriteByte(0xff);
+                    stream.WriteByte(0xff);
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                Console.WriteLine("Your bundle menu position couldn't be found, please contact me on discord or in #tool-help");
+                return;
+            }
             Console.WriteLine("Closed all bundle menus");
 
         }
