@@ -82,7 +82,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.31.2";
+            string version = "2.32.0";
 
             if (lines == version && !skip)
             {
@@ -131,7 +131,8 @@ namespace Battle_Cats_save_editor
                 "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
                 "&23.& Clear story chapters\n&24.& Patch data(not necessary to use, because your save is automatically patched after every edit)\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
                 "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Enter game modding menu, contains stuff on .packs and .lists\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.& Change treasure level for specific benefits, e.g energy drink or aqua crystal\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Enter game modding menu, contains stuff on .packs and .lists\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.& Change treasure level for specific " +
+                "benefits, e.g energy drink or aqua crystal\n&34.& Clear all zombie stages\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
@@ -183,6 +184,7 @@ namespace Battle_Cats_save_editor
                     case 31: GameModdingMenu(); break;
                     case 32: TalentOrbs(path); break;
                     case 33: VerySpecificTreasures(path); break;
+                    case 34: Outbreaks(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Encrypt(gameVer, path);
@@ -1386,7 +1388,7 @@ namespace Battle_Cats_save_editor
                 }
 
             }
-            if (!found) Console.WriteLine("Sorry your leadership couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your leadership couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
         }
 
         static void NP(string path)
@@ -1416,7 +1418,7 @@ namespace Battle_Cats_save_editor
                 }
 
             }
-            if (!found) Console.WriteLine("Sorry your NP position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your NP position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
         }
 
         static void CatTicket(string path)
@@ -1501,7 +1503,7 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("Success");
             }
-            if (!found) Console.WriteLine("Sorry your gamatoto xp position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your gamatoto xp position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
 
         }
         static Tuple<int, bool, int> ThirtySix(string path)
@@ -1619,7 +1621,7 @@ namespace Battle_Cats_save_editor
                 }
                 Console.WriteLine("\nSet helpers to:\n {0} intern(s)\n {1} lackey(s)\n {2} underling(s)\n {3} assistant(s)\n {4} legend(s)", helpNums[0], helpNums[1], helpNums[2], helpNums[3], helpNums[4]);
             }
-            if (!found) Console.WriteLine("Sorry your gamatoto helper position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your gamatoto helper position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
         }
         static void FixGam(string path)
         {
@@ -1656,7 +1658,7 @@ namespace Battle_Cats_save_editor
             File.WriteAllBytes(path, allData);
             bool found = true;
             if (found) Console.WriteLine("Success");
-            if (!found) Console.WriteLine("Sorry your gamatoto position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your gamatoto position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
 
         }
 
@@ -1676,8 +1678,59 @@ namespace Battle_Cats_save_editor
             stream.Position = pos + 16;
             stream.WriteByte(platCatTickets);
             if (found) Console.WriteLine("Success");
-            if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
 
+        }
+        static void Outbreaks(string path)
+        {
+            int pos = ThirtySix(path).Item1;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            bool found = false;
+            int StartPos = 0;
+
+            for (int i = pos; i < length; i++)
+            {
+                if (allData[i] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0x3a && allData[i + 4] == 0 && allData[i + 5] == 0 && allData[i+6] == 0 && allData[i+ 23] == 0x30 && allData[i+24] == 0 && allData[i+22] == 0)
+                {
+                    found = true;
+                    StartPos = i + 31;
+                }
+            }
+            if (!found)
+            {
+                Console.WriteLine("Sorry your outbreak position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
+                return;
+            }
+            if (StartPos < 100)
+            {
+                Console.WriteLine("Sorry your outbreak position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
+                return;
+            }
+            for (int j = 0; j < length; j++)
+            {
+                stream.Position = StartPos + (j *5);
+                stream.WriteByte(1);
+                if (allData[StartPos + (j*5) + 10] == 0x30)
+                {
+                    StartPos += 5;
+                    stream.Position = StartPos + (j * 5);
+                    if (allData[StartPos + (j*5) +1] < 0x08)
+                    {
+                        stream.WriteByte(1);
+                    }
+                    StartPos += 8;
+                }
+                else if(allData[StartPos + (j * 5) + 13] == 0x40)
+                {
+                    break;
+                }
+            }
+            Console.WriteLine("Successfully cleared all zombie stages");
         }
 
         static void Seed(string path)
@@ -1711,7 +1764,7 @@ namespace Battle_Cats_save_editor
             }
             catch (ArgumentOutOfRangeException)
             {
-                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
                 Options();
             }
 
@@ -1744,7 +1797,7 @@ namespace Battle_Cats_save_editor
             }
             catch (ArgumentOutOfRangeException)
             {
-                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
                 Options();
             }
             byte[] seed = new byte[100];
@@ -1888,7 +1941,7 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("Success");
             }
-            if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
         }
 
         static void BaseMats(string path)
@@ -1917,7 +1970,7 @@ namespace Battle_Cats_save_editor
                     }
                 }
             }
-            if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
         }
 
         static void Catseyes(string path)
@@ -1956,7 +2009,7 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("Success");
             }
-            if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your catseye position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
 
         }
         static void RemCats(string path)
@@ -2522,7 +2575,7 @@ namespace Battle_Cats_save_editor
             }
             catch (ArgumentOutOfRangeException)
             {
-                Console.WriteLine("You either havn't unlocked NP or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please create a bug report on github or tell me on discord\nThank you");
+                Console.WriteLine("You either havn't unlocked NP or the tool is bugged and if the tool is bugged then:\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
                 Options();
             }
             for (int i = (int)stream2.Position; i < occurrence[0] + 5284; i += 8)
