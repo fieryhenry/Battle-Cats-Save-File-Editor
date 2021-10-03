@@ -53,7 +53,8 @@ I have created an updated tutorial video that goes you through the steps of gett
 30. Edit gamatoto xp
 31. Secondary modding menu: <br>
   31.1 Decrypt .list and .pack files <br>
-  32.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
-  32.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br> 
-33. Edit talent orbs
-34. Change type of treasures, e.g giant safe, energy drink, ancient tablet
+  31.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
+  31.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br> 
+32. Edit talent orbs
+33. Change type of treasures, e.g giant safe, energy drink, ancient tablet
+34. Clear all zombie stages
