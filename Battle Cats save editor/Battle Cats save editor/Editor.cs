@@ -23,7 +23,6 @@ namespace Battle_Cats_save_editor
             CheckUpdate();
             SelSave();
             Options();
-
         }
         static void SelSave()
         {
@@ -31,8 +30,7 @@ namespace Battle_Cats_save_editor
             {
                 Multiselect = true,
                 Filter = "battle cats save(*.*)|*.*",
-                Title = "Select save"
-                
+                Title = "Select save"                
             };
             if (FD.ShowDialog() == DialogResult.OK)
             {
@@ -48,14 +46,14 @@ namespace Battle_Cats_save_editor
                 ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 SelSave();
             }
-            Console.WriteLine("What game version are you using? (e.g en, jp, vn, kr), note: en currently has the most support with the editor, so features may not work in other versions");
+            Console.WriteLine("What game version are you using? (e.g en, jp, kr), note: en currently has the most support with the editor, so features may not work in other versions");
             gameVer = Console.ReadLine();
         }
         static string MakeRequest(WebRequest request)
         {
             WebResponse response = request.GetResponse();
             using Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
+            StreamReader reader = new(dataStream);
             string responseFromServer = reader.ReadToEnd();
             return responseFromServer;
         }
@@ -82,7 +80,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.32.0";
+            string version = "2.33.0";
 
             if (lines == version && !skip)
             {
@@ -123,21 +121,19 @@ namespace Battle_Cats_save_editor
             ColouredText("&What would you like to do?&\n0.& Select a new save\n1.& Change Cat food\n&2.& Change XP\n&3.& Get all treasures to a specific level\n&4.& All cats upgraded to a specific level" +
                 "\n&5.& Change leadership\n&6.& Change NP\n&7.& Change cat tickets\n&8.& change rare cat tickets" +
                 "\n&9.& Change platinum tickets\n&10.& Change gacha seed\n&11.& All cats evolved(you must first have unlocked the ability to " +
-                "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count\n&13.& " +
-                "Change Catamins" +
-                "\n&14.& Change base materials\n&15.& Change catseyes(must have catseyes unlocked)\n&16.& Get/remove All cats\n&17.& Get/remove a specific cat" +
-                "\n&18.& Upgrade a specific cat to a specific level\n" +
-                "&19.& Unlock treasures of a specific chapter\n" +
-                "&20.& Evolve a specific cat\n&21.& Change cat fruits and cat fruit seeds\n&22.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
-                "&23.& Clear story chapters\n&24.& Patch data(not necessary to use, because your save is automatically patched after every edit)\n&25.& More small edits and fixes\n&26.& Display current gacha seed\n&27.& Change all " +
-                "into the future timed score rewards\n&28.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n" +
-                "&29.& Edit gamatoto helpers\n&30.& Edit gamatoto xp\n&31.& Enter game modding menu, contains stuff on .packs and .lists\n&32.& Change talent orbs(must have talent orbs unlocked)\n&33.& Change treasure level for specific " +
-                "benefits, e.g energy drink or aqua crystal\n&34.& Clear all zombie stages\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "evolve cats + you need to click the \"cycle\" icon on the bottom right of your cat)\n&12.& Change battle item count" +
+                "\n&13.& Change catseyes(must have catseyes unlocked)\n&14.& Get/remove All cats\n&15.& Get/remove a specific cat" +
+                "\n&16.& Upgrade a specific cat to a specific level\n&17.& Unlock treasures of a specific chapter\n&18.& Evolve a specific cat\n&19.& Change cat fruits and cat fruit seeds\n" +
+                "&20.& Talent upgrade cats(Must have NP unlocked)&(Experimental and buggy - use at your own risk)&\n" +
+                "&21.& Clear story chapters\n&22.& Patch data(not necessary to use, because your save is automatically patched after every edit)\n&23.& More small edits and fixes\n&24.& Display current gacha seed" +
+                "\n&25.& Change all into the future timed score rewards\n&26.& Clear stories of legends subchpaters chapters (doesn't include uncanny legends)\n&27.& Enter game modding menu, contains stuff on .packs and .lists" +
+                "\n&28.& Change talent orbs(must have talent orbs unlocked)\n&29.& Change treasure level for specific " +
+                "benefits, e.g energy drink or aqua crystal\n&30.& Clear all zombie stages\n&31.& Enter gamatoto/ototo menu, contains all gamatoto/ototo related edits\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             byte[] anchour = new byte[20];
             anchour[0] = Anchour(path);
             anchour[1] = 0x02;
             catAmount = BitConverter.ToInt32(anchour, 0);
-            int Choice = Inputed();
+            int Choice = (int)Inputed();
             for (int i = 0; i < fileToOpen.Length; i++)
             {
                 path = fileToOpen[i];
@@ -146,7 +142,7 @@ namespace Battle_Cats_save_editor
                     case 0: SelSave(); Options(); break;
                     case 1: CatFood(path); break;
                     case 2: XP(path); break;
-                    case 19: SepecTreasures(path); break;
+                    case 3: MaxTreasures(path); break;
                     case 4: CatUpgrades(path); break;
                     case 5: Leadership(path); break;
                     case 6: NP(path); break;
@@ -156,35 +152,25 @@ namespace Battle_Cats_save_editor
                     case 10: Seed(path); break;
                     case 11: Evolve(path); break;
                     case 12: Items(path); break;
-                    case 13: Catamin(path); break;
-                    case 14: BaseMats(path); break;
-                    case 15: Catseyes(path); break;
-                    case 16: Cats(path); break;
-                    case 17: SpecifiCat(path); break;
-                    case 18: SpecifUpgrade(path); break;
-                    case 3: MaxTreasures(path); break;
-                    case 20: EvolveSpecific(path); break;
-                    case 21: CatFruit(path); break;
-                    case 22: Talents(path); break;
-                    case 23: Stage(path); break;
-                    case 24:
-                        Encrypt(gameVer, path);
-                        if (i == fileToOpen.Length - 1)
-                        {
-                            Console.WriteLine("Press enter to exit");
-                            Exit(0);
-                        }
-                        break;
-                    case 25: Menu(path); break;
-                    case 26: GetSeed(path); break;
-                    case 27: TimedScore(path); break;
-                    case 28: SoL(path); break;
-                    case 29: GamHelp(path); break;
-                    case 30: GamXP(path); break;
-                    case 31: GameModdingMenu(); break;
-                    case 32: TalentOrbs(path); break;
-                    case 33: VerySpecificTreasures(path); break;
-                    case 34: Outbreaks(path); break;
+                    case 13: Catseyes(path); break;
+                    case 14: Cats(path); break;
+                    case 15: SpecifiCat(path); break;
+                    case 16: SpecifUpgrade(path); break;
+                    case 17: SepecTreasures(path); break;
+                    case 18: EvolveSpecific(path); break;
+                    case 19: CatFruit(path); break;
+                    case 20: Talents(path); break;
+                    case 21: Stage(path); break;
+                    case 22: break;
+                    case 23: Menu(path); break;
+                    case 24: GetSeed(path); break;
+                    case 25: TimedScore(path); break;
+                    case 26: SoL(path); break;
+                    case 27: GameModdingMenu(); break;
+                    case 28: TalentOrbs(path); break;
+                    case 29: VerySpecificTreasures(path); break;
+                    case 30: Outbreaks(path); break;
+                    case 31: GamOtotoMenu(path); break;
                     default: Console.WriteLine("Please input a number that is recognised"); break;
                 }
                 Encrypt(gameVer, path);
@@ -193,16 +179,48 @@ namespace Battle_Cats_save_editor
             Console.ReadLine();
             Options();
         }
+        static void GamOtotoMenu(string path)
+        {
+            ColouredText("&Welcome to the gamatoto/ototo menu&\n&1.& Edit base materials\n&2.& Edit catamins\n&3.& Edit gamatoto helpers\n&4.& Edit gamatoto XP\n&5.& Edit ototo engineers\n&6.& Edit cat cannon/base upgrades\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            int choice = (int)Inputed();
+
+            switch (choice)
+            {
+                case 1: BaseMats(path); break;
+                case 2: Catamin(path); break;
+                case 3: GamHelp(path); break;
+                case 4: GamXP(path); break;
+                case 5: Engineers(path); break;
+                case 6: CatCannon(path); break;
+                default: Console.WriteLine("Please input a number that is recognised"); break;
+
+            }
+        }
         static void GameModdingMenu()
         {
-            ColouredText("&Welcome to the game modding menu&\n&1.&Decrypt .list and .pack files\n&2.&Encrypt a folder of game files and turn them into encrypted .pack and .list files\n&3.&Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            int choice = Inputed();
+            ColouredText("&Welcome to the game modding menu&\n&1.&Decrypt .list and .pack files\n&2.&Encrypt a folder of game files and turn them into encrypted .pack and .list files\n&3.&Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)\n" +
+                "&4.&Enter the game file parsing/editing menu - contains things like editng the unit*.csv files\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            int choice = (int)Inputed();
 
             switch (choice)
             {
                 case 1: Decrypt("b484857901742afc"); break;
                 case 2: EncryptData("b484857901742afc"); break;
                 case 3: MD5Lib(); break;
+                case 4: GameFileParsing(); break;
+                default: Console.WriteLine("Please input a number that is recognised"); break;
+
+            }
+        }
+        static void GameFileParsing()
+        {
+            ColouredText("&Welcome to the game file parsing/editing menu&\n&1.& Edit unit*.csv files\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            int choice = (int)Inputed();
+
+            switch (choice)
+            {
+                case 1: Unitcsv(); break;
+                default: Console.WriteLine("Please enter a recognised number"); break;
             }
         }
         static void Elsewhere(string path2)
@@ -309,6 +327,266 @@ namespace Battle_Cats_save_editor
                 Console.WriteLine("Success");
             }
         }
+        static void Unitcsv()
+        {
+            OpenFileDialog fd = new()
+            {
+                Filter = "files (unit*.csv)|unit*.csv",
+                Title = "Select a unit*.csv file"
+            };
+            if (fd.ShowDialog() != DialogResult.OK)
+            {
+                Console.WriteLine("Please select .csv files");
+                Options();
+            }
+            string path = fd.FileName;
+            string[] csvData = File.ReadAllLines(path);
+
+            string[] firstFormData = csvData[0].Split(',');
+            string[] secondFormData = csvData[1].Split(',');
+            string[] thridFormData = new string[secondFormData.Length];
+            bool hasTrue = false;
+            if (csvData.Length >= 4)
+            {
+                hasTrue = true;
+                thridFormData = csvData[2].Split(',');
+                if (thridFormData.Length < 5)
+                {
+                    hasTrue = false;
+                }
+            }
+
+            string[] values =
+            {
+                "HP", "Knockback amount", "Movement Speed", "Attack Power", "Time between attacks", "Attack Range", "Base cost", "Recharge time",
+                "Always zero 1", "Hit box size?", "Red effective flag", "Always zero 2", "Area attack flag", "Attack animation", "Value from 0,1,5,6,7,9",
+                "Value from 0-9", "Floating effective flag", "Black effective flag", "Metal effective flag", "White effective flag", "Angel effective flag", "Alien effective flag",
+                "Zombie effective flag", "Strong against flag", "Knockback chance", "Freeze chance", "Freeze duration", "Slow chance", "Slow duration",
+                "Resistant flag", "Triple damage flag", "Critical chance", "Attack only flag", "Extra money from enemies flag", "Base destroyer flag", "Wave chance",
+                "Wave attack level", "Weaken chance", "Weaken duration", "Weaken to (decrease attack to percentage left)", "HP remain strength",
+                "Boost strength multiplier", "Survive chance", "If unit is metal flag", "Long range start", "Long range append", "Immune to wave flag", "Block wave flag",
+                "Resist knockbacks flag", "Resist freeze flag", "Resist slow flag", "Resist weaken flag", "Zombie killer flag", "Witch killer flag","Always zero 3", "Value from -1, 0, 1 - 1 is used for glass cat only",
+                "Some flag, used for unit 340", "Always -1", "Death after attack flag", "Second attack power", "Third attack power", "Second attack animation", "Third attack animation", "Some value, 0 for crazed moneko",
+                "Second attack flag", "Third attack flag", "Value from -1, 0", "Value from -1, 0, 1, 2, 3, 5, 6, 7", "Some flag for jp collab", "Some flag for jp collab",
+                "Barrier break chance", "Always zero 4", "Always zero 5", "Always zero 6", "Always zero 7", "Warp blocker flag", "Always zero 8",
+                "Eva angel killer flag", "Relic effective flag", "Immune to curse flag", "Insanely tough flag", "Insane damage flag", "Savage blow chance", "Savage blow level", "Dodge attack chance",
+                "Dodge attack duration", "surge attack chance", "Surge attack level", "Unknown", "Unknown", "Toxic immunity flag", "Surge immunity flag", "Curse chance", "Curse duration", "Unkown", "Unkown",
+                "Aku effective flag"
+            };
+
+            int choice;
+            if (hasTrue)
+            {
+                ColouredText("Thanks to this resource: &https://pastebin.com/JrCTPnUV& for help with parsing the unit data", ConsoleColor.White, ConsoleColor.Green);
+                ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n&3.& Third Form\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                choice = (int)Inputed();
+                if (choice > 3)
+                {
+                    Console.WriteLine("Please enter a number that is recognised");
+                    Unitcsv();
+                }
+            }
+            else
+            {
+                ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                choice = (int)Inputed();
+                if (choice > 2)
+                {
+                    Console.WriteLine("Please enter a number that is recognised");
+                    Unitcsv();
+                }
+            }
+            string unitValues = "";
+            string[] dataToUse = new string[firstFormData.Length];
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("First form data:");
+                    dataToUse = firstFormData;
+                    break;
+                case 2:
+                    Console.WriteLine("Second form data:");
+                    dataToUse = secondFormData;
+                    break;
+                case 3:
+                    Console.WriteLine("Third form data:");
+                    dataToUse = thridFormData;
+                    break;
+            }
+            for (int i = 0; i < dataToUse.Length; i++)
+            {
+                if (dataToUse[i] != "0" && dataToUse[i].Length > 0)
+                {
+                    try
+                    {
+                        unitValues += $"&{i + 1}.& {values[i]}";
+                        unitValues += $" : &{dataToUse[i]}&\n";
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            ColouredText(unitValues, ConsoleColor.White, ConsoleColor.DarkYellow);
+            string ValueTypes = "";
+            for (int i = 0; i < values.Length; i++)
+            {
+                ValueTypes += $"&{i + 1}.& {values[i]}\n";
+            }
+            ColouredText("What do you want to edit:\n" + ValueTypes + "\nWhat do you want to edit? You can enter multiple values separated by spaces to edit multiple values at once\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] EditIDs = Console.ReadLine().Split(' ');
+            for (int k = 0; k < EditIDs.Length; k++)
+            {
+                csvData = File.ReadAllLines(path);
+
+                firstFormData = csvData[0].Split(',');
+                secondFormData = csvData[1].Split(',');
+                thridFormData = new string[secondFormData.Length];
+                hasTrue = false;
+                if (csvData.Length >= 4)
+                {
+                    hasTrue = true;
+                    thridFormData = csvData[2].Split(',');
+                    if (thridFormData.Length < 5)
+                    {
+                        hasTrue = false;
+                    }
+                }
+                int toEdit = int.Parse(EditIDs[k]);
+
+                dataToUse = firstFormData;
+                List<string> firstFormList = new(firstFormData.Length);
+                List<string> secondFormList = new(firstFormData.Length);
+                List<string> thirdFormList = new(firstFormData.Length);
+                for (int i = 0; i < 3; i++)
+                {
+                    string amToAdd = "";
+                    int id = dataToUse.Length - 1;
+                    if (toEdit > dataToUse.Length - 1)
+                    {
+                        int amountToAdd = toEdit - (dataToUse.Length - 1);
+                        for (int j = 1; j < amountToAdd + 1; j++)
+                        {
+                            string val = "0";
+                            if (j + id == 58)
+                            {
+                                val = "-1";
+                            }
+                            else if (j + id == 56)
+                            {
+                                val = "-1";
+                            }
+                            else if (j + id == 64)
+                            {
+                                val = "1";
+                            }
+                            else if (j + id == 67)
+                            {
+                                val = "-1";
+                            }
+                            if (j == amountToAdd)
+                            {
+                                amToAdd += $"{val}";
+                            }
+                            else
+                            {
+                                amToAdd += $"{val},";
+                            }
+                        }
+                    }
+                    string[] amountToAddArr = amToAdd.Split(',');
+                    List<string> dataToUseList2 = dataToUse.ToList();
+                    for (int j = 0; j < amountToAddArr.Length; j++)
+                    {
+                        if (amountToAddArr[0] != "")
+                        {
+                            dataToUseList2.Insert((dataToUse.Length - 1) + j, amountToAddArr[j]);
+                        }
+                    }
+                    if (i == 0)
+                    {
+                        dataToUse = secondFormData;
+                        firstFormList = dataToUseList2;
+                    }
+                    else if (i == 1)
+                    {
+                        secondFormList = dataToUseList2;
+                    }
+                    else if (i == 2 && hasTrue)
+                    {
+                        thirdFormList = dataToUseList2;
+                    }
+                    if (i == 2 && hasTrue)
+                    {
+                        dataToUse = thridFormData;
+                    }
+                    else if (i == 1 && !hasTrue)
+                    {
+                        break;
+                    }
+                }
+                Console.WriteLine($"What value do you want to set {values[toEdit - 1]} to (for proc chance enter as a percentage(without the % sign), for flag values enter a 1 to enable them)");
+                int value = (int)Inputed();
+
+                if (choice == 1)
+                {
+                    firstFormList[toEdit - 1] = value.ToString();
+                }
+                else if (choice == 2)
+                {
+                    secondFormList[toEdit - 1] = value.ToString();
+                }
+                else
+                {
+                    thirdFormList[toEdit - 1] = value.ToString();
+                }
+                List<string> dataToUseList = firstFormList;
+                string fin = "";
+                for (int i = 0; i < 3; i++)
+                {
+                    string dataToUseFinal = "";
+                    for (int j = 0; j < dataToUseList.Count; j++)
+                    {
+                        if (j == dataToUseList.Count - 1)
+                        {
+                            dataToUseFinal += $"{dataToUseList[j]}";
+
+                        }
+                        else
+                        {
+                            dataToUseFinal += $"{dataToUseList[j]},";
+                        }
+                    }
+                    fin += dataToUseFinal + "\n";
+                    if (i == 0)
+                    {
+                        dataToUseList = secondFormList;
+                    }
+                    else if (i == 1 && hasTrue)
+                    {
+                        dataToUseList = thirdFormList;
+                    }
+                    else if (i == 1 && !hasTrue)
+                    {
+                        break;
+                    }
+                }
+                ColouredText($"&Set contents of the &{Path.GetFileName(path)}& file to&\n{fin}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                File.WriteAllText(path, fin);
+                byte[] allBytes = File.ReadAllBytes(path);
+
+                List<byte> ls = allBytes.ToList();
+                int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
+                rem *= 16;
+                rem -= ls.Count;
+                for (int i = 0; i < rem && rem != 16; i++)
+                {
+                    ls.Add((byte)rem);
+                }
+                File.WriteAllBytes(path, ls.ToArray());
+            }
+        }
         static void Decrypt(string key)
         {
             Console.WriteLine("Do you want the lists of the files contained within the .pack files to be outputed in the console?(yes/no) When slecting .pack and .list files, make sure the names match, you can select multiple packs and lists at the same time");
@@ -320,9 +598,11 @@ namespace Battle_Cats_save_editor
             {
                 spam = true;
             }
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Multiselect = true;
-            fd.Filter = "files (*.pack; .list)|*.pack;*.list";
+            OpenFileDialog fd = new()
+            {
+                Multiselect = true,
+                Filter = "files (*.pack; .list)|*.pack;*.list"
+            };
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .pack and .list files");
@@ -381,9 +661,9 @@ namespace Battle_Cats_save_editor
 
                         ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                        using MemoryStream msDecrypt = new MemoryStream(allData);
-                        using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-                        using StreamReader srDecrypt = new StreamReader(csDecrypt);
+                        using MemoryStream msDecrypt = new(allData);
+                        using CryptoStream csDecrypt = new(msDecrypt, decryptor, CryptoStreamMode.Read);
+                        using StreamReader srDecrypt = new(csDecrypt);
 
                         plaintext = srDecrypt.ReadToEnd();
                         if (!Directory.Exists("Decomp_lists/"))
@@ -511,7 +791,7 @@ namespace Battle_Cats_save_editor
                                 {
                                     using var stream2 = new FileStream(@"game_files/content", FileMode.Open, FileAccess.ReadWrite);
 
-                                    using CryptoStream csDecrypt = new CryptoStream(stream2, decryptor, CryptoStreamMode.Read);
+                                    using CryptoStream csDecrypt = new(stream2, decryptor, CryptoStreamMode.Read);
                                     byte[] bytes = new byte[offset[j]];
                                     csDecrypt.Read(bytes, 0, offset[j]);
 
@@ -538,10 +818,12 @@ namespace Battle_Cats_save_editor
         {
             Console.WriteLine("Enter name of .pack file name to be outputed, e.g datalocal, ImapServer (don't include .pack)");
             string name = Console.ReadLine();
-            FolderBrowserDialog fd = new FolderBrowserDialog();
-            fd.SelectedPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\game_files";
-            fd.Description = "Select a folder of game files to be encrypted into .pack and .list files";
-            fd.ShowNewFolderButton = false;
+            FolderBrowserDialog fd = new()
+            {
+                SelectedPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\game_files",
+                Description = "Select a folder of game files to be encrypted into .pack and .list files",
+                ShowNewFolderButton = false
+            };
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select a folder of game content!");
@@ -599,8 +881,8 @@ namespace Battle_Cats_save_editor
 
             ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-            using MemoryStream msEncrypt = new MemoryStream(allData);
-            using CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Read);
+            using MemoryStream msEncrypt = new(allData);
+            using CryptoStream csEncrypt = new(msEncrypt, encryptor, CryptoStreamMode.Read);
 
             byte[] bytess = new byte[length];
 
@@ -630,8 +912,8 @@ namespace Battle_Cats_save_editor
 
                     ICryptoTransform encryptor2 = aesAlg2.CreateEncryptor(aesAlg2.Key, aesAlg2.IV);
 
-                    using MemoryStream ms = new MemoryStream(bytef);
-                    using CryptoStream cs = new CryptoStream(ms, encryptor2, CryptoStreamMode.Read);
+                    using MemoryStream ms = new(bytef);
+                    using CryptoStream cs = new(ms, encryptor2, CryptoStreamMode.Read);
 
                     cs.Read(bytef, 0, FileLen);
 
@@ -667,8 +949,8 @@ namespace Battle_Cats_save_editor
 
                         ICryptoTransform encryptor2 = aesAlg2.CreateEncryptor(aesAlg2.Key, aesAlg2.IV);
 
-                        using MemoryStream ms = new MemoryStream(bytef);
-                        using CryptoStream cs = new CryptoStream(ms, encryptor2, CryptoStreamMode.Read);
+                        using MemoryStream ms = new(bytef);
+                        using CryptoStream cs = new(ms, encryptor2, CryptoStreamMode.Read);
 
                         cs.Read(bytef, 0, FileLen);
                     }
@@ -684,8 +966,10 @@ namespace Battle_Cats_save_editor
         static void MD5Lib()
         {
             Console.WriteLine("Please select an so file");
-            OpenFileDialog fd = new OpenFileDialog();
-            fd.Filter = "files (*.so)|*.so";
+            OpenFileDialog fd = new()
+            {
+                Filter = "files (*.so)|*.so"
+            };
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .so files");
@@ -699,10 +983,10 @@ namespace Battle_Cats_save_editor
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
 
-            List<KeyValuePair<string, byte[]>> listsHash = new List<KeyValuePair<string, byte[]>>();
+            List<KeyValuePair<string, byte[]>> listsHash = new();
 
             string[] order =
-                {"DataLocal.list", "ImageDataLocal.list", "ImageLocal.list", "MapLocal.list", "NumberLocal.list", "resLocal.list", "UnitLocal.list", "ImageDataLocal_fr.list", "ImageLocal_fr.list", "MapLocal_fr.list", "NumberLocal_fr.list", "resLocal_fr.list", "ImageDataLocal_it.list", "ImageLocal_it.list", "MapLocal_it.list", "NumberLocal_it.list", "resLocal_it.list", "ImageDataLocal_de.list", "ImageLocal_de.list", "MapLocal_de.list", "NumberLocal_de.list", "resLocal_de.list", "ImageDataLocal_es.list", "ImageLocal_es.list", "MapLocal_es.list", "NumberLocal_es.list", "resLocal_es.list", "DataLocal.pack", "ImageDataLocal.pack", "ImageLocal.pack", "MapLocal.pack", "NumberLocal.pack", "resLocal.pack", "UnitLocal.pack", "ImageDataLocal_fr.pack", "ImageLocal_fr.pack", "MapLocal_fr.pack", "NumberLocal_fr.pack", "resLocal_fr.pack", "ImageDataLocal_it.pack", "ImageLocal_it.pack", "MapLocal_it.pack", "NumberLocal_it.pack", "resLocal_it.pack", "ImageDataLocal_de.pack", "ImageLocal_de.pack", "MapLocal_de.pack", "NumberLocal_de.pack", "resLocal_de.pack", "ImageDataLocal_es.pack", "ImageLocal_es.pack", "MapLocal_es.pack", "NumberLocal_es.pack", "resLocal_es.pack",
+                {"DataLocal.list", "ImageDataLocal.list", "ImageLocal.list", "MapLocal.list", "NumberLocal.list", "resLocal.list", "UnitLocal.list", "ImageDataLocal_fr.list", "ImageLocal_fr.list", "MapLocal_fr.list", "resLocal_fr.list", "ImageDataLocal_it.list", "ImageLocal_it.list", "MapLocal_it.list", "resLocal_it.list", "ImageDataLocal_de.list", "ImageLocal_de.list", "MapLocal_de.list", "resLocal_de.list", "ImageDataLocal_es.list", "ImageLocal_es.list", "MapLocal_es.list", "resLocal_es.list", "DataLocal.pack", "ImageDataLocal.pack", "ImageLocal.pack", "MapLocal.pack", "NumberLocal.pack", "resLocal.pack", "UnitLocal.pack", "ImageDataLocal_fr.pack", "ImageLocal_fr.pack", "MapLocal_fr.pack", "NumberLocal_fr.pack", "resLocal_fr.pack", "ImageDataLocal_it.pack", "ImageLocal_it.pack", "MapLocal_it.pack", "NumberLocal_it.pack", "resLocal_it.pack", "ImageDataLocal_de.pack", "ImageLocal_de.pack", "MapLocal_de.pack", "NumberLocal_de.pack", "resLocal_de.pack", "ImageDataLocal_es.pack", "ImageLocal_es.pack", "MapLocal_es.pack", "NumberLocal_es.pack", "resLocal_es.pack", "ImageServer_100900_00_en.list", "MapServer_100900_00_en.list", "NumberServer_100900_00_en", "UnitServer_100900_00_en.list",
                 "ImageServer_100800_00_en.list", "MapServer_100800_00_en.list", "NumberServer_100800_00_en", "UnitServer_100800_00_en.list", "ImageServer_100700_00_en.list", "MapServer_100700_00_en.list", "NumberServer_100700_00_en.list", "UnitServer_100700_00_en.list", "ImageDataServer_100600_00_en.list", "ImageServer_100600_01_en.list", "MapServer_100600_02_en.list", "NumberServer_100600_03_en.list", "UnitServer_100600_04_en.list", "LImageServer.list", "LMapServer.list", "LNumberServer.list", "LUnitServer.list", "KImageServer.list", "KMapServer.list", "KNumberServer.list", "KUnitServer.list", "JImageServer.list", "JMapServer.list", "JNumberServer.list", "JUnitServer.list", "IImageServer.list", "IMapServer.list", "INumberServer.list", "IUnitServer.list", "HImageServer.list", "HMapServer.list", "HNumberServer.list", "HUnitServer.list", "GImageServer.list", "GMapServer.list", "GNumberServer.list", "GUnitServer.list", "FImageServer.list", "FMapServer.list", "FNumberServer.list", "FUnitServer.list", "EImageServer.list", "EMapServer.list", "ENumberServer.list", "EUnitServer.list", "DImageServer.list", "DMapServer.list", "DNumberServer.list", "DUnitServer.list", "CImageServer.list", "CMapServer.list", "CNumberServer.list", "CUnitServer.list", "BNumberServer.list", "BUnitServer.list", "AMapServer.list", "ANumberServer.list", "AUnitServer.list", "ImageServer.list", "MapServer.list"};
 
             int prevIndex = 0;
@@ -749,9 +1033,11 @@ namespace Battle_Cats_save_editor
                 }
             }
             Console.WriteLine("Please select .pack and .list files, you can select multiple at once");
-            OpenFileDialog fd2 = new OpenFileDialog();
-            fd2.Filter = "files (*.pack; .list)|*.pack;*.list";
-            fd2.Multiselect = true;
+            OpenFileDialog fd2 = new()
+            {
+                Filter = "files (*.pack; .list)|*.pack;*.list",
+                Multiselect = true
+            };
             if (fd2.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .pack/.list files");
@@ -788,55 +1074,18 @@ namespace Battle_Cats_save_editor
         }
         static string CalculateMD5(string filename)
         {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(filename))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-                }
-            }
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(filename);
+            var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }
-        static void UploadSave(string choice, string path)
-        {
-            string answer = Encrypt(choice, path);
-            string url1 = "https://nyanko.ponosgames.com/?action=store&country=en";
-            if (answer == "jp")
-            {
-                url1 = "https://nyanko.ponosgames.com/?action=store&country=jp";
-            }
-            else if (answer != "en")
-            {
-                Console.WriteLine("Error, please enter en or jp");
-            }
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            var client = new WebClient
-            {
-                BaseAddress = url1,
-            };
-            client.Headers.Add("Content-Type", "multipart/form-data;boundary=");
-
-            string data = Encoding.Default.GetString(allData);
-            ColouredText("Uploading saves is possible thanks to Lethal's save editor, as I could see the requests it made to the game servers allowing me to figure out how to do this&\nUploading save...", ConsoleColor.White, ConsoleColor.Green);
-            string response = client.UploadString(url1, "--\n" +
-                "Content-Disposition: attachment; name=\"saveData\";filename=\"data.sav\"" +
-                "\nContent-Type: application/octet-stream\n\n" + data + "\n----");
-
-            ColouredText("&Your codes are:\nTransfer:&" + response.Substring(14, 9) + "\n&Confirmation:&" + response.Substring(32, 4) + "\nPut these codes back into the game\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-
-
-        }
         static void Menu(string path)
         {
             ColouredText("&Welcome to the small patches and tweaks menu&\n&1.&Close all the bundle menus (if you have used upgrade all cats, you know what this is)\n&2.&Set new account code" +
                 "\n&3.&Upgrade the blue upgrades on the right of the normal cat upgrades\n&4.&Fix gamatoto" +
                 "(use if your gamatoto crashes your game)\n&5.&Fix save is used elsewhere error, whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that) and it should fix that error\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            int choice = Inputed();
+            int choice = (int)Inputed();
 
             switch (choice)
             {
@@ -908,7 +1157,7 @@ namespace Battle_Cats_save_editor
             };
 
             Console.WriteLine("What level of treasures of you want?(max 255) 1 = inferior, 2 = normal 3 = superior, anything above 3 just aplifies the treasure effect");
-            int level = Inputed();
+            int level = (int)Inputed();
             if (level > 255) level = 255;
             Console.WriteLine("Do you want a list of the types of treasures?(yes,no):");
             if (Console.ReadLine().ToLower() == "yes")
@@ -1077,7 +1326,7 @@ namespace Battle_Cats_save_editor
             string[] orbGrades = { "D", "C", "B", "A", "S" };
             string[] orbTypes = { "Strong", "Massive", "Tough", };
 
-            List<string> orbS = new List<string>();
+            List<string> orbS = new();
 
             orbS.AddRange(orbList);
             int length2 = orbS.Count;
@@ -1119,8 +1368,8 @@ namespace Battle_Cats_save_editor
             string input = Console.ReadLine();
             string[] orbNames = input.Split('_');
 
-            List<int> ids = new List<int>();
-            List<int> amounts = new List<int>();
+            List<int> ids = new();
+            List<int> amounts = new();
 
             bool skip = false;
             if (orbNames[0].ToLower() == "clear")
@@ -1157,6 +1406,12 @@ namespace Battle_Cats_save_editor
                 }
                 catch
                 {
+                    if (orbNames[i].ToLower().Contains("angle"))
+                    {
+                        ColouredText("You put angle instead of angel, I assume you mean angel so it has been corrected\n\n", ConsoleColor.White, ConsoleColor.Red);
+                        orbNames[i] = orbNames[i].ToLower();
+                        orbNames[i] = orbNames[i].Replace("angle", "angel");
+                    }
                     if (!orbS.Exists(orb => orb.ToLower() == orbNames[i].ToLower()))
                     {
                         Console.WriteLine("Orb: " + orbNames[i] + " doesn't exist!");
@@ -1170,7 +1425,7 @@ namespace Battle_Cats_save_editor
             for (int i = 0; i < ids.Count; i++)
             {
                 ColouredText("&What amount of &" + orbS[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
-                amounts.Add(Inputed());
+                amounts.Add((int)Inputed());
                 insert[ids[i] * 3] = (byte)amounts[i];
             }
             bytess[(int)startPos + 4] = 0x9B;
@@ -1183,8 +1438,9 @@ namespace Battle_Cats_save_editor
         static void CatFood(string path)
         {
             Console.WriteLine("How much cat food do you want?(max 45000, but I recommend below 20k, to be \"safe\"");
-            int CatFood = Inputed();
+            int CatFood = (int)Inputed();
             if (CatFood > 45000) CatFood = 45000;
+            else if (CatFood < 0) CatFood = 0;
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             Console.WriteLine("Set Cat food to " + CatFood);
@@ -1201,31 +1457,30 @@ namespace Battle_Cats_save_editor
         {
 
             Console.WriteLine("How much XP do you want?(max 99999999)");
-            int XP = Inputed();
+            int XP = (int)Inputed();
             if (XP > 99999999) XP = 99999999;
+            else if (XP < 0) XP = 0;
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             Console.WriteLine("Set XP to " + XP);
 
             byte[] bytes = Endian(XP);
+            int startPos = 76;
 
-            stream.Position = 76;
-            stream.WriteByte(bytes[0]);
-            stream.Position = 77;
-            stream.WriteByte(bytes[1]);
-            stream.Position = 78;
-            stream.WriteByte(bytes[2]);
-            stream.Position = 79;
-            stream.WriteByte(bytes[3]);
-
+            if (gameVer == "jp")
+            {
+                startPos = 75;
+            }
+            stream.Position = startPos;
+            stream.Write(bytes, 0, bytes.Length);
         }
 
         static void SepecTreasures(string path)
         {
             Console.WriteLine("What level of treasures of you want?(max 255) I would recommend going below 60 though, 1 = inferior, 2 = normal 3 = superior, anything above 3 just aplifies the treasure effect");
-            int level = Inputed();
+            int level = (int)Inputed();
             ColouredText("What chapter do you want to edit:\n&1.&Empire of Cats chapter 1\n&2.&Empire of Cats chapter 2\n&3.&Empire of Cats chapter 3\n&4.&Into the Future chapter 1\n&5.&Into the Future chapter 2\n&6.&Into the Future  chapter 3\n&7.&Cats of the Cosmos chapter 1\n&8.&Cats of the Cosmos chapter 2\n&9.&Cats of the Cosmos  chapter 3\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            int answer = Inputed();
+            int answer = (int)Inputed();
             if (level > 255) level = 255;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int j = 0;
@@ -1245,13 +1500,12 @@ namespace Battle_Cats_save_editor
                         stream.WriteByte((byte)level);
                     }
                 }
-
             }
         }
         static void MaxTreasures(string path)
         {
             Console.WriteLine("What level of treasures of you want?(max 255) I would recommend going below 60 though, if you actually want to damage aliens, you should set this to 4 or lower, 1=inferior, 2=normal, 3=superior");
-            int level = Inputed();
+            int level = (int)Inputed();
             if (level > 255) level = 255;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int j = 0;
@@ -1271,9 +1525,9 @@ namespace Battle_Cats_save_editor
         static void CatUpgrades(string path)
         {
             Console.WriteLine("What base level do you want to upgrade all of your cats to? (max 50) - plus levels will be specified later");
-            int baseLev = Inputed() - 1;
+            int baseLev = (int)(Inputed() - 1);
             Console.WriteLine("What plus level do you want to upgrade all of your cats to? (max 90)");
-            int plusLev = Inputed();
+            int plusLev = (int)Inputed();
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             if (baseLev > 49) baseLev = 49;
@@ -1364,7 +1618,7 @@ namespace Battle_Cats_save_editor
         static void Leadership(string path)
         {
             Console.WriteLine("How much leadership do you want(max 32767)");
-            int CatFood = Inputed();
+            int CatFood = (int)Inputed();
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -1394,7 +1648,7 @@ namespace Battle_Cats_save_editor
         static void NP(string path)
         {
             Console.WriteLine("How much NP do you want(max 65535)");
-            int CatFood = Inputed();
+            int CatFood = (int)Inputed();
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -1424,7 +1678,7 @@ namespace Battle_Cats_save_editor
         static void CatTicket(string path)
         {
             Console.WriteLine("How many Cat Tickets do you want(max 2000)");
-            int catTickets = Inputed();
+            int catTickets = (int)Inputed();
             if (catTickets >= 2000) catTickets = 1999;
             else if (catTickets < 0) catTickets = 0;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1450,7 +1704,7 @@ namespace Battle_Cats_save_editor
         static void CatTicketRare(string path)
         {
             Console.WriteLine("How many Rare Cat Tickets do you want(max 300)");
-            int catTickets = Inputed();
+            int catTickets = (int)Inputed();
             if (catTickets >= 300) catTickets = 399;
             else if (catTickets < 0) catTickets = 0;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1474,36 +1728,24 @@ namespace Battle_Cats_save_editor
         {
             Console.WriteLine("How much gamatoto xp do you want?\nLevel bounderies: https://battle-cats.fandom.com/wiki/Gamatoto_Expedition#Level-up_Requirements");
 
-            int amount = Inputed();
+            long amount = Inputed();
             byte[] bytes = Endian(amount);
-            int pos = ThirtySix(path).Item1;
-            bool c8 = ThirtySix(path).Item2;
+            int[] occurrence = OccurrenceB(path);
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             bool found = false;
+            int pos = occurrence[8] + (catAmount * 4) + 53;
             if (pos > 0)
             {
                 found = true;
+                stream.Position = pos;
             }
-            if (c8)
-            {
-                stream.Position = pos - 2367;
-
-            }
-            else
-            {
-                stream.Position = pos - 3087;
-            }
-            stream.WriteByte(bytes[0]);
-            stream.WriteByte(bytes[1]);
-            stream.WriteByte(bytes[2]);
-            stream.WriteByte(bytes[3]);
-
-
+            stream.Write(bytes, 0, bytes.Length);
             if (found)
             {
                 Console.WriteLine("Success");
             }
-            if (!found) Console.WriteLine("Sorry your gamatoto xp position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
+            if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
 
         }
         static Tuple<int, bool, int> ThirtySix(string path)
@@ -1667,6 +1909,7 @@ namespace Battle_Cats_save_editor
             Console.WriteLine("How many Platinum Cat Tickets do you want(max 9 - you'll get banned if you get more)");
             byte platCatTickets = Convert.ToByte(Console.ReadLine());
             if (platCatTickets > 9) platCatTickets = 9;
+            else if (platCatTickets < 0) platCatTickets = 0;
             int pos = ThirtySix(path).Item1;
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1717,13 +1960,13 @@ namespace Battle_Cats_save_editor
                 stream.WriteByte(1);
                 if (allData[StartPos + (j*5) + 10] == 0x30)
                 {
-                    StartPos += 5;
-                    stream.Position = StartPos + (j * 5);
-                    if (allData[StartPos + (j*5) +1] < 0x08)
-                    {
-                        stream.WriteByte(1);
-                    }
-                    StartPos += 8;
+                        StartPos += 5;
+                        stream.Position = StartPos + (j * 5);
+                        if (allData[StartPos + (j * 5) + 1] < 0x08)
+                        {
+                            stream.WriteByte(1);
+                        }
+                        StartPos += 8;
                 }
                 else if(allData[StartPos + (j * 5) + 13] == 0x40)
                 {
@@ -1732,7 +1975,102 @@ namespace Battle_Cats_save_editor
             }
             Console.WriteLine("Successfully cleared all zombie stages");
         }
+        static void CatCannon(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+            int pos = 0;
+
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 8 && allData[i + 4] == 0 && allData[i + 5] == 0 && allData[i + 6] == 0 && allData[i + 7] == 0 && allData[i + 8] == 0 && allData[i + 9] == 0 && allData[i + 10] == 0 && allData[i + 11] == 2 && allData[i + 12] == 0 && allData[i + 13] == 0 && allData[i + 14] == 0 && allData[i + 15] == 3 && allData[i + 16] == 0 && allData[i + 17] == 0 && allData[i + 18] == 0)
+                {
+                    pos = i + 15;
+                    break;
+                }
+            }
+            ColouredText("What cat cannon type do you want to edit?:\n&1.& Imporve Base\n&2.& Develop Slow Beam\n&3.& Develop Iron Wall\n&4.& Develop Thunderbolt\n&5.& Develop Waterblast\n&6.& Develop Holy Blast\n&7.& Develop Breakerblast\n&8.& Develop Curseblast\n&You can edit multiple at once by entering multiple numbers separated by spaces\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] answer = Console.ReadLine().Split(' ');
+            for (int i = 0; i < answer.Length; i++)
+            {
+                int choice = int.Parse(answer[i]);
+                int max = 0;
+
+                switch (choice)
+                {
+                    case 1:
+                        max = 20;
+                        break;
+                    case 2:
+                        max = 30;
+                        break;
+                    case 3:
+                        max = 30;
+                        break;
+                    case 4:
+                        max = 30;
+                        break;
+                    case 5:
+                        max = 20;
+                        break;
+                    case 6:
+                        max = 25;
+                        break;
+                    case 7:
+                        max = 30;
+                        break;
+                    case 8:
+                        max = 30;
+                        break;
+                }
+
+                int unlockPos = pos + (16 * (choice - 1));
+                stream.Position = unlockPos;
+                stream.WriteByte(3);
+
+                Console.WriteLine($"What level do you want for {choice}? (max {max})");
+                int level = (int)Inputed();
+                if (level == 0)
+                {
+                    stream.Position = unlockPos;
+                    stream.WriteByte(0);
+                }
+                else if (level > max) level = max;
+                else if (level < 1) level = 1;
+                level -= 1;
+
+                int levelPos = unlockPos + 4;
+                stream.Position = levelPos;
+                stream.WriteByte((byte)level);
+            }
+        }
+        static void Engineers(string path)
+        {
+            Console.WriteLine("How many engineers do you want? (max 5)");
+            int engineers = (int)Inputed();
+            if (engineers > 5) engineers = 5;
+            else if (engineers < 0) engineers = 0;
+            byte engi = Convert.ToByte(engineers);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            for (int i = 0; i < allData.Length; i++)
+            {
+                if (allData[i] == 0 && allData[i+1] == 0 && allData[i+2] == 0 && allData[i+3] == 8 && allData[i+4] == 0 && allData[i+5] == 0 && allData[i+6] == 0 && allData[i+7] == 0 && allData[i+8] == 0 && allData[i+9] == 0 && allData[i+10] == 0 && allData[i+11] == 2 && allData[i+12] == 0 && allData[i+13] == 0 && allData[i+14] == 0 && allData[i+15] == 3 && allData[i+16] == 0 && allData[i+17] == 0 && allData[i+18] == 0)
+                {
+                    stream.Position = i - 1;
+                    stream.WriteByte(engi);
+                    break;
+                }
+            }
+            Console.WriteLine($"Set current amount of ototo engineers to {engineers}");
+        }
         static void Seed(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -1745,8 +2083,7 @@ namespace Battle_Cats_save_editor
 
             Console.WriteLine("What seed do you want?");
             long Seed = Inputed();
-            if (Seed > 4294967295) Seed = 4294967295;
-            else if (Seed < 0) Seed = 0;
+            if (Seed < 0) Seed = 0;
             byte[] bytes = Endian(Seed);
 
             byte[] year = new byte[2];
@@ -1825,12 +2162,8 @@ namespace Battle_Cats_save_editor
             int[] occurrence = OccurrenceB(path);
 
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            try
-            {
-                stream2.Position = occurrence[4] + 40;
-            }
-            catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
+            stream2.Position = occurrence[5] + 40;
+                       
             int[] form = EvolvedFormsGetter();
             bool stop = false;
             int t = 0;
@@ -1853,7 +2186,7 @@ namespace Battle_Cats_save_editor
         static void Items(string path)
         {
             Console.WriteLine("\nHow many of each item do you want?(max 3999)");
-            int Items = Inputed();
+            int Items = (int)Inputed();
             if (Items > 3999) Items = 3999;
             if (Items < 0) Items = 0;
             _ = new byte[10];
@@ -1908,35 +2241,25 @@ namespace Battle_Cats_save_editor
         static void Catamin(string path)
         {
             Console.WriteLine("How many Catimins of each type do you want(max 65535)");
-            int platCatTickets = Inputed();
+            int platCatTickets = (int)Inputed();
 
             byte[] bytes = Endian(platCatTickets);
 
+            int[] occurrence = OccurrenceB(path);
 
-            int pos = ThirtySix(path).Item1;
-            bool c8 = ThirtySix(path).Item2;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             bool found = false;
+            int pos = occurrence[8] + (catAmount * 4) + 32;
             if (pos > 0)
             {
                 found = true;
-            }
-            if (c8)
-            {
-                stream.Position = pos - 2388;
-
-            }
-            else
-            {
-                stream.Position = pos - 3108;
+                stream.Position = pos;
             }
             for (int i = 0; i < 3; i++)
             {
-                stream.Write(bytes, 0, 2);
+                stream.Write(bytes, 0, bytes.Length);
                 stream.Position += 2;
             }
-
-
             if (found)
             {
                 Console.WriteLine("Success");
@@ -1947,64 +2270,91 @@ namespace Battle_Cats_save_editor
         static void BaseMats(string path)
         {
             Console.WriteLine("How many Base Materials do you want(max 65535)");
-            int platCatTickets = (int)Convert.ToInt64(Console.ReadLine());
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
-            byte[] bytes = Endian(platCatTickets);
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            bool found = false;
-
-            Console.WriteLine("Scan Complete");
-            for (int j = 0; j < allData.Length; j++)
+            int pos = 0;
+            for (int i = 0; i < allData.Length; i++)
             {
-                if (allData[j] == Convert.ToByte(01) && allData[j + 1] == Convert.ToByte("3F", 16) && allData[j + 2] == 0 && allData[j + 3] == 0 && allData[j + 4] == 0 && allData[j + 5] == 8)
+                if (allData[i] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 8 && allData[i + 4] == 0 && allData[i + 5] == 0 && allData[i + 6] == 0 && allData[i + 7] == 0 && allData[i + 8] == 0 && allData[i + 9] == 0 && allData[i + 10] == 0 && allData[i + 11] == 2 && allData[i + 12] == 0 && allData[i + 13] == 0 && allData[i + 14] == 0 && allData[i + 15] == 3 && allData[i + 16] == 0 && allData[i + 17] == 0 && allData[i + 18] == 0)
                 {
-                    found = true;
-                    for (int i = 0; i < 29; i += 4)
-                    {
-                        stream.Position = j + 9 + i;
-                        stream.WriteByte(bytes[0]);
-                        stream.WriteByte(bytes[1]);
-                    }
+                    pos = i - 46;
+                    break;
                 }
             }
-            if (!found) Console.WriteLine("Sorry your base mats position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
+            if (pos < 200)
+            {
+                Console.WriteLine("Your base mats position couldn't be found, please report this on the discord");
+                return;
+            }
+            string[] types = { "Brick", "Feather", "Coal", "Sprocket", "Gold", "Meteorite", "Beast Bone", "Ammonite" };
+            ColouredText("&What base material type do you want to edit, you can enter multiple ids separated by spaces&\n&1.& " +
+                "Bricks\n&2.& Feathers\n&3.& Coal\n&4.& Sprockets\n&5.& Gold\n&6.& Meteorite\n&7.& Beast Bones\n&8.& Ammonite\n&9.& All materials at once\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] answer = Console.ReadLine().Split(' ');
+            for (int i = 0; i < answer.Length; i++)
+            {
+                int id = int.Parse(answer[i]);
+                if (id == 9)
+                {
+                    Console.WriteLine("How much of each material do you want?(max 65535)");
+                    int platCatTickets = (int)Inputed();
+
+                    if (platCatTickets > 65535) platCatTickets = 65535;
+                    else if (platCatTickets < 0) platCatTickets = 0;
+
+                    byte[] bytes = Endian(platCatTickets);
+
+                    for (int j = 0; j < 8; j++)
+                    {
+                        stream.Position = pos + (j * 4);
+                        stream.Write(bytes, 0, bytes.Length);
+                        ColouredText($"&Set current amount of &{types[j]}& to &{platCatTickets}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    }
+                }
+                else
+                {
+                    id -= 1;
+
+                    Console.WriteLine($"How much {types[id]} do you want?(max 65535)");
+                    int platCatTickets = (int)Inputed();
+
+                    if (platCatTickets > 65535) platCatTickets = 65535;
+                    else if (platCatTickets < 0) platCatTickets = 0;
+
+                    byte[] bytes = Endian(platCatTickets);
+
+                    stream.Position = pos + (id* 4);
+                    stream.Write(bytes, 0, bytes.Length);
+
+                    ColouredText($"&Set current amount of &{types[id]}& to &{platCatTickets}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                }
+            }
         }
 
         static void Catseyes(string path)
         {
             Console.WriteLine("How many catseyes of each type do you want(max 65535)");
-            int platCatTickets = Inputed();
+            int platCatTickets = (int)Inputed();
 
             byte[] bytes = Endian(platCatTickets);
 
+            int[] occurrence = OccurrenceB(path);
 
-            int pos = ThirtySix(path).Item1;
-            bool c8 = ThirtySix(path).Item2;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             bool found = false;
+            int pos = occurrence[8] + (catAmount * 4) + 8;
             if (pos > 0)
             {
                 found = true;
-            }
-            if (c8)
-            {
-                stream.Position = pos - 2412;
-
-            }
-            else
-            {
-                stream.Position = pos - 3132;
+                stream.Position = pos;
             }
             for (int i = 0; i < 5; i++)
             {
-                stream.Write(bytes, 0, 2);
+                stream.Write(bytes, 0, bytes.Length);
                 stream.Position += 2;
             }
-
-
             if (found)
             {
                 Console.WriteLine("Success");
@@ -2040,10 +2390,15 @@ namespace Battle_Cats_save_editor
             }
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            int ids = 0;
             for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
             {
-                stream.Position = i;
-                stream.WriteByte(Convert.ToByte(01));
+                if (ids != 542)
+                {
+                    stream.Position = i;
+                    stream.WriteByte(Convert.ToByte(01));
+                }
+                ids++;
             }
             Console.WriteLine("Gave all cats");
 
@@ -2165,7 +2520,7 @@ namespace Battle_Cats_save_editor
         static string Encrypt(string choice, string path)
         {
             string name = Path.GetFileName(path);
-            if (name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so"))
+            if (name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so") || name.EndsWith(".csv"))
             {
                 Console.WriteLine("Are you sure you want to patch this type of file?, it might corrupt it, (yes/no)");
                 string answer = Console.ReadLine().ToLower();
@@ -2247,10 +2602,10 @@ namespace Battle_Cats_save_editor
             catch (IndexOutOfRangeException) { }
         }
 
-        static int Inputed()
+        static long Inputed()
         {
-            int input = 0;
-            try { input = (int)Convert.ToInt64(Console.ReadLine()); }
+            long input = 0;
+            try { input = Convert.ToInt64(Console.ReadLine()); }
             catch (OverflowException)
             {
                 ColouredText("Input number was too large\n", ConsoleColor.White, ConsoleColor.DarkRed);
@@ -2280,7 +2635,7 @@ namespace Battle_Cats_save_editor
             for (int i = 0; i < allData.Length - 1; i++)
             {
                 if (allData[i] == anchour)
-                    if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i - 1] == 0)
+                    if (allData[i + 1] == 2 && allData[i + 2] == 0 && allData[i + 3] == 0)
                     {
                         occurrence[amount] = i;
                         amount++;
@@ -2333,7 +2688,7 @@ namespace Battle_Cats_save_editor
 
             try
             {
-                stream.Position = occurrence[4] + 40;
+                stream.Position = occurrence[5] + 40;
             }
             catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
             int[] form = EvolvedFormsGetter();
@@ -2429,7 +2784,7 @@ namespace Battle_Cats_save_editor
 
             try
             {
-                stream2.Position = occurrence[6] - 60;
+                stream2.Position = occurrence[7] - 60;
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -2441,7 +2796,7 @@ namespace Battle_Cats_save_editor
             string[] fruits = { "Purple Seed", "Red Seed", "Blue Seed", "Green Seed", "Yellow Seed", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seed", "Elder Fruit", "Epic Seed", "Gold Fruit" };
 
             int j = 0;
-            for (int i = occurrence[6] - 60; i < occurrence[6] - 3; i += 4)
+            for (int i = occurrence[7] - 60; i < occurrence[7] - 3; i += 4)
             {
                 catfruit[0] = allData[i];
                 catfruit[1] = allData[i + 1];
@@ -2455,7 +2810,7 @@ namespace Battle_Cats_save_editor
             if (input == "2")
             {
                 ColouredText("&How many do you want?(max &32&)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                int num = Inputed();
+                int num = (int)Inputed();
                 if (num > 32) num = 32;
                 else if (num < 0) num = 0;
 
@@ -2464,16 +2819,16 @@ namespace Battle_Cats_save_editor
                 for (int i = 5; i < 11; i++)
                 {
                     int choice2 = i;
-                    stream2.Position = occurrence[6] - 60 + ((choice2) * 4);
+                    stream2.Position = occurrence[7] - 60 + ((choice2) * 4);
                     stream2.WriteByte(bytes2[0]);
                     stream2.WriteByte(bytes2[1]);
                     ColouredText("&Set &" + fruits[choice2] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
                 }
-                stream2.Position = occurrence[6] - 60 + (12 * 4);
+                stream2.Position = occurrence[7] - 60 + (12 * 4);
                 stream2.WriteByte(bytes2[0]);
                 stream2.WriteByte(bytes2[1]);
                 ColouredText("&Set &" + fruits[12] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                stream2.Position = occurrence[6] - 60 + (14 * 4);
+                stream2.Position = occurrence[7] - 60 + (14 * 4);
                 stream2.WriteByte(bytes2[0]);
                 stream2.WriteByte(bytes2[1]);
                 ColouredText("&Set &" + fruits[14] + "& to &" + num + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
@@ -2505,13 +2860,13 @@ namespace Battle_Cats_save_editor
                         else if (choice < 1) choice = 1;
 
                         ColouredText("&How many &" + fruits[choice - 1] + "s& do you want (max &256&)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                        int amount = Inputed();
+                        int amount = (int)Inputed();
                         if (amount > 256) amount = 256;
                         else if (amount < 0) amount = 0;
 
                         byte[] bytes = Endian(amount);
 
-                        stream2.Position = occurrence[6] - 60 + ((choice - 1) * 4);
+                        stream2.Position = occurrence[7] - 60 + ((choice - 1) * 4);
                         stream2.WriteByte(bytes[0]);
                         stream2.WriteByte(bytes[1]);
                     }
@@ -2553,7 +2908,7 @@ namespace Battle_Cats_save_editor
         static void Talents(string path)
         {
             Console.WriteLine("What level of talents do you want to upgrade everything to?(max 65535)");
-            int level = Inputed();
+            int level = (int)Inputed();
             if (level > 65535) level = 65535;
 
             byte[] talents = Endian(level);
@@ -2598,6 +2953,10 @@ namespace Battle_Cats_save_editor
 
         static byte Anchour(string path)
         {
+            if (path.EndsWith(".list") || path.EndsWith(".pack") || path.EndsWith(".so") || path.EndsWith(".csv"))
+            {
+                return 0;
+            }
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
@@ -2607,10 +2966,17 @@ namespace Battle_Cats_save_editor
 
             for (int i = 7344; i < 7375; i++)
             {
-                if (allData[i] == 2)
+                try
                 {
-                    anchour = allData[i - 1];
-                    break;
+                    if (allData[i] == 2)
+                    {
+                        anchour = allData[i - 1];
+                        break;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Error, this save file seems to be different/corrupted, if this is an actual bc save file, please report this to the discord");
                 }
             }
             stream.Close();
@@ -2627,7 +2993,7 @@ namespace Battle_Cats_save_editor
 
             ColouredText("What chapters do you want to complete?(1-9)\n1.&Empire of cats chapter 1&\n2.&Empire of cats chapter 2&\n3.&Empire of cats chapter 3&\n4.&Into the future chapter 1&\n5.&Into the future chapter 2&\n6.&Into the future chapter 3&\n7.&Cats of the cosmos chapter 1&" +
                 "\n8.&Cats of the cosmos chapter 2&\n9.&Cats of the cosmos chapter 3&\n10.&All chapters&\n", ConsoleColor.White, ConsoleColor.Cyan);
-            int choice = Inputed();
+            int choice = (int)Inputed();
 
             if (choice == 10)
             {
@@ -2819,7 +3185,7 @@ namespace Battle_Cats_save_editor
         static void TimedScore(string path)
         {
             Console.WriteLine("What timed score do you want? (max 9999)");
-            int score = Inputed();
+            int score = (int)Inputed();
             if (score > 9999) score = 9999;
             byte[] scoreByte = Endian(score);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
@@ -2837,16 +3203,16 @@ namespace Battle_Cats_save_editor
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
 
-            stream2.Position = occurance[5];
+            stream2.Position = occurance[6];
             if (stream2.Position == 0)
             {
                 Console.WriteLine("Sorry your timed score position couldn't be found please contact me on discord(linked in the readme)");
                 return;
             }
-            if (allData[occurance[5] - 2095] == 1) stream2.Position = occurance[5] - 2096;
-            if (allData[occurance[5] - 2127] == 1) stream2.Position = occurance[5] - 2128;
+            if (allData[occurance[6] - 2095] == 1) stream2.Position = occurance[6] - 2096;
+            if (allData[occurance[6] - 2127] == 1) stream2.Position = occurance[6] - 2128;
 
-            stream2.Position -= 616;
+            stream2.Position -= catAmount;
             for (int i = 0; i < 48; i++)
             {
                 stream2.WriteByte(scoreByte[0]);
@@ -2874,11 +3240,11 @@ namespace Battle_Cats_save_editor
         static int[] EvolvedFormsGetter()
         {
             Console.WriteLine("Downloading cat data...");
-            WebClient client = new WebClient();
+            WebClient client = new();
             client.DownloadFile("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/cats.csv", @"cats.csv");
             Console.WriteLine("Done\nParsing cat evolve forms...");
             using var reader = new StreamReader(@"cats.csv");
-            List<string> listA = new List<string>();
+            List<string> listA = new();
             while (!reader.EndOfStream)
             {
                 string line = reader.ReadLine();
