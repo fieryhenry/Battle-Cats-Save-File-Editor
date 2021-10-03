@@ -28,33 +28,38 @@ I have created an updated tutorial video that goes you through the steps of gett
 10. Change rare gacha seed
 11. Evolve all cats (requires the ability to evolve cats)
 12. Change battle items
-13. Change catamins
-14. Change base materials
-15. Change catseyes (requires catseyes to be unlocked)
-16. Get/remove all cats
-17. Get/remove a specific cat
-18. Upgrade a specific cat to a specific level
-19. Unlock treasures of a specific chapter
-20. Evolve a specific cat
-21. Change cat fruits and cat fruit seeds
-22. Change the talent level of all cats(expreimental and buggy - use at your own risk)
-23. Clear specifc or all story chapters (doesn't include SoL)
-24. Patch the save
-25. Secondary menu:  <br>
-  25.1. Close rank up bundle menus <br>
-  25.2. Change account code <br>
-  25.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
-  25.4. Fix gamatoto <br>
-  25.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up
-26. Display your current rare gacha seed
-27. Change ItF timed scores
-28. Clear SoL subchapters (doesn't include uncanny ledgends)
-29. Edit amount of gamatoto helpers
-30. Edit gamatoto xp
-31. Secondary modding menu: <br>
-  31.1 Decrypt .list and .pack files <br>
-  31.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
-  31.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br> 
-32. Edit talent orbs
-33. Change type of treasures, e.g giant safe, energy drink, ancient tablet
-34. Clear all zombie stages
+13. Change catseyes
+14. Get/remove all cats
+15. Get/remove a specific cat
+16. Upgrade a specific cat to a specific level
+17. Unlock treasures of a specific chapter
+18. Evolve a specific cat
+19. Change cat fruits and cat fruit seeds
+20. Change the talent level of all cats(expreimental and buggy - use at your own risk)
+21. Clear specifc or all story chapters (doesn't include SoL)
+22. Patch the save
+23. Secondary menu:  <br>
+  23.1. Close rank up bundle menus <br>
+  23.2. Change account code <br>
+  23.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
+  23.4. Fix gamatoto <br>
+  23.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up <br>
+24. Display your current rare gacha seed
+25. Change ItF timed scores
+26. Clear SoL subchapters (doesn't include uncanny ledgends)
+27. Secondary modding menu: <br>
+  27.1 Decrypt .list and .pack files <br>
+  27.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
+  27.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br>
+  27.4 Enter game editing/parsing menu <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.1 Modify/parse unit csv files <br>
+28. Edit talent orbs
+29. Change type of treasures, e.g giant safe, energy drink, ancient tablet
+30. Clear all zombie stages
+31. Enter gamatoto/ototo menu
+  31.1 Edit Base materials <br>
+  31.2 Edit catamins <br>
+  31.3 Edit gamatoto helpers <br>
+  31.4 Edit gamatoto XP <br>
+  31.5 Edit ototo engineers <br>
+  31.6 Edit cat cannon/base upgrades <br>
