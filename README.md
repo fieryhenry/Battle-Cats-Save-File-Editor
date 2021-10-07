@@ -49,7 +49,7 @@ I have created an updated tutorial video that goes you through the steps of gett
 26. Clear SoL subchapters (doesn't include uncanny ledgends)
 27. Secondary modding menu: <br>
   27.1 Decrypt .list and .pack files <br>
-  27.2 Encypt a folder of game files and turn them into encrypted .list and .pack files <br>
+  27.2 Encrypt a folder of game files and turn them into encrypted .list and .pack files <br>
   27.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br>
   27.4 Enter game editing/parsing menu <br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.1 Modify/parse unit csv files <br>
