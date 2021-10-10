@@ -1,0 +1,3 @@
+30/Clear Zombie Stages/You might still have an outbreak that hasn't been cleared after using this feature, although after a wait this will disappear, so it isn't much of an issue
+25/Change all into the future timed score rewards/This may lead to bans if set too high
+1/Change Cat food/In some cases editing cat food at all can lead to bans, I think their might be a way to avoid this in the future, but it might be too difficult
