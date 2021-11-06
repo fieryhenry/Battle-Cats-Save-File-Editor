@@ -1,0 +1,51 @@
+1: Gain Weaken:10
+2: Gain Freeze:10
+3: Gain Slow:10
+5: Gain Strong:10
+6: Gain Tough Vs:10
+7: Gain Massive Damage:10
+8: Gain Knockback:10
+9: Gain Warp:10
+10: Gain Strengthen:10
+11: Gain Survives:10
+13: Gain Critical:10
+14: Gain Zombie Killer:1
+15: Gain Barrier Breaker:10
+16: Gain Money Up:10
+17: Gain Wave Attack:10
+18: Gain Resist Weaken:10
+19: Gain Resist Freeze:10
+20: Gain Resist Slow:10
+21: Gain Resist Knockback:10
+22: Gain Resist Wave:10
+25: Cost Down:10
+26: Recover Speed Up:10
+27: Move Speed Up:10
+29: Gain Immune Curse:1
+30: Resist Curse:10
+31: Attack Buff:10
+32: Defense Buff:10
+33: Gain Target Red:1
+34: Gain Target Floating:1
+35: Gain Target Black:1
+36: Gain Target Metal:1
+37: Gain Target Angel:1
+38: Gain Target Alien:1
+39: Gain Target Zombie:1
+40: Gain Target Relic:1
+41: Gain Target Traitless:1
+44: Gain Immune Weaken:1
+45: Gain Immune Freeze:1
+46: Gain Immune Slow:1
+47: Gain Immune Knockback:1
+48: Gain Immune Waves:1
+49: Gain Immune Warp:1
+50: Gain Savage Blow:10
+51: Gain Dodge Attack:10
+52: Gain Resist Toxic:10
+53: Gain Immune Toxic:1
+54: Gain Resist Surge:10
+55: Gain Immune Surge:1
+56: Gain Surge Attack:10
+57: Gain Target Aku:1
+58: Gain Shield Piercing:10
