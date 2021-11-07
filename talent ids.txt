@@ -8,7 +8,7 @@
 9: Gain Warp:10
 10: Gain Strengthen:10
 11: Gain Survives:10
-13: Gain Critical:10
+13: Gain Critical:5
 14: Gain Zombie Killer:1
 15: Gain Barrier Breaker:10
 16: Gain Money Up:10
