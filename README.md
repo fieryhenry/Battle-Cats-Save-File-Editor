@@ -42,8 +42,7 @@ I have created an updated tutorial video that goes you through the steps of gett
   23.1. Close rank up bundle menus <br>
   23.2. Change account code <br>
   23.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
-  23.4. Fix gamatoto <br>
-  23.5  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up <br>
+  23.4  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up <br>
 24. Display your current rare gacha seed
 25. Change ItF timed scores
 26. Clear SoL subchapters (doesn't include uncanny ledgends)
@@ -53,6 +52,7 @@ I have created an updated tutorial video that goes you through the steps of gett
   27.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br>
   27.4 Enter game editing/parsing menu <br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.1 Modify/parse unit csv files <br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.2 Modify/parse stage csv files <br>
 28. Edit talent orbs
 29. Change type of treasures, e.g giant safe, energy drink, ancient tablet
 30. Clear all zombie stages
@@ -63,3 +63,5 @@ I have created an updated tutorial video that goes you through the steps of gett
   31.4 Edit gamatoto XP <br>
   31.5 Edit ototo engineers <br>
   31.6 Edit cat cannon/base upgrades <br>
+32. Clear Aku realm (must have it unlocked)
+33. Unlock equip slots
