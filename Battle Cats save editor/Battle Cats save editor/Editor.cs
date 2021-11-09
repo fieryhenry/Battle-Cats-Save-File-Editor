@@ -82,7 +82,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.35.0";
+            string version = "2.35.1";
 
             if (lines == version && !skip)
             {
@@ -709,14 +709,14 @@ namespace Battle_Cats_save_editor
             string[] secondFormData = csvData[1].Split(',');
             string[] thirdFormData = new string[secondFormData.Length];
             bool hasTrue = false;
-            if (csvData.Length >= 4)
+            if (csvData.Length >= 3)
             {
-                hasTrue = true;
                 thirdFormData = csvData[2].Split(',');
-                if (thirdFormData.Length < 5)
+                if (thirdFormData.Length > 5)
                 {
-                    hasTrue = false;
+                    hasTrue = true;
                 }
+
             }
 
             string[] values =
@@ -808,14 +808,14 @@ namespace Battle_Cats_save_editor
                 secondFormData = csvData[1].Split(',');
                 thirdFormData = new string[secondFormData.Length];
                 hasTrue = false;
-                if (csvData.Length >= 4)
+                if (csvData.Length >= 3)
                 {
-                    hasTrue = true;
                     thirdFormData = csvData[2].Split(',');
-                    if (thirdFormData.Length < 5)
+                    if (thirdFormData.Length > 5)
                     {
-                        hasTrue = false;
+                        hasTrue = true;
                     }
+
                 }
                 int toEdit = int.Parse(EditIDs[k]);
 
@@ -891,65 +891,77 @@ namespace Battle_Cats_save_editor
                         break;
                     }
                 }
-                Console.WriteLine($"What value do you want to set {values[toEdit - 1]} to (for proc chance enter as a percentage(without the % sign), for flag values enter a 1 to enable them)");
-                int value = (int)Inputed();
+                bool stopNow = false;
+                try
+                {
+                    Console.WriteLine($"What value do you want to set {values[toEdit - 1]} to (for proc chance enter as a percentage(without the % sign), for flag values enter a 1 to enable them)");
+                }
+                catch
+                {
+                    Console.WriteLine("Error, id is too large");
+                    stopNow = true;
+                }
+                if (!stopNow)
+                {
+                    int value = (int)Inputed();
 
-                if (choice == 1)
-                {
-                    firstFormList[toEdit - 1] = value.ToString();
-                }
-                else if (choice == 2)
-                {
-                    secondFormList[toEdit - 1] = value.ToString();
-                }
-                else
-                {
-                    thirdFormList[toEdit - 1] = value.ToString();
-                }
-                List<string> dataToUseList = firstFormList;
-                string fin = "";
-                for (int i = 0; i < 3; i++)
-                {
-                    string dataToUseFinal = "";
-                    for (int j = 0; j < dataToUseList.Count; j++)
+                    if (choice == 1)
                     {
-                        if (j == dataToUseList.Count - 1)
+                        firstFormList[toEdit - 1] = value.ToString();
+                    }
+                    else if (choice == 2)
+                    {
+                        secondFormList[toEdit - 1] = value.ToString();
+                    }
+                    else
+                    {
+                        thirdFormList[toEdit - 1] = value.ToString();
+                    }
+                    List<string> dataToUseList = firstFormList;
+                    string fin = "";
+                    for (int i = 0; i < 3; i++)
+                    {
+                        string dataToUseFinal = "";
+                        for (int j = 0; j < dataToUseList.Count; j++)
                         {
-                            dataToUseFinal += $"{dataToUseList[j]}";
+                            if (j == dataToUseList.Count - 1)
+                            {
+                                dataToUseFinal += $"{dataToUseList[j]}";
 
+                            }
+                            else
+                            {
+                                dataToUseFinal += $"{dataToUseList[j]},";
+                            }
                         }
-                        else
+                        fin += dataToUseFinal + "\n";
+                        if (i == 0)
                         {
-                            dataToUseFinal += $"{dataToUseList[j]},";
+                            dataToUseList = secondFormList;
+                        }
+                        else if (i == 1 && hasTrue)
+                        {
+                            dataToUseList = thirdFormList;
+                        }
+                        else if (i == 1 && !hasTrue)
+                        {
+                            break;
                         }
                     }
-                    fin += dataToUseFinal + "\n";
-                    if (i == 0)
-                    {
-                        dataToUseList = secondFormList;
-                    }
-                    else if (i == 1 && hasTrue)
-                    {
-                        dataToUseList = thirdFormList;
-                    }
-                    else if (i == 1 && !hasTrue)
-                    {
-                        break;
-                    }
-                }
-                ColouredText($"&Set contents of the &{Path.GetFileName(path)}& file to&\n{fin}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-                File.WriteAllText(path, fin);
-                byte[] allBytes = File.ReadAllBytes(path);
+                    ColouredText($"&Set contents of the &{Path.GetFileName(path)}& file to&\n{fin}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    File.WriteAllText(path, fin);
+                    byte[] allBytes = File.ReadAllBytes(path);
 
-                List<byte> ls = allBytes.ToList();
-                int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
-                rem *= 16;
-                rem -= ls.Count;
-                for (int i = 0; i < rem && rem != 16; i++)
-                {
-                    ls.Add((byte)rem);
+                    List<byte> ls = allBytes.ToList();
+                    int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
+                    rem *= 16;
+                    rem -= ls.Count;
+                    for (int i = 0; i < rem && rem != 16; i++)
+                    {
+                        ls.Add((byte)rem);
+                    }
+                    File.WriteAllBytes(path, ls.ToArray());
                 }
-                File.WriteAllBytes(path, ls.ToArray());
             }
         }
         static void Decrypt(string key)
@@ -1181,8 +1193,9 @@ namespace Battle_Cats_save_editor
         }
         static void EncryptData(string key)
         {
-            Console.WriteLine("Enter name of .pack file name to be outputed, e.g datalocal, ImapServer (don't include .pack)");
+            Console.WriteLine("Enter name of .pack file name to be outputed, e.g DataLocal, ImapServer (don't include .pack) + capatalisation must be correct");
             string name = Console.ReadLine();
+
             FolderBrowserDialog fd = new()
             {
                 SelectedPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\game_files",
