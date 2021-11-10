@@ -35,7 +35,7 @@ I have created an updated tutorial video that goes you through the steps of gett
 17. Unlock treasures of a specific chapter
 18. Evolve a specific cat
 19. Change cat fruits and cat fruit seeds
-20. Change the talent level of all cats(expreimental and buggy - use at your own risk)
+20. Change the talent level of all cats
 21. Clear specifc or all story chapters (doesn't include SoL)
 22. Patch the save
 23. Secondary menu:  <br>
