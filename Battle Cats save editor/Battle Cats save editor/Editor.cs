@@ -82,7 +82,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.35.1";
+            string version = "2.35.2";
 
             if (lines == version && !skip)
             {
@@ -98,7 +98,7 @@ namespace Battle_Cats_save_editor
                     try
                     {
                         System.Diagnostics.Process.Start(@"Updater.exe");
-                        Exit(1);
+                        Exit(0);
                     }
                     catch
                     {
@@ -2783,7 +2783,7 @@ namespace Battle_Cats_save_editor
         {
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
+            for (int i = occurrence[0] + 4; i <= occurrence[1] - 4; i += 4)
             {
                 stream.Position = i;
                 stream.WriteByte(Convert.ToByte(0));
@@ -2808,7 +2808,7 @@ namespace Battle_Cats_save_editor
             int[] occurrence = OccurrenceB(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             int ids = 0;
-            for (int i = occurrence[0] + 4; i <= occurrence[1] - 12; i += 4)
+            for (int i = occurrence[0] + 4; i <= occurrence[1] - 4; i += 4)
             {
                 if (ids != 542)
                 {
