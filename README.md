@@ -9,6 +9,8 @@ Lethal's editor for giving me inspiration to start the project and it helped me 
 Beeven and csehydrogen's open source code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats, https://github.com/csehydrogen/BattleCatsHacker
 
 # How to use
+## Warning: <b>Before editing anything, please make sure to create a backup of the save file somewhere, in case things go wrong</b>
+
 This got way more complicated due to added security to the transfer system, you now need to have a rooted device - either emulator or real and extract the save that way. 
 
 Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get Battle Cats Save File Editor.zip, not the exe)
