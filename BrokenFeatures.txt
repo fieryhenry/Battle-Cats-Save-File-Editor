@@ -1,3 +1,7 @@
 30/Clear Zombie Stages/You might still have an outbreak that hasn't been cleared after using this feature, although after a wait this will disappear, so it isn't much of an issue
 25/Change all into the future timed score rewards/This may lead to bans if set too high
-1/Change Cat food/In some cases editing cat food at all can lead to bans, I think their might be a way to avoid this in the future, but it might be too difficult
+1/Change Cat food/In some cases editing cat food at all can lead to bans, their is a way to avoid this, but it's too dificult atm
+7/Change cat tickets/In some cases editing tickets at all can lead to bans, their is a way to avoid this, but it's too dificult atm
+8/Change rare cat tickets/In some cases editing tickets at all can lead to bans, their is a way to avoid this, but it's too dificult atm
+9/Change platinum tickets/In some cases editing tickets at all can lead to bans, their is a way to avoid this, but it's too dificult atm
+34/Change legend tickets/In some cases editing tickets at all can lead to bans, their is a way to avoid this, but it's too dificult atm
