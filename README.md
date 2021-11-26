@@ -65,3 +65,4 @@ I have created an updated tutorial video that goes you through the steps of gett
   31.6 Edit cat cannon/base upgrades <br>
 32. Clear Aku realm (must have it unlocked)
 33. Unlock equip slots
+34. Add legend tickets
