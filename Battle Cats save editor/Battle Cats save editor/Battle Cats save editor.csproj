@@ -56,6 +56,54 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Editor.cs" />
+    <Compile Include="Game Mods\Files\Stage Mod.cs" />
+    <Compile Include="Game Mods\Files\Unit Mod.cs" />
+    <Compile Include="Game Mods\MD5 Libnative.cs" />
+    <Compile Include="Game Mods\Packs\EncryptPack.cs" />
+    <Compile Include="Game Mods\Packs\DecryptPack.cs" />
+    <Compile Include="Save Edits\Basic Items\Platinum Shards.cs" />
+    <Compile Include="Save Edits\Cats\All Talent.cs" />
+    <Compile Include="Save Edits\Other\Patch Save File.cs" />
+    <Compile Include="Save Edits\Gamatoto - Ototo\Ototo Engineers.cs" />
+    <Compile Include="Save Edits\Other\Rare Gacha Seed.cs" />
+    <Compile Include="Save Edits\Level\ItF Timed Scores.cs" />
+    <Compile Include="Save Edits\Other\Equip Slots.cs" />
+    <Compile Include="Save Edits\Gamatoto - Ototo\Ototo Cat Cannon.cs" />
+    <Compile Include="Save Edits\Basic Items\Base Materials.cs" />
+    <Compile Include="Save Edits\Cats\Remove Specific Cats.cs" />
+    <Compile Include="Save Edits\Cats\Remove Cats.cs" />
+    <Compile Include="Save Edits\Cats\Get Specific Cats.cs" />
+    <Compile Include="Save Edits\Cats\Get Cat.cs" />
+    <Compile Include="Save Edits\Other\Close Bundle.cs" />
+    <Compile Include="Save Edits\Cats\Blue Upgrade.cs" />
+    <Compile Include="Save Edits\Cats\Specific Upgrade.cs" />
+    <Compile Include="Save Edits\Cats\Cat Upgrade.cs" />
+    <Compile Include="Save Edits\Cats\Evolves Specific.cs" />
+    <Compile Include="Save Edits\Cats\Evolve Cats.cs" />
+    <Compile Include="Save Edits\Cats\Specific Talent.cs" />
+    <Compile Include="Save Edits\Level\Aku Realm.cs" />
+    <Compile Include="Save Edits\Level\Zombie Stages.cs" />
+    <Compile Include="Save Edits\Level\Stories of Legend.cs" />
+    <Compile Include="Save Edits\Level\Main Story.cs" />
+    <Compile Include="Save Edits\Other\Fix Elsewhere.cs" />
+    <Compile Include="Save Edits\Other\New Inquiry Code.cs" />
+    <Compile Include="Save Edits\Gamatoto - Ototo\Gamatoto Helper.cs" />
+    <Compile Include="Save Edits\Gamatoto - Ototo\Gamatoto XP.cs" />
+    <Compile Include="Save Edits\Basic Items\Catamins.cs" />
+    <Compile Include="Save Edits\Basic Items\TalentOrbs.cs" />
+    <Compile Include="Save Edits\Basic Items\CatFruits.cs" />
+    <Compile Include="Save Edits\Basic Items\Catseye.cs" />
+    <Compile Include="Save Edits\Basic Items\BattleItems.cs" />
+    <Compile Include="Save Edits\Level\SpecificTreasures.cs" />
+    <Compile Include="Save Edits\Level\All Treasures.cs" />
+    <Compile Include="Save Edits\Basic Items\NP.cs" />
+    <Compile Include="Save Edits\Basic Items\Leadership.cs" />
+    <Compile Include="Save Edits\Basic Items\Legend Tickets.cs" />
+    <Compile Include="Save Edits\Basic Items\Plat Tickets.cs" />
+    <Compile Include="Save Edits\Basic Items\Rare Tickets.cs" />
+    <Compile Include="Save Edits\Basic Items\Normal Tickets.cs" />
+    <Compile Include="Save Edits\Basic Items\XP.cs" />
+    <Compile Include="Save Edits\Basic Items\CatFood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,5 +129,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
