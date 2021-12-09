@@ -18,53 +18,61 @@ Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/rel
 I have created an updated tutorial video that goes you through the steps of getting the save from the game, editing it, putting it back in, and fixing save data is used elsewhere bug: https://youtu.be/D6hPnJTlq-U
 
 # Features
-1. Change catfood
-2. Change XP
-3. Get all treasures to a specific level
-4. Max upgrade all cats to a specific level
-5. Change leadership
-6. Change NP
-7. Change normal cat tickets
-8. Change rare cat tickets
-9. Change platinum cat tickets
-10. Change rare gacha seed
-11. Evolve all cats (requires the ability to evolve cats)
-12. Change battle items
-13. Change catseyes
-14. Get/remove all cats
-15. Get/remove a specific cat
-16. Upgrade a specific cat to a specific level
-17. Unlock treasures of a specific chapter
-18. Evolve a specific cat
-19. Change cat fruits and cat fruit seeds
-20. Change the talent level of all cats
-21. Clear specifc or all story chapters (doesn't include SoL)
-22. Patch the save
-23. Secondary menu:  <br>
-  23.1. Close rank up bundle menus <br>
-  23.2. Change account code <br>
-  23.3. Max out the blue upgrades to the right of the normal cat upgrades <br>
-  23.4  Fix "save is used elsewhere" bug select a new fresh save without the error to fix the save that you selected when the program starts up <br>
-24. Display your current rare gacha seed
-25. Change ItF timed scores
-26. Clear SoL subchapters (doesn't include uncanny ledgends)
-27. Secondary modding menu: <br>
-  27.1 Decrypt .list and .pack files <br>
-  27.2 Encrypt a folder of game files and turn them into encrypted .list and .pack files <br>
-  27.3 Modify the libnative.so file to update it with the md5 sum of modified .list and .pack files, this allows you to load them into the game without data read error h01 <br>
-  27.4 Enter game editing/parsing menu <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.1 Modify/parse unit csv files <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27.4.2 Modify/parse stage csv files <br>
-28. Edit talent orbs
-29. Change type of treasures, e.g giant safe, energy drink, ancient tablet
-30. Clear all zombie stages
-31. Enter gamatoto/ototo menu
-  31.1 Edit Base materials <br>
-  31.2 Edit catamins <br>
-  31.3 Edit gamatoto helpers <br>
-  31.4 Edit gamatoto XP <br>
-  31.5 Edit ototo engineers <br>
-  31.6 Edit cat cannon/base upgrades <br>
-32. Clear Aku realm (must have it unlocked)
-33. Unlock equip slots
-34. Add legend tickets
+1. Cat Food
+2. XP
+3. Tickets / Platinum Shards<br>
+  3.1 Normal Tickets<br>
+  3.2 Rare Tickets<br>
+  3.3 Platinum Tickets<br>
+  3.4 Legend Tickets<br>
+  3.5 Platinum Shards (using this instead of platinum shards reduces the chance of a ban)<br>
+4. Leadership
+5. NP
+6. Treasures<br>
+  6.1 All Treasures In A Chapter / Chapters<br>
+  6.2 Specific Treasure Types e.g Energy Drink, Void Fruit<br>
+7. Battle Items
+8. Catseyes
+9. Cat Fruits / Seeds
+10. Talent Orbs
+11. Gamatoto<br>
+  11.1 Catamins<br>
+  11.2 Helpers<br>
+  11.3 XP<br>
+12. Ototo<br>
+  12.1 Base Materials<br>
+  12.2 Engineers<br>
+  12.3 Cat Cannon Upgrades<br>
+13. Gacha Seed
+14. Equip Slots
+15. Gain / Remove Cats<br>
+  15.1 Get all cats<br>
+  15.2 Get specific cats<br>
+  15.3 Remove all cats<br>
+  15.3 Remove specific cats<br>
+16. Cat / Stat Upgrades<br>
+  16.1 Upgrade all cats<br>
+  16.2 Upgrade specific cats<br>
+  16.3 Upgrade Base / Special Skills (The ones that are blue)<br>
+17. Cat Evolves<br>
+  17.1 Evolve all cats<br>
+  17.2 Evolve specific cats<br>
+18. Cat Talents
+19. Clear Levels / Outbreaks / Timed Score<br>
+  19.1 Clear Main Story Chapters<br>
+  19.2 Clear Stories of Legend Subchapters<br>
+  19.3 Clear Zombie Stages / Outbreaks<br>
+  19.4 Clear Aku Realm<br>
+  19.5 Set Into The Future Timed Scores<br>
+20. Inquiry Code / Elsewhere Fix / Unban<br>
+  20.1 Change Inquiry Code<br>
+  20.2 Fix save is used elsewhere error - whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that)<br>
+21. Close rank up bundle / offer menu
+22. Game Modding Menu<br>
+  22.1 Decrypt .list and .pack files<br>
+  22.2 Encypt a folder of game files and turn them into encrypted .pakc and .list files<br>
+  22.3 Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)<br>
+  22.4 Enter the game file parsing/editing menu - contains things like editing the unit*.csv files<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.1 Edit unit*.csv files<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit stage*.csv files<br>
+23. Calculate checksum of save file
