@@ -48,7 +48,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             stream1.Close();
 
             // Search for token position in second save
-            byte[] condtions2 = { 0x00, 0x78, 0x63, 0x01, 0x00 };
+            byte[] condtions2 = { 0x78, 0x63, 0x01};
             int pos2 = Editor.Search(path2, condtions2, false, allData.Length - 800)[0];
 
             using var stream = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
@@ -65,7 +65,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 }
             }
             // Check for token
-            for (int i = pos2 + 8; i < pos2 + 100; i++)
+            for (int i = pos2 + 9; i < pos2 + 100; i++)
             {
                 if (allData[i] >= 48 && allData[i + 1] >= 48 && allData[i + 2] >= 48 && allData[i + 3] >= 48)
                 {
@@ -108,7 +108,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     break;
                 }
             }
-            for (int i = pos4 + 8; i < pos4 + 100; i++)
+            for (int i = pos4 + 9; i < pos4 + 100; i++)
             {
                 if (allData[i] >= 48 && allData[i + 1] >= 48 && allData[i + 2] >= 48 && allData[i + 3] >= 48)
                 {

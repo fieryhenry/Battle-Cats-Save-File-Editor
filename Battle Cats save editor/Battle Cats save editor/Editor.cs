@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Forms;
 using static System.Environment;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
 using System.Diagnostics;
 using Battle_Cats_save_editor.SaveEdits;
 using Battle_Cats_save_editor.Game_Mods;
@@ -85,7 +80,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.37.0";
+            string version = "2.37.1";
 
             if (lines == version && !skip)
             {
@@ -115,7 +110,7 @@ namespace Battle_Cats_save_editor
             string[] fileToOpen = Savepaths;
             string path = Path.Combine(fileToOpen[0]);
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 25-->5, and select a save that doesn't have that error and never has had the error\n", fileToOpen);
+            Console.WriteLine("\nBackup your save before using this editor!\nIf you get an error along the lines of \"Your save is active somewhere else\"then select option 20-->2, and select a save that doesn't have that error and never has had the error\n", fileToOpen);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files, uploading the save data onto the servers how to and edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n");
             Console.ForegroundColor = ConsoleColor.White;
