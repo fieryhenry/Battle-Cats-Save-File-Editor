@@ -11,6 +11,12 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void catFood(string path)
         {
+            Console.WriteLine("Warning, editing cat food at all can get you banned after a few days, would you like to continue? (yes/no):");
+            string answer = Console.ReadLine();
+            if (answer.ToLower() == "yes")
+            {
+                return;
+            }
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             byte[] catfoodB = new byte[4];

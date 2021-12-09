@@ -44,6 +44,7 @@ namespace Updater
         }
         static object MakeRequest(bool isString, WebRequest request)
         {
+            request.Headers.Add("time-stamp", DateTime.Now.Ticks.ToString());
             WebResponse response = request.GetResponse();
             using (Stream dataStream = response.GetResponseStream())
             {

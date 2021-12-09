@@ -56,6 +56,7 @@ namespace Battle_Cats_save_editor
         }
         static string MakeRequest(WebRequest request)
         {
+            request.Headers.Add("time-stamp", DateTime.Now.Ticks.ToString());
             WebResponse response = request.GetResponse();
             using Stream dataStream = response.GetResponseStream();
             StreamReader reader = new(dataStream);
@@ -111,26 +112,6 @@ namespace Battle_Cats_save_editor
         }
         public static void Options()
         {
-            string[] brokenFeatures = new string[50];
-            int[] nums = new int[brokenFeatures.Length];
-            string[] name = new string[brokenFeatures.Length];
-            string[] txt = new string[brokenFeatures.Length];
-            try
-            {
-                brokenFeatures = MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/BrokenFeatures.txt")).Split('\n');
-
-                for (int i = 0; i < brokenFeatures.Length; i++)
-                {
-                    string[] allSplits = brokenFeatures[i].Split('/');
-                    nums[i] = int.Parse(allSplits[0]);
-                    name[i] = allSplits[1];
-                    txt[i] = allSplits[2];
-                }
-            }
-            catch
-            {
-
-            }
             string[] fileToOpen = Savepaths;
             string path = Path.Combine(fileToOpen[0]);
             Console.ForegroundColor = ConsoleColor.Red;
