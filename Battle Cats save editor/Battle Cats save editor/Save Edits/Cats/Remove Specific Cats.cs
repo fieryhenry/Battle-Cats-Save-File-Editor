@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 int startPos = occurrence[0] + 4;
                 stream.Position = startPos + catID * 4;
                 stream.WriteByte(0);
-                Editor.ColouredText("&Removed cat: &" + catID + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("&Removed cat: &" + catID + "\n");
             }
         }
     }

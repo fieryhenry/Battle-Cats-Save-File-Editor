@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 return;
             }
             Editor.ColouredText("&What subchapter do you want to edit?, enter an id starting at &1& = &Legend Begins&, &2& = &Passion land& etc, you can enter multiple ids seperated by spaces, e.g &1 5 4 7&, or you can enter 2 ids seperated by a &-& to edit a range of" +
-                " chapters, e.g &1&-&7&, or you can enter &all& to edit all subchapters at once\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                " chapters, e.g &1&-&7&, or you can enter &all& to edit all subchapters at once\n");
             string input = Console.ReadLine();
             int totalChapters = 49;
             List<int> chaptersToEdit = new();
@@ -71,13 +71,13 @@ namespace Battle_Cats_save_editor.SaveEdits
                 int[] idsInt = Array.ConvertAll(ids, int.Parse);
                 chaptersToEdit.AddRange(idsInt);
             }
-            Editor.ColouredText("&Do you want to set all of the stars/crowns at the same time (&1&), or individually (&2&)?\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText("&Do you want to set all of the stars/crowns at the same time (&1&), or individually (&2&)?\n");
             string sameOrIndividual = Console.ReadLine();
             int stars = 0;
             // Same
             if (sameOrIndividual == "1")
             {
-                Editor.ColouredText("&How many stars/crowns do you want to complete for each chapter (&1&-&4&)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("&How many stars/crowns do you want to complete for each chapter (&1&-&4&)\n");
                 stars = (int)Editor.Inputed();
             }
             for (int i = 0; i < chaptersToEdit.Count; i++)
@@ -85,7 +85,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 // Individual
                 if (sameOrIndividual == "2")
                 {
-                    Editor.ColouredText($"&How many stars/crowns do you want to complete for chapter &{chaptersToEdit[i]}&? (&1&-&4&)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&How many stars/crowns do you want to complete for chapter &{chaptersToEdit[i]}&? (&1&-&4&)\n");
                     stars = (int)Editor.Inputed();
                 }
                 // Levels beaten, required for next chapter to unlock

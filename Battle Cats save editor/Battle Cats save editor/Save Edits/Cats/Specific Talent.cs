@@ -113,7 +113,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                                 skillsDesc[index - 1] = desc;
                                 skillsIDs[index - 1] = catSkillData.Key.ToString();
                                 skillsMax[index - 1] = data[catSkillData.Key].Item2.ToString();
-                                Editor.ColouredText($"&{id2}.& {desc}\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                                Editor.ColouredText($"&{id2}.& {desc}\n");
                                 index++;
                             }
                             Console.WriteLine("Enter skill id, you can enter multiple values separated by spaces:");
@@ -140,7 +140,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                                     // If cameraman cat critical, max value is 1
                                     if (id == 149 && realID == 13)
                                     {
-                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:1):", ConsoleColor.White, ConsoleColor.DarkYellow);
+                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:1):");
                                         value = (int)Editor.Inputed();
                                         if (value > 1) value = 1;
                                         else if (value < 0) value = 0;
@@ -148,14 +148,14 @@ namespace Battle_Cats_save_editor.SaveEdits
                                     // If Catasaurus critical, max value is 5 
                                     else if (id == 46 && realID == 13)
                                     {
-                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:5):", ConsoleColor.White, ConsoleColor.DarkYellow);
+                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:5):");
                                         value = (int)Editor.Inputed();
                                         if (value > 5) value = 5;
                                         else if (value < 0) value = 0;
                                     }
                                     else
                                     {
-                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:{skillsMax[idInt - 1]}):", ConsoleColor.White, ConsoleColor.DarkYellow);
+                                        Editor.ColouredText($"&What do you want to set &{skillsDesc[idInt - 1]}& to? (max:{skillsMax[idInt - 1]}):");
                                         value = (int)Editor.Inputed();
                                         if (value > int.Parse(skillsMax[idInt - 1])) value = int.Parse(skillsMax[idInt - 1]);
                                         else if (value < 0) value = 0;

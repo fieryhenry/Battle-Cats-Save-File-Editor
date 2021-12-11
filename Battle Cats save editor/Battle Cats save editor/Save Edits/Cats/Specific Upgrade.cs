@@ -13,27 +13,38 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            Editor.ColouredText("What is the cat id? (you can input more than 1 to upgrade more than 1 e.g 15 200 78 will select those cats)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            string[] ids = Console.ReadLine().Split(' ');
-            int[] idInt = Array.ConvertAll(ids, int.Parse);
+            Console.WriteLine("Enter the cat ids for the cats you want to upgrade(you can enter multiple values separated by spaces to edit multiple at once):");
+            int[] idInt = Array.ConvertAll(Console.ReadLine().Split(' '), int.Parse);
 
-            Editor.ColouredText("What base level do you want? (max 50) - (If you inputed more than 1 id before, then input the base upgrades that amount of times e.g if you inputed id 12 56, then you need to input 2 numbers)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            string[] baselevel = Console.ReadLine().Split(' ');
-            int[] baseID = Array.ConvertAll(baselevel, int.Parse);
+            Console.WriteLine("Do you want to upgrade all of those cats to the same level?(yes/no)");
+            string input = Console.ReadLine();
 
-            Editor.ColouredText("What plus level do you want? (max +90) - (If you inputed more than 1 id before, then input the plus levels that amount of times e.g if you inputed id 12 56, then you need to input 2 numbers)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
-            string[] plusLevel = Console.ReadLine().Split(' ');
-            int[] plusID = Array.ConvertAll(plusLevel, int.Parse);
-
-            if (plusID.Length < ids.Length || baselevel.Length < ids.Length)
+            int[] baseLevels = new int[idInt.Length];
+            int[] plusLevels = new int[idInt.Length];
+            if (input.ToLower() == "yes")
             {
-                Editor.ColouredText("Error: not enough inputs were given", ConsoleColor.White, ConsoleColor.Red);
-                SpecifUpgrade(path);
+                Editor.ColouredText($"&What level do you want: &enter the &base& followed by a &+& then the &plus& level you want, e.g 50+80, 30+0, 10+30\n");
+                string level = Console.ReadLine();
+
+                int baselevel = int.Parse(level.Split('+')[0]) - 1;
+                int plusLevel = int.Parse(level.Split('+')[1]);
+
+                baseLevels = Enumerable.Repeat(baselevel, baseLevels.Length).ToArray();
+                plusLevels = Enumerable.Repeat(plusLevel, plusLevels.Length).ToArray();
             }
-            else if (plusID.Length > ids.Length || baselevel.Length > ids.Length)
+            else
             {
-                Editor.ColouredText("Error: too many inputs were given", ConsoleColor.White, ConsoleColor.Red);
-                SpecifUpgrade(path);
+                for (int i = 0; i < idInt.Length; i++)
+                {
+                    Editor.ColouredText($"&What level do you want to upgrade cat {idInt[i]} to: &enter the &base& followed by a &+& then the &plus& level you want, e.g 50+80, 30+0, 10+30\n");
+                    string level = Console.ReadLine();
+
+                    int baselevel = int.Parse(level.Split('+')[0]) - 1;
+                    int plusLevel = int.Parse(level.Split('+')[1]);
+
+                    baseLevels[i] = baselevel;
+                    plusLevels[i] = plusLevel;
+                }
             }
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
@@ -47,17 +58,18 @@ namespace Battle_Cats_save_editor.SaveEdits
                     for (int i = 0; i < idInt.Length; i++)
                     {
                         stream.Position = j + (idInt[i] * 4) + 3;
-                        stream.WriteByte((byte)plusID[i]);
+                        stream.WriteByte((byte)plusLevels[i]);
                         stream.Position++;
-                        stream.WriteByte((byte)((byte)baseID[i] - 1));
+                        stream.WriteByte((byte)baseLevels[i]);
                     }
                     break;
                 }
             }
-            for (int i = 0; i < ids.Length; i++)
+            for (int i = 0; i < idInt.Length; i++)
             {
-                Editor.ColouredText("Upgraded cat &" + ids[i] + "& to level &" + baseID[i] + "& +&" + plusID[i] + "\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText($"Upgraded cat &{idInt[i]}& to level &{baseLevels[i] + 1}& +&{plusLevels[i]}\n");
             }
+            CloseBundle.Bundle(path);
         }
     }
 }

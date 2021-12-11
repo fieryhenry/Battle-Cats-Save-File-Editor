@@ -13,7 +13,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             Console.WriteLine("Warning, editing cat food at all can get you banned after a few days, would you like to continue? (yes/no):");
             string answer = Console.ReadLine();
-            if (answer.ToLower() == "yes")
+            if (answer.ToLower() == "no")
             {
                 return;
             }

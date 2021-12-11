@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     break;
                 }
             }
-            Editor.ColouredText("What cat cannon type do you want to edit?:\n&1.& Imporve Base\n&2.& Develop Slow Beam\n&3.& Develop Iron Wall\n&4.& Develop Thunderbolt\n&5.& Develop Waterblast\n&6.& Develop Holy Blast\n&7.& Develop Breakerblast\n&8.& Develop Curseblast\n&You can edit multiple at once by entering multiple numbers separated by spaces\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText("What cat cannon type do you want to edit?:\n&1.& Improve Base\n&2.& Develop Slow Beam\n&3.& Develop Iron Wall\n&4.& Develop Thunderbolt\n&5.& Develop Waterblast\n&6.& Develop Holy Blast\n&7.& Develop Breakerblast\n&8.& Develop Curseblast\n&You can edit multiple at once by entering multiple numbers separated by spaces\n");
             string[] answer = Console.ReadLine().Split(' ');
             for (int i = 0; i < answer.Length; i++)
             {

@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             else
             {
-                Editor.ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("\nPlease select your save\n\n");
                 Editor.SelSave();
             }
             byte[] condtions1 = { 0x2d, 0x00, 0x00, 0x00, 0x2e };

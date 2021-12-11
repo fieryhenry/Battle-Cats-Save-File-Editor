@@ -24,7 +24,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             if (answer == "no")
             {
                 Editor.ColouredText("What do you want to upgrade?\n&1.& Power\n&2.& Range\n&3.& Charge\n&4.& Efficiency\n&5.& Wallet\n&6.& Health\n&7.& Research\n&8.& Accounting\n&9.& Study" +
-                    "\n&10.& Energy\nInput more than 1 id to edit more than 1 at a time (separated by spaces)\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    "\n&10.& Energy\nInput more than 1 id to edit more than 1 at a time (separated by spaces)\n");
                 string[] input = Console.ReadLine().Split(' ');
                 int[] ids = Array.ConvertAll(input, int.Parse);
 

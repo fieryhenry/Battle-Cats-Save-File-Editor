@@ -81,14 +81,14 @@ namespace Battle_Cats_save_editor.SaveEdits
                     toOutput += "&" + orbs[i] + "& " + orbS[i] + " &orbs\n&";
                 }
             }
-            Editor.ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText(toOutput);
             List<byte> allDataList = new(allData);
 
             // Remove your orb data from save file
             allDataList.RemoveRange(startPos + 8, orbCountTypes);
 
             Editor.ColouredText("\n&What orbs do you want?(Enter the full name, in format - {&type&} {&letter&} {&attack&/&defense&/&strong&/&massive&/&tough&}, e.g &red d attack&, or &floating s defense&, note that for metal, &only defense up orbs exist&\nIf you want to edit multiple, enter 1 full" +
-                " orb name and then another orb name, separated by and underscore, e.g, &red s strong&_&alien c tough&\nYou can also enter orb ids instead if you want to. You can enter &clear& if you want to remove all of your talent orbs\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                " orb name and then another orb name, separated by and underscore, e.g, &red s strong&_&alien c tough&\nYou can also enter orb ids instead if you want to. You can enter &clear& if you want to remove all of your talent orbs\n");
             string input = Console.ReadLine();
             string[] orbNames = input.Split('_');
 
@@ -157,7 +157,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             // Loop through user entered orb ids
             for (int i = 0; i < ids.Count; i++)
             {
-                Editor.ColouredText("&What amount of &" + orbS[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("&What amount of &" + orbS[ids[i]] + "& Orbs do you want to set?(max 255 per orb): ");
                 amounts.Add((int)Editor.Inputed());
                 // Set orb amount
                 insert[ids[i] * 3] = (byte)amounts[i];

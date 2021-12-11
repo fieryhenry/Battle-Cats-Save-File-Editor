@@ -89,15 +89,15 @@ namespace Battle_Cats_save_editor.Game_Mods
                 EnemySlotData.Add(LsData);
             }
 
-            Editor.ColouredText($"Stage ID:&{stageIDTrim}\n{BaseCol}", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText($"Stage ID:&{stageIDTrim}\n{BaseCol}");
             for (int i = 0; i < EnemySlotData.Count; i++)
             {
-                Editor.ColouredText($"\n&Enemy Slot &{i + 1}&:\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText($"\n&Enemy Slot &{i + 1}&:\n");
                 for (int j = 0; j < EnemySlotData[i].Count; j++)
                 {
                     if (EnemySlotData[i][0] == "0")
                     {
-                        Editor.ColouredText("Empty\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                        Editor.ColouredText("Empty\n");
                         break;
                     }
                     if (j == 1 && EnemySlotData[i][j] == "0")
@@ -106,7 +106,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                     }
                     try
                     {
-                        Editor.ColouredText($"&{EnemyStrings[j]}:&{EnemySlotData[i][j]}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                        Editor.ColouredText($"&{EnemyStrings[j]}:&{EnemySlotData[i][j]}&\n");
                     }
                     catch
                     {
@@ -114,7 +114,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                     }
                 }
             }
-            Editor.ColouredText("&What do you want to edit?(1 &stage data&, 2 &enemy spawning data&):\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText("&What do you want to edit?(1 &stage data&, 2 &enemy spawning data&):\n");
             int answer = (int)Editor.Inputed();
             string complete = "";
             // Stage data
@@ -123,13 +123,13 @@ namespace Battle_Cats_save_editor.Game_Mods
                 Console.WriteLine("What do you want to edit?(you can enter multiple ids separated by spaces to edit multiple at once):");
                 for (int i = 0; i < BaseStrings.Length; i++)
                 {
-                    Editor.ColouredText($"&{i + 1}. &{BaseStrings[i]}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&{i + 1}. &{BaseStrings[i]}&\n");
                 }
                 string[] response = Console.ReadLine().Split(' ');
                 for (int j = 0; j < response.Length; j++)
                 {
                     int id = int.Parse(response[j]);
-                    Editor.ColouredText($"&What do you want to set &{BaseStrings[id - 1]}& to?:\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&What do you want to set &{BaseStrings[id - 1]}& to?:\n");
                     string val = Console.ReadLine();
                     baseData[id - 1] = val;
                 }
@@ -154,22 +154,22 @@ namespace Battle_Cats_save_editor.Game_Mods
                 Console.WriteLine("What enemy slot do you want to edit?(you can enter multiple slots separated by spaces to edit multiple at once):");
                 for (int i = 0; i < EnemySlotData.Count; i++)
                 {
-                    Editor.ColouredText($"{i + 1}. &Enemy id:& {EnemySlotData[i][0]}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"{i + 1}. &Enemy id:& {EnemySlotData[i][0]}&\n");
                 }
                 string[] response = Console.ReadLine().Split(' ');
                 for (int i = 0; i < response.Length; i++)
                 {
                     int slot = int.Parse(response[i]);
-                    Editor.ColouredText($"&What do you want to edit in slot &{slot}&?(you can enter multiple slots separated by spaces to edit multiple at once):\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&What do you want to edit in slot &{slot}&?(you can enter multiple slots separated by spaces to edit multiple at once):\n");
                     for (int j = 0; j < EnemyStrings.Length; j++)
                     {
-                        Editor.ColouredText($"&{j + 1}.& {EnemyStrings[j]}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                        Editor.ColouredText($"&{j + 1}.& {EnemyStrings[j]}&\n");
                     }
                     string[] response2 = Console.ReadLine().Split(' ');
                     for (int j = 0; j < response2.Length; j++)
                     {
                         int toEdit = int.Parse(response2[j]);
-                        Editor.ColouredText($"&What do you want to set &{EnemyStrings[toEdit - 1]}& to?:\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                        Editor.ColouredText($"&What do you want to set &{EnemyStrings[toEdit - 1]}& to?:\n");
                         string val = Console.ReadLine();
                         Console.WriteLine(slot);
                         EnemySlotData[slot - 1][toEdit - 1] = val;

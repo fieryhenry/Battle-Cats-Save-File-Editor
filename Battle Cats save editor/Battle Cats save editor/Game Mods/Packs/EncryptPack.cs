@@ -41,7 +41,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                 listFile += fileName;
                 listFile += "," + previous + "," + FileLength + "\n";
                 previous += FileLength;
-                //ColouredText($"&Created list line: &{i}& for &{fileName}& - &{i}&/&{files.Length}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                //ColouredText($"&Created list line: &{i}& for &{fileName}& - &{i}&/&{files.Length}&\n");
 
             }
             Console.WriteLine("Done");

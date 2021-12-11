@@ -56,6 +56,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Editor.cs" />
+    <Compile Include="Game Mods\Files\EnemyMod.cs" />
     <Compile Include="Game Mods\Files\Stage Mod.cs" />
     <Compile Include="Game Mods\Files\Unit Mod.cs" />
     <Compile Include="Game Mods\MD5 Libnative.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Game Mods\Packs\DecryptPack.cs" />
     <Compile Include="Save Edits\Basic Items\Platinum Shards.cs" />
     <Compile Include="Save Edits\Cats\All Talent.cs" />
+    <Compile Include="Save Edits\Cats\Upgrade Current.cs" />
     <Compile Include="Save Edits\Other\Patch Save File.cs" />
     <Compile Include="Save Edits\Gamatoto - Ototo\Ototo Engineers.cs" />
     <Compile Include="Save Edits\Other\Rare Gacha Seed.cs" />

@@ -43,7 +43,7 @@ namespace Battle_Cats_save_editor
             }
             else
             {
-                ColouredText("\nPlease select your save\n\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                ColouredText("\nPlease select your save\n\n");
                 SelSave();
             }
             Console.WriteLine("What game version are you using? (e.g en, jp, kr), note: en currently has the most support with the editor, so features may not work in other versions");
@@ -57,6 +57,27 @@ namespace Battle_Cats_save_editor
             StreamReader reader = new(dataStream);
             string responseFromServer = reader.ReadToEnd();
             return responseFromServer;
+        }
+        public static int[] GetCurrentCats(string path)
+        {
+            int[] occurrence = OccurrenceB(path);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            List<int> catsL = new List<int>();
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            for (int i = 0; i < catAmount; i++)
+            {
+                int startPos = occurrence[0] + 4;
+                if (allData[startPos + (i*4)] == 1)
+                {
+                    int catID = i;
+                    catsL.Add(catID);
+                }
+            }
+            return catsL.ToArray();
         }
         static void CheckUpdate()
         {
@@ -80,7 +101,7 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.37.1";
+            string version = "2.38.0";
 
             if (lines == version && !skip)
             {
@@ -128,7 +149,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
 
             byte[] CatNumber = new byte[20];
             CatNumber[0] = GetCatNumber(path);
@@ -168,7 +189,7 @@ namespace Battle_Cats_save_editor
                 }
                 PatchSaveFile.patchSaveFile(gameVer, path);
             }
-            ColouredText("Press enter to continue\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText("Press enter to continue\n");
             Console.ReadLine();
             Options();
         }
@@ -186,7 +207,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -215,7 +236,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -244,7 +265,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -270,7 +291,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -287,6 +308,7 @@ namespace Battle_Cats_save_editor
             {
                 "Go back",
                 "Upgrade all cats",
+                "Upgrade all cats that are currently unlocked",
                 "Upgrade specific cats",
                 "Upgrade Base / Special Skills (The ones that are blue)"
             };
@@ -297,15 +319,16 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
             {
                 case 0: Options(); break;
                 case 1: CatUpgrade.CatUpgrades(path); break;
-                case 2: SpecificUpgrade.SpecifUpgrade(path); break;
-                case 3: BlueUpgrade.Blue(path); break;
+                case 2: UpgradeCurrent.UpgradeCurrentCats(path); break;
+                case 3: SpecificUpgrade.SpecifUpgrade(path); break;
+                case 4: BlueUpgrade.Blue(path); break;
                 default: Console.WriteLine($"Please enter a number between 0 and {Features.Length}"); break;
             }
         }
@@ -326,7 +349,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -354,7 +377,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -383,7 +406,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -413,7 +436,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -441,7 +464,7 @@ namespace Battle_Cats_save_editor
                 toOutput += $"&{i}.& ";
                 toOutput += Features[i] + "\n";
             }
-            ColouredText(toOutput, ConsoleColor.White, ConsoleColor.DarkYellow);
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
@@ -455,30 +478,58 @@ namespace Battle_Cats_save_editor
         }
         static void GameModdingMenu()
         {
-            ColouredText("&Welcome to the game modding menu&\n&1.&Decrypt .list and .pack files\n&2.&Encrypt a folder of game files and turn them into encrypted .pack and .list files\n&3.&Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)\n" +
-                "&4.&Enter the game file parsing/editing menu - contains things like editng the unit*.csv files\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] Features =
+            {
+                "Go back",
+                "Decrypt .list and .pack",
+                "Encrypt a folder of game files and turn them into encrypted .pack and .list files",
+                "Update the md5 sum of the modified .pack and .list files",
+                "Enter the game file editing menu"
+            };
+            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
+            for (int i = 1; i < Features.Length; i++)
+            {
+                toOutput += $"&{i}.& ";
+                toOutput += Features[i] + "\n";
+            }
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
             {
+                case 0: Options(); break;
                 case 1: DecryptPack.Decrypt("b484857901742afc"); break;
                 case 2: EncryptPack.EncryptData("b484857901742afc"); break;
                 case 3: MD5Libnative.MD5Lib(); break;
                 case 4: GameFileParsing(); break;
-                default: Console.WriteLine("Please input a number that is recognised"); break;
-
+                default: Console.WriteLine($"Please enter a number between 0 and {Features.Length}"); break;
             }
         }
         static void GameFileParsing()
         {
-            ColouredText("&Welcome to the game file parsing/editing menu&\n&1.& Edit unit*.csv files\n&2.& Edit stage*.csv files\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            string[] Features =
+            {
+                "Go back",
+                "Edit unit*.csv (cat data)",
+                "Edit stage*.csv (level data)",
+                "Edit t_unit.csv (enemy data)"
+            };
+            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
+            for (int i = 1; i < Features.Length; i++)
+            {
+                toOutput += $"&{i}.& ";
+                toOutput += Features[i] + "\n";
+            }
+            ColouredText(toOutput);
             int choice = (int)Inputed();
 
             switch (choice)
             {
+                case 0: GameModdingMenu(); break;
                 case 1: UnitMod.Unitcsv(); break;
                 case 2: StageMod.Stagecsv(); break;
-                default: Console.WriteLine("Please enter a recognised number"); break;
+                case 3: EnemyMod.EnemyCSV(); break;
+                default: Console.WriteLine($"Please enter a number between 0 and {Features.Length}"); break;
             }
         }
         public static string CalculateMD5(string filename)
@@ -604,7 +655,7 @@ namespace Battle_Cats_save_editor
             return BitConverter.ToString(ba).Replace("-", "");
         }
 
-        public static void ColouredText(string input, ConsoleColor Base, ConsoleColor New)
+        public static void ColouredText(string input, ConsoleColor Base = ConsoleColor.White, ConsoleColor New = ConsoleColor.DarkYellow)
         {
             char[] chars = { '&' };
 
@@ -628,7 +679,10 @@ namespace Battle_Cats_save_editor
                 }
                 Console.ForegroundColor = Base;
             }
-            catch (IndexOutOfRangeException) { }
+            catch (IndexOutOfRangeException)
+            {
+
+            }
         }
 
         public static long Inputed()

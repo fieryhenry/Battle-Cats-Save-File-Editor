@@ -33,7 +33,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             string[] types = { "Brick", "Feather", "Coal", "Sprocket", "Gold", "Meteorite", "Beast Bone", "Ammonite" };
             Editor.ColouredText("&What base material type do you want to edit, you can enter multiple ids separated by spaces&\n&1.& " +
-                "Bricks\n&2.& Feathers\n&3.& Coal\n&4.& Sprockets\n&5.& Gold\n&6.& Meteorite\n&7.& Beast Bones\n&8.& Ammonite\n&9.& All materials at once\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                "Bricks\n&2.& Feathers\n&3.& Coal\n&4.& Sprockets\n&5.& Gold\n&6.& Meteorite\n&7.& Beast Bones\n&8.& Ammonite\n&9.& All materials at once\n");
             string[] answer = Console.ReadLine().Split(' ');
             for (int i = 0; i < answer.Length; i++)
             {
@@ -52,7 +52,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     {
                         stream.Position = pos + (j * 4);
                         stream.Write(bytes, 0, 4);
-                        Editor.ColouredText($"&Set current amount of &{types[j]}& to &{platCatTickets}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                        Editor.ColouredText($"&Set current amount of &{types[j]}& to &{platCatTickets}&\n");
                     }
                 }
                 else
@@ -70,7 +70,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     stream.Position = pos + (id * 4);
                     stream.Write(bytes, 0, 4);
 
-                    Editor.ColouredText($"&Set current amount of &{types[id]}& to &{platCatTickets}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&Set current amount of &{types[id]}& to &{platCatTickets}&\n");
                 }
             }
         }

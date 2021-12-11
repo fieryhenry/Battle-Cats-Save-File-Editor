@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace Battle_Cats_save_editor.SaveEdits
 {
-    public class CatUpgrade
+    public class UpgradeCurrent
     {
-        public static void CatUpgrades(string path)
+        public static void UpgradeCurrentCats(string path)
         {
-            int[] occurrence = Editor.OccurrenceB(path);
+
+            int[] idInt = Editor.GetCurrentCats(path);
+
             Editor.ColouredText("&What level do you want?:enter the &base& followed by a &+& then the &plus& level you want, e.g 50+80, 30+0, 10+30\nEnter the base followed by a plus with nothing else to leave the plus value as it is, e.g 50+, or 20+\nEnter " +
                 "a plus followed by the plus value to leave the base values as they are e.g +20, +50\n");
             string answer = Console.ReadLine();
@@ -34,33 +36,39 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 leave = 2;
             }
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            int pos = occurrence[1] + 1;
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
+            bool repeat = true;
 
-            for (int i = pos + 3; i <= pos + (Editor.catAmount * 4) - 2; i += 4)
+            for (int j = 9600; j <= 12000; j++)
             {
-                stream.Position = i;
-                if (leave != 2)
+                if (allData[j] == 2 && repeat)
                 {
-                    stream.WriteByte((byte)plusLevel);
-                    stream.Position--;
+                    for (int i = 0; i < idInt.Length; i++)
+                    {
+                        stream.Position = j + (idInt[i] * 4) + 3;
+                        if (leave != 2)
+                        {
+                            stream.WriteByte((byte)plusLevel);
+                            stream.Position--;
+                        }
+                        plusLevel = stream.ReadByte();
+                        stream.Position++;
+                        if (leave != 1)
+                        {
+                            stream.WriteByte((byte)baselevel);
+                            stream.Position--;
+                        }
+                        baselevel = stream.ReadByte();
+                        Editor.ColouredText($"Upgraded cat &{idInt[i]}& to level &{baselevel + 1}& +&{plusLevel}\n");
+                    }
+                    break;
                 }
-                plusLevel = stream.ReadByte();
-                stream.Position++;
-                if (leave != 1)
-                {
-                    stream.WriteByte((byte)baselevel);
-                    stream.Position--;
-                }
-                baselevel = stream.ReadByte();
             }
-            Console.WriteLine($"Upgraded all cats to level {answer}");
-            stream.Close();
-            // Close rank up bundle menu offer thing popping up 100s of times
             CloseBundle.Bundle(path);
         }
     }

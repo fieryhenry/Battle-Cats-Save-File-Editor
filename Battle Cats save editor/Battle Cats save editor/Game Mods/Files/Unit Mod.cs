@@ -63,7 +63,7 @@ namespace Battle_Cats_save_editor.Game_Mods
             if (hasTrue)
             {
                 Editor.ColouredText("Thanks to this resource: &https://pastebin.com/JrCTPnUV& for help with parsing the unit data\n", ConsoleColor.White, ConsoleColor.Green);
-                Editor.ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n&3.& Third Form\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n&3.& Third Form\n");
                 choice = (int)Editor.Inputed();
                 if (choice > 3)
                 {
@@ -75,7 +75,7 @@ namespace Battle_Cats_save_editor.Game_Mods
             else
             {
                 Editor.ColouredText("Thanks to this resource: &https://pastebin.com/JrCTPnUV& for help with parsing the unit data\n", ConsoleColor.White, ConsoleColor.Green);
-                Editor.ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("What do you want to edit?:\n&1.& First form\n&2.& Second Form\n");
                 choice = (int)Editor.Inputed();
                 if (choice > 2)
                 {
@@ -116,13 +116,13 @@ namespace Battle_Cats_save_editor.Game_Mods
                     }
                 }
             }
-            Editor.ColouredText(unitValues, ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText(unitValues);
             string ValueTypes = "";
             for (int i = 0; i < values.Length; i++)
             {
                 ValueTypes += $"&{i + 1}.& {values[i]}\n";
             }
-            Editor.ColouredText("What do you want to edit:\n" + ValueTypes + "\nWhat do you want to edit? You can enter multiple values separated by spaces to edit multiple values at once\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+            Editor.ColouredText("What do you want to edit:\n" + ValueTypes + "\nWhat do you want to edit? You can enter multiple values separated by spaces to edit multiple values at once\n");
             string[] EditIDs = Console.ReadLine().Split(' ');
             for (int k = 0; k < EditIDs.Length; k++)
             {
@@ -290,7 +290,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                             break;
                         }
                     }
-                    Editor.ColouredText($"&Set contents of the &{Path.GetFileName(path)}& file to&\n{fin}&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                    Editor.ColouredText($"&Set contents of the &{Path.GetFileName(path)}& file to&\n{fin}&\n");
                     // Write data to file
                     File.WriteAllText(path, fin);
                     byte[] allBytes = File.ReadAllBytes(path);
