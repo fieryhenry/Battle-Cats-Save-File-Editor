@@ -52,8 +52,9 @@ I have created an updated tutorial video that goes you through the steps of gett
   15.3 Remove specific cats<br>
 16. Cat / Stat Upgrades<br>
   16.1 Upgrade all cats<br>
-  16.2 Upgrade specific cats<br>
-  16.3 Upgrade Base / Special Skills (The ones that are blue)<br>
+  16.2 Upgrade all cats that are currently unlocked<br>
+  16.3 Upgrade specific cats<br>
+  16.4 Upgrade Base / Special Skills (The ones that are blue)<br>
 17. Cat Evolves<br>
   17.1 Evolve all cats<br>
   17.2 Evolve specific cats<br>
@@ -73,6 +74,7 @@ I have created an updated tutorial video that goes you through the steps of gett
   22.2 Encypt a folder of game files and turn them into encrypted .pakc and .list files<br>
   22.3 Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)<br>
   22.4 Enter the game file parsing/editing menu - contains things like editing the unit*.csv files<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.1 Edit unit*.csv files<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit stage*.csv files<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.1 Edit unit*.csv (cat data)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit stage*.csv (stage data)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit t_unit.csv (enemy data)<br>
 23. Calculate checksum of save file
