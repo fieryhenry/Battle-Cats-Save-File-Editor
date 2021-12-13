@@ -34,32 +34,12 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 leave = 2;
             }
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int pos = occurrence[1] + 1;
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            for (int i = pos + 3; i <= pos + (Editor.catAmount * 4) - 2; i += 4)
-            {
-                stream.Position = i;
-                if (leave != 2)
-                {
-                    stream.WriteByte((byte)plusLevel);
-                    stream.Position--;
-                }
-                plusLevel = stream.ReadByte();
-                stream.Position++;
-                if (leave != 1)
-                {
-                    stream.WriteByte((byte)baselevel);
-                    stream.Position--;
-                }
-                baselevel = stream.ReadByte();
-            }
+            int[] ids = Enumerable.Range(0, Editor.catAmount).ToArray();
+            int[] plusLevels = Enumerable.Repeat(plusLevel, Editor.catAmount).ToArray();
+            int[] baseLevels = Enumerable.Repeat(baselevel, Editor.catAmount).ToArray();
+            Editor.UpgradeCats(path, ids, plusLevels, baseLevels, leave);
+            
             Console.WriteLine($"Upgraded all cats to level {answer}");
-            stream.Close();
             // Close rank up bundle menu offer thing popping up 100s of times
             CloseBundle.Bundle(path);
         }

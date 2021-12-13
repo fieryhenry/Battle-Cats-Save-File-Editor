@@ -38,10 +38,9 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 stream2.Position = occurrence[4] - 21;
             }
-            catch (ArgumentOutOfRangeException)
+            catch
             {
-                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
-                Editor.Options();
+                Editor.Error();
             }
 
             Console.WriteLine("Set gacha seed to: {0}", Seed);
@@ -69,10 +68,9 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 stream2.Position = occurrence[4] - 21;
             }
-            catch (ArgumentOutOfRangeException)
+            catch
             {
-                Console.WriteLine("Sorry your seed position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
-                Editor.Options();
+                Editor.Error();
             }
             byte[] seed = new byte[100];
             int j = 0;

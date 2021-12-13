@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             stream.Position = pos + 8;
             stream.Write(bytes, 0, 4);
             if (found) Console.WriteLine("Success");
-            if (!found) Console.WriteLine("Sorry your platinum cat ticket position couldn't be found, please report this on discord\nThank you");
+            if (!found) Editor.Error();
         }
     }
 }

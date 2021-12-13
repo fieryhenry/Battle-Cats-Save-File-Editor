@@ -47,8 +47,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (!found)
             {
-                Console.WriteLine("Sorry your timed score position couldn't be found please contact me on discord(linked in the readme)");
-                return;
+                Editor.Error();
             }
             // Set each of the 3 ItF chapter's timed scores
             for (int j = 0; j < 3; j++)

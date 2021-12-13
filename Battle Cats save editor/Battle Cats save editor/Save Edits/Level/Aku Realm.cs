@@ -25,6 +25,11 @@ namespace Battle_Cats_save_editor.SaveEdits
             // Search for aku realm position from 10.9 content
             int pos = Editor.Search(path, akuConditions, true, verPos)[0];
 
+            if (verPos == 0 || pos == 0)
+            {
+                Editor.Error();
+            }
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             // Set stages to clear

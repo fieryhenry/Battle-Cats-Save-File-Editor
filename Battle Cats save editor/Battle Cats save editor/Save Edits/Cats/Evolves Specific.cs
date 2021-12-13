@@ -18,34 +18,16 @@ namespace Battle_Cats_save_editor.SaveEdits
                 Console.WriteLine("Answer must be 1 or 2!");
                 EvolveSpecific(path);
             }
-            int[] occurrence = Editor.OccurrenceB(path);
-
+            int pos1 = Editor.GetEvolvePos(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-
+            stream.Position = pos1;
             Console.WriteLine("What is the cat id?, input multiple ids separated by spaces to evolve multiple cats ids must be 9 or above, normal cats cannot be evolved this way");
             string[] input = Console.ReadLine().Split(' ');
 
-            try
-            {
-                // Game version correcting
-                if (allData[occurrence[5] - 304] == 0x2c && allData[occurrence[5] - 303] == 0x01)
-                {
-                    stream.Position = occurrence[5] + 40;
-                }
-                else if (allData[occurrence[4] - 304] == 0x2c && allData[occurrence[4] - 303] == 0x01)
-                {
-                    stream.Position = occurrence[4] + 40;
-                }
-                else
-                {
-                    Console.WriteLine("Error, your evolved cat position couldn't be found, please report this to me on discord");
-                }
-            }
-            catch { Console.WriteLine("You either haven't unlocked the ability to evolve cats or if you have - the tool is bugged and you should tell me on the discord"); return; }
             int[] form = Editor.EvolvedFormsGetter();
             int pos = (int)stream.Position;
             try
@@ -68,16 +50,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                         }
                         if (form[id - 9] == 0 || stay)
                         {
-                            Console.WriteLine("Does the cat need catfruit/catfruit seeds to evolve?(yes/no)");
-                            string answer = Console.ReadLine().ToLower();
-                            if (answer == "yes")
-                            {
-                                stream.WriteByte(2);
-                            }
-                            else
-                            {
-                                stream.WriteByte(1);
-                            }
+                            stream.WriteByte(2);
                         }
                         else
                         {

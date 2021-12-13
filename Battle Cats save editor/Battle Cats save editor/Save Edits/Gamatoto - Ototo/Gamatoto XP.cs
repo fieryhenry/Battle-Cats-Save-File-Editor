@@ -30,8 +30,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 Console.WriteLine("Success");
             }
-            if (!found) Console.WriteLine("Sorry your Catamin position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
-
+            if (!found) Editor.Error();
         }
     }
 }

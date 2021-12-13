@@ -11,13 +11,15 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void SpecifUpgrade(string path)
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
             Console.WriteLine("Enter the cat ids for the cats you want to upgrade(you can enter multiple values separated by spaces to edit multiple at once):");
             int[] idInt = Array.ConvertAll(Console.ReadLine().Split(' '), int.Parse);
 
-            Console.WriteLine("Do you want to upgrade all of those cats to the same level?(yes/no)");
-            string input = Console.ReadLine();
+            string input = "no";
+            if (idInt.Length > 1)
+            {
+                Console.WriteLine("Do you want to upgrade all of those cats to the same level?(yes/no)");
+                input = Console.ReadLine();
+            }
 
             int[] baseLevels = new int[idInt.Length];
             int[] plusLevels = new int[idInt.Length];
@@ -46,25 +48,8 @@ namespace Battle_Cats_save_editor.SaveEdits
                     plusLevels[i] = plusLevel;
                 }
             }
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-            bool repeat = true;
+            Editor.UpgradeCats(path, idInt, plusLevels, baseLevels);
 
-            for (int j = 9600; j <= 12000; j++)
-            {
-                if (allData[j] == 2 && repeat)
-                {
-                    for (int i = 0; i < idInt.Length; i++)
-                    {
-                        stream.Position = j + (idInt[i] * 4) + 3;
-                        stream.WriteByte((byte)plusLevels[i]);
-                        stream.Position++;
-                        stream.WriteByte((byte)baseLevels[i]);
-                    }
-                    break;
-                }
-            }
             for (int i = 0; i < idInt.Length; i++)
             {
                 Editor.ColouredText($"Upgraded cat &{idInt[i]}& to level &{baseLevels[i] + 1}& +&{plusLevels[i]}\n");

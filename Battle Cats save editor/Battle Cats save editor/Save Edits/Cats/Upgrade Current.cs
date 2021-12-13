@@ -36,39 +36,10 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 leave = 2;
             }
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-            bool repeat = true;
-
-            for (int j = 9600; j <= 12000; j++)
-            {
-                if (allData[j] == 2 && repeat)
-                {
-                    for (int i = 0; i < idInt.Length; i++)
-                    {
-                        stream.Position = j + (idInt[i] * 4) + 3;
-                        if (leave != 2)
-                        {
-                            stream.WriteByte((byte)plusLevel);
-                            stream.Position--;
-                        }
-                        plusLevel = stream.ReadByte();
-                        stream.Position++;
-                        if (leave != 1)
-                        {
-                            stream.WriteByte((byte)baselevel);
-                            stream.Position--;
-                        }
-                        baselevel = stream.ReadByte();
-                        Editor.ColouredText($"Upgraded cat &{idInt[i]}& to level &{baselevel + 1}& +&{plusLevel}\n");
-                    }
-                    break;
-                }
-            }
+            int[] plusLevels = Enumerable.Repeat(plusLevel, Editor.catAmount).ToArray();
+            int[] baseLevels = Enumerable.Repeat(baselevel, Editor.catAmount).ToArray();
+            Editor.UpgradeCats(path, idInt, plusLevels, baseLevels, leave);
+            Console.WriteLine("Success");
             CloseBundle.Bundle(path);
         }
     }

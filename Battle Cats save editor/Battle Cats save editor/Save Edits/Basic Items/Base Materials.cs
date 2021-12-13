@@ -28,8 +28,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (pos < 200)
             {
-                Console.WriteLine("Your base mats position couldn't be found, please report this on the discord");
-                return;
+                Editor.Error();
             }
             string[] types = { "Brick", "Feather", "Coal", "Sprocket", "Gold", "Meteorite", "Beast Bone", "Ammonite" };
             Editor.ColouredText("&What base material type do you want to edit, you can enter multiple ids separated by spaces&\n&1.& " +

@@ -18,7 +18,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             bool found = false;
 
             // Search for bundle counter position
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < length - 32; i++)
             {
                 if (allData[i] == 0x31 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 0 && allData[i + 4] == 0x32 && allData[i + 5] == 0 && allData[i + 6] == 0 && allData[i + 7] == 0 && allData[i + 8] == 0x33 && allData[i + 9] == 0 && allData[i + 10] == 0 && allData[i + 11] == 0)
                 {
@@ -27,12 +27,12 @@ namespace Battle_Cats_save_editor.SaveEdits
                     stream.WriteByte(0xff);
                     stream.WriteByte(0xff);
                     found = true;
+                    break;
                 }
             }
             if (!found)
             {
-                Console.WriteLine("Your bundle menu position couldn't be found, please contact me on discord or in #bug-reports");
-                return;
+                Editor.Error();
             }
             Console.WriteLine("Closed all bundle menus");
 

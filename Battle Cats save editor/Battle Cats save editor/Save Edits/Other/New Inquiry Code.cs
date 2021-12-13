@@ -39,8 +39,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (!found)
             {
-                Console.WriteLine("Sorry your inquiry code position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
-                return;
+                Editor.Error();
             }
             Console.WriteLine("Success\nYour new account code is now: " + iq + " This should remove that \"save is being used elsewhere\" bug and if your account is banned, this should get you unbanned");
         }

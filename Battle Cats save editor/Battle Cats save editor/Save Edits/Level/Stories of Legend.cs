@@ -39,8 +39,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (levels == 0 || unlock == 0 || stream.Position == 0)
             {
-                Console.WriteLine("Sorry your SoL position couldn't be found, you are either using an old save or the editor is bugged - if that is the case please contact me on discord or in #bug-reports");
-                return;
+                Editor.Error();
             }
             Editor.ColouredText("&What subchapter do you want to edit?, enter an id starting at &1& = &Legend Begins&, &2& = &Passion land& etc, you can enter multiple ids seperated by spaces, e.g &1 5 4 7&, or you can enter 2 ids seperated by a &-& to edit a range of" +
                 " chapters, e.g &1&-&7&, or you can enter &all& to edit all subchapters at once\n");

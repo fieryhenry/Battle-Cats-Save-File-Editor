@@ -17,9 +17,18 @@ namespace Battle_Cats_save_editor
         public static int catAmount = 0;
         public static string[] Savepaths = new string[500];
         public static string gameVer = "";
+        public static string version = "2.38.1";
         [STAThread]
         static void Main()
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                Console.WriteLine("An error has occurred\nPlease report this in #bug-reports:\n");
+                Console.WriteLine(eventArgs.ExceptionObject.ToString());
+                Console.WriteLine("\nPress enter to exit");
+                Console.ReadLine();
+                Exit(0);
+            };
             CheckUpdate();
             SelSave();
             Options();
@@ -37,7 +46,7 @@ namespace Battle_Cats_save_editor
                 string[] fileToOpen = FD.FileNames;
                 for (int i = 0; i < fileToOpen.Length; i++)
                 {
-                    ColouredText("&Save: &\"" + Path.GetFileName(fileToOpen[i]) + "\"&\n", ConsoleColor.White, ConsoleColor.Green);
+                    ColouredText($"&Save: &\"{Path.GetFileName(fileToOpen[i])}\"&\n", ConsoleColor.White, ConsoleColor.Green);
                 }
                 Savepaths = fileToOpen;
             }
@@ -57,6 +66,38 @@ namespace Battle_Cats_save_editor
             StreamReader reader = new(dataStream);
             string responseFromServer = reader.ReadToEnd();
             return responseFromServer;
+        }
+        public static void UpgradeCats(string path, int[] catIDs, int[] plusLevels, int[] baseLevels, int ignore = 0)
+        {
+            int[] occurrence = OccurrenceB(path);
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int pos = occurrence[1] +1;
+
+            for (int i = 0; i < catIDs.Length; i++)
+            {
+                stream.Position = pos + (catIDs[i] * 4) + 3;
+                if (ignore != 2)
+                {
+                    stream.WriteByte((byte)plusLevels[i]);
+                    stream.Position--;
+                }
+                stream.Position+=2;
+                if (ignore != 1)
+                {
+                    stream.WriteByte((byte)baseLevels[i]);
+                };
+            }
+        }
+        public static byte[] LoadData(string path)
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            return allData;
         }
         public static int[] GetCurrentCats(string path)
         {
@@ -101,8 +142,6 @@ namespace Battle_Cats_save_editor
                 ColouredText("No internet connection to check for a new version\n", ConsoleColor.White, ConsoleColor.Red);
                 skip = true;
             }
-            string version = "2.38.0";
-
             if (lines == version && !skip)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -541,7 +580,7 @@ namespace Battle_Cats_save_editor
         }
 
         // Search function for any number of conditions, instead of having to add more conditions to an if statement
-        public static int[] Search(string path, byte[] conditions, bool negative = false, int startpoint = 0, byte[] mult = null)
+        public static int[] Search(string path, byte[] conditions, bool negative = false, int startpoint = 0, byte[] mult = null, int endpoint = -1)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -552,6 +591,10 @@ namespace Battle_Cats_save_editor
             if (mult == null)
             {
                 mult = new byte[conditions.Length];
+            }
+            if (endpoint == -1)
+            {
+                endpoint = allData.Length - conditions.Length;
             }
 
             int count = 0;
@@ -568,7 +611,7 @@ namespace Battle_Cats_save_editor
                 end = 0;
                 start = conditions.Length - 1;
             }
-            for (int i = startpos; i < (allData.Length - conditions.Length); i += num)
+            for (int i = startpos; i < endpoint; i += num)
             {
                 count = 0;
                 for (int j = 0; j < conditions.Length; j += 1)
@@ -629,10 +672,6 @@ namespace Battle_Cats_save_editor
             }
             else
             {
-                Console.WriteLine("Error, a position couldn't be found, please report this to me on discord");
-                Console.WriteLine("Press enter to continue");
-                Console.ReadLine();
-                Options();
                 return values;
             }
         }
@@ -674,7 +713,12 @@ namespace Battle_Cats_save_editor
                     Console.ForegroundColor = New;
                     Console.Write(split[i]);
                     Console.ForegroundColor = Base;
+                    if (i == split.Length - 1)
+                    {
+                        break;
+                    }
                     Console.Write(split[i + 1]);
+                    
 
                 }
                 Console.ForegroundColor = Base;
@@ -771,12 +815,42 @@ namespace Battle_Cats_save_editor
             }
             return data;
         }
+        public static int GetEvolvePos(string path)
+        {
+            int[] occurrence = OccurrenceB(path);
+
+            byte[] conditions = { 0x2c, 0x01, 0x00, 0x00 };
+            int pos1 = Search(path, conditions, false, occurrence[5] - 400, null, occurrence[5])[0];
+            int pos2 = occurrence[5];
+            if (pos1 == 0)
+            {
+                pos1 = Search(path, conditions, true, occurrence[4] - 400, null, occurrence[4])[0];
+                pos2 = occurrence[4];
+            }
+            if (pos1 == 0)
+            {
+                Error();
+            }
+            return pos2 + 40;
+        }
+        public static void Error(string text = "Error, a position couldn't be found, please report this in #bug-reports on discord")
+        {
+            Console.WriteLine(text + "\nPress enter to continue");
+            Console.ReadLine();
+            Options();
+        }
         public static int[] ThirtySix(string path)
         {
             byte[] conditions = { 0xFF, 0xFF, 0x00, 0x36, 0x00, 0x00 };
-            int pos1 = Search(path, conditions)[0];
+            byte[] choice = { 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
+            int pos1 = Search(path, conditions, false, 0, choice)[0];
             byte[] conditions2 = { 0x36, 0x00, 0x00, 0x00 };
             int pos2 = Search(path, conditions2, false, pos1+conditions.Length)[0];
+
+            if (pos1 == 0 || pos2 == 0)
+            {
+                Error();
+            }
 
             return new int[] {pos1, pos2};
         }
@@ -832,8 +906,33 @@ namespace Battle_Cats_save_editor
             stream.Close();
             return anchour;
         }
-
         public static int[] EvolvedFormsGetter()
+        {
+            Console.WriteLine("Downloading cat data");
+            string[] catData = MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/nyankoPictureBook_en.csv")).Split('\n');
+
+            List<string> thirdDataS = new();
+            foreach (string cat in catData)
+            {
+                thirdDataS.Add(cat.Split('|')[6]);
+            }
+            int[] thirdFormData = new int[catData.Length];
+            for (int i = 0; i < thirdFormData.Length; i++)
+            {
+                string text = thirdDataS[i].ToLower();
+                if (text.Length < 2)
+                {
+                    thirdFormData[i] = 0;
+                }
+                else
+                {
+                    thirdFormData[i] = 2;
+                }
+            }
+            return thirdFormData;
+        }
+
+        public static int[] EvolvedFormsGetter_old()
         {
             Console.WriteLine("Downloading cat data...");
             WebClient client = new();
@@ -846,7 +945,6 @@ namespace Battle_Cats_save_editor
             {
                 Console.WriteLine("Error, no internet connection exists to get evolve form data");
             }
-
             // Old editor versions download cats.csv as a physical file, not just a string
             if (File.Exists(@"cats.csv"))
             {

@@ -33,7 +33,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (pos == 0)
             {
-                Console.WriteLine("Error, your talent position couldn't be found, please report this to me on discord");
+                Editor.Error();
                 return;
             }
             // Get all types of skills and their maxes
@@ -72,7 +72,14 @@ namespace Battle_Cats_save_editor.SaveEdits
                     }
                     else
                     {
-                        stream.WriteByte((byte)data[skillID].Item2);
+                        try
+                        {
+                            stream.WriteByte((byte)data[skillID].Item2);
+                        }
+                        catch
+                        {
+
+                        }
                     }
                 }
                 // Move to the next cat

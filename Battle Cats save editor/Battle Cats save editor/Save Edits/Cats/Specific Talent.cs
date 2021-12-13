@@ -33,8 +33,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             if (pos == 0)
             {
-                Console.WriteLine("Error, your talent position couldn't be found, please report this to me on discord");
-                return;
+                Editor.Error();
             }
             // Get all types of skills and their maxes
             Dictionary<int, Tuple<string, int>> data = Editor.GetSkillData();

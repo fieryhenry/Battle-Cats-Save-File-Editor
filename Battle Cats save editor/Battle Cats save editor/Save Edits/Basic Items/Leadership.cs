@@ -19,6 +19,10 @@ namespace Battle_Cats_save_editor.SaveEdits
             byte[] conditions = { 0x80, 0x38 };
             // Search for leadership position
             int pos = Editor.Search(path, conditions)[0];
+            if (pos == 0)
+            {
+                Editor.Error();
+            }
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             int length = (int)stream.Length;

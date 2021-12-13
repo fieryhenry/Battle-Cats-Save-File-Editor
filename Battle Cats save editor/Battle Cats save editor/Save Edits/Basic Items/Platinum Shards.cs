@@ -27,8 +27,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             if (pos <= 0)
             {
-                Console.WriteLine("Error, your plat shard position couldn't be found, please report this on discord");
-                return;
+                Editor.Error();
             }
             byte[] shardB = new byte[4];
             stream.Position = pos - 4;

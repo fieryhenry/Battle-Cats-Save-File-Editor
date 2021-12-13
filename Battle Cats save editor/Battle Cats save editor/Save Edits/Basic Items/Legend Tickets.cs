@@ -27,8 +27,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             if (pos <= 0)
             {
-                Console.WriteLine("Error, your legend ticket position couldn't be found, please report this on discord");
-                return;
+                Editor.Error();
             }
             byte[] ticketB = new byte[4];
             stream.Position = pos + 5;

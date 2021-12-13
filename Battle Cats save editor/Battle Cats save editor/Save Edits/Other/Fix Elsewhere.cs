@@ -33,6 +33,10 @@ namespace Battle_Cats_save_editor.SaveEdits
             byte[] condtions1 = { 0x2d, 0x00, 0x00, 0x00, 0x2e };
             // Search for rough inquiry code position in second save
             int pos1 = Editor.Search(path2, condtions1)[0];
+            if (pos1 == 0)
+            {
+                Editor.Error();
+            }
 
             using var stream1 = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
 
@@ -50,6 +54,10 @@ namespace Battle_Cats_save_editor.SaveEdits
             // Search for token position in second save
             byte[] condtions2 = { 0x78, 0x63, 0x01};
             int pos2 = Editor.Search(path2, condtions2, false, allData.Length - 800)[0];
+            if (pos2 == 0)
+            {
+                Editor.Error();
+            }
 
             using var stream = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
 
@@ -79,11 +87,15 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             if (found.Sum() < 2)
             {
-                Console.WriteLine("Sorry a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
-                return;
+                Editor.Error();
             }
             // Search for rough inquiry code in first save
             int pos3 = Editor.Search(path, condtions1)[0];
+            if (pos3 == 0)
+            {
+                Editor.Error();
+            }
+            found[2] = 1;
             stream.Close();
             using var stream3 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -94,6 +106,11 @@ namespace Battle_Cats_save_editor.SaveEdits
             stream3.Close();
             // Search for token position in first save
             int pos4 = Editor.Search(path, condtions2, false, allData.Length - 800)[0];
+            if (pos4 == 0)
+            {
+                Editor.Error();
+            }
+            found[3] = 1;
 
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             // Search for inquiry code position starting from rough position
@@ -101,7 +118,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 if (allData[pos3 - j] == 9 && allData[pos3 - j + 1] == 0 && allData[pos3 - j + 2] == 0 && allData[pos3 - j + 3] == 0 && allData[pos3 - j - 1] == 0 && allData[pos3 - j + 23] == 0x2c)
                 {
-                    found[3] = 1;
+                    found[4] = 1;
                     stream2.Position = pos3 - j + 4;
                     // Set inquiry code in first save to inquiry code in second save
                     stream2.Write(iqExtra, 0, 11);
@@ -119,12 +136,11 @@ namespace Battle_Cats_save_editor.SaveEdits
             stream2.Position = pos4;
             // Set token in first save to token in second save
             stream2.Write(lastKey, 0, 45);
-            found[4] = 1;
+            found[5] = 1;
 
             if (found.Sum() < 4)
             {
-                Console.WriteLine("Sorry a position couldn't be found\nEither your save is invalid or the edtior is bugged, if it is please contact me on the discord linked in the readme.md");
-                return;
+                Editor.Error();
             }
             else
             {

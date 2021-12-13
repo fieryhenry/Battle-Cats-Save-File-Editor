@@ -40,15 +40,9 @@ namespace Battle_Cats_save_editor.SaveEdits
                 found = true;
                 StartPos = pos2;
             }
-            if (!found)
+            if (!found || StartPos < 100)
             {
-                Console.WriteLine("Sorry your outbreak position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
-                return;
-            }
-            if (StartPos < 100)
-            {
-                Console.WriteLine("Sorry your outbreak position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
-                return;
+                Editor.Error();
             }
             for (int j = 0; j < length; j++)
             {

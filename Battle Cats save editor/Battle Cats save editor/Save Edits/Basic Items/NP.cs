@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 }
 
             }
-            if (!found) Console.WriteLine("Sorry your NP position couldn't be found\nYour save file is either invalid or the tool is bugged\nIf this is the case please tell me on discord\nThank you");
+            if (!found) Editor.Error();
         }
     }
 }

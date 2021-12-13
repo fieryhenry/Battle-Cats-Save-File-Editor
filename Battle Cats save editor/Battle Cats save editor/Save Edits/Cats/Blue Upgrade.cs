@@ -68,12 +68,5 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             Console.WriteLine("Success");
         }
-        public static int ThirtySix(string path)
-        {
-            byte[] conditions = { 0xFF, 0xFF, 0x00, 0x36, 0x00, 0x00 };
-            int pos = Editor.Search(path, conditions)[0];
-
-            return pos + 3;
-        }
     }
 }
