@@ -9,64 +9,104 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class BlueUpgrade
     {
+        public static int TotalUpgrades = 10;
+        public static Tuple<List<int>, List<int>> GetBlueUpgrades(string path)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.catAmount * 4);
+            int[] Levels = Editor.GetItemData(path, (TotalUpgrades + 1) * 2, 2, pos + 4);
+            List<int> plusLevels = new();
+            List<int> baseLevels = new();
+
+            for (int i = 0; i < Levels.Length; i++)
+            {
+                if (i == 2 || i == 3)
+                {
+                    continue;
+                }
+                if (i % 2 == 0)
+                {
+                    plusLevels.Add(Levels[i]);
+                }
+                else
+                {
+                    baseLevels.Add(Levels[i] + 1);
+                }
+            }
+
+            return Tuple.Create(baseLevels, plusLevels);
+        }
+        public static void SetBlueUpgrades(string path, Tuple<List<int>, List<int>> upgrades)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.catAmount * 4);
+            upgrades.Item1.Insert(1, 1);
+            upgrades.Item2.Insert(1, 0);
+
+            List<int> levels = new();
+
+            for (int i = 0; i < upgrades.Item1.Count; i++)
+            {
+                levels.Add(upgrades.Item2[i]);
+                levels.Add(upgrades.Item1[i] - 1);
+            }
+            Editor.SetItemData(path, levels.ToArray(), 2, pos + 4);
+        }
         public static void Blue(string path)
         {
-            int[] occurrence = Editor.OccurrenceB(path);
-            Console.WriteLine("Do you want to upgrade all the blue upgrades at once? (yes/no)");
-            string answer = Console.ReadLine();
-            byte[] maxData = { 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x00, 0x00, 0x09, 0x00,
-                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
-                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13, 0x00,
-                0x0A, 0x00, 0x13, 0x00, 0x0A, 0x00, 0x13 };
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            // Individual upgrades
-            if (answer == "no")
+            string[] types =
             {
-                Editor.ColouredText("What do you want to upgrade?\n&1.& Power\n&2.& Range\n&3.& Charge\n&4.& Efficiency\n&5.& Wallet\n&6.& Health\n&7.& Research\n&8.& Accounting\n&9.& Study" +
-                    "\n&10.& Energy\nInput more than 1 id to edit more than 1 at a time (separated by spaces)\n");
-                string[] input = Console.ReadLine().Split(' ');
-                int[] ids = Array.ConvertAll(input, int.Parse);
+                "Cat Cannon Attack", "Cat Cannon Range", "Cat Cannon Charge",
+                "Worker Cat Rate", "Worker Cat Wallet", "Base Defnse",
+                "Research", "Accountant", "Study", "Cat Energy"
+            };
+            Tuple<List<int>, List<int>> upgrades = GetBlueUpgrades(path);
+            int[] baseLevels = upgrades.Item1.ToArray();
+            int[] plusLevels = upgrades.Item2.ToArray();
 
-                Console.WriteLine("What base level do you want? (If you inputed more than 1 id before you must add more than 1 amount e.g if you said 1 4 5 before you need to input 3 numbers now)");
-                string[] inputBase = Console.ReadLine().Split(' ');
-                int[] idBase = Array.ConvertAll(inputBase, int.Parse);
+            string toOutput = "&Current Levels:\n";
 
-                Console.WriteLine("What plus level do you want? (If you inputed more than 1 id before you must add more than 1 amount e.g if you said 1 4 5 before you need to input 3 numbers now)");
-                string[] inputPlus = Console.ReadLine().Split(' ');
-                int[] idPlus = Array.ConvertAll(inputPlus, int.Parse);
-
-                int length = (int)stream.Length;
-                byte[] allData = new byte[length];
-                stream.Read(allData, 0, length);
-                int pos = occurrence[2] + (Editor.catAmount * 4);
-                stream.Position = pos;
-
-                // Loop through user entered ids
-                for (int i = 0; i < ids.Length; i++)
+            for (int i = 0;i < baseLevels.Length; i++)
+            {
+                toOutput += $"&{types[i]}&: {baseLevels[i]}+{plusLevels[i]}\n";
+            }
+            Editor.ColouredText(toOutput);
+            Editor.ColouredText($"&What do you want to edit? {Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(types)}&{types.Length +1}.& All at once\n");
+            string[] answer = Console.ReadLine().Split(' ');
+            foreach (string choice in answer)
+            {
+                int id = int.Parse(choice) -1;
+                if (id == types.Length)
                 {
-                    // For some reason there is a gap between the Cat cannon power and the rest of the upgrades
-                    if (ids[i] == 1)
-                    {
-                        stream.Position = pos + (ids[i] * 4);
-                    }
-                    else
-                    {
-                        stream.Position = pos + ((ids[i] + 1) * 4);
-                    }
-                    stream.WriteByte((byte)idPlus[i]);
-                    stream.Position++;
-                    stream.WriteByte((byte)((byte)idBase[i] - 1));
-                }
+                    Editor.ColouredText($"&What do you want to set the level to? (e.g 20+10):\n");
+                    string[] response = Console.ReadLine().Split('+');
+                    int base_level = int.Parse(response[0]);
+                    int plus_level = int.Parse(response[1]);
 
+                    if (base_level == 0)
+                    {
+                        base_level = 1;
+                    }
+
+                    List<int> base_level_set = Enumerable.Repeat(base_level, upgrades.Item1.Count).ToList();
+                    List<int> plus_level_set = Enumerable.Repeat(plus_level, upgrades.Item2.Count).ToList();
+                    upgrades = Tuple.Create(base_level_set, plus_level_set);
+                }
+                else
+                {
+                    Editor.ColouredText($"&What do you want to set the level of &{types[id]}& to? (e.g 20+10):\n");
+                    string[] response = Console.ReadLine().Split('+');
+                    int base_level = int.Parse(response[0]);
+                    int plus_level = int.Parse(response[1]);
+
+                    if (base_level == 0)
+                    {
+                        base_level = 1;
+                    }
+
+                    upgrades.Item1[id] = base_level;
+                    upgrades.Item2[id] = plus_level;
+                }
             }
-            // All upgrades at once
-            if (answer == "yes")
-            {
-                stream.Position = occurrence[2] + (Editor.catAmount * 4) + 4;
-                stream.Write(maxData, 0, maxData.Length);
-            }
-            Console.WriteLine("Success");
+            SetBlueUpgrades(path, upgrades);
         }
     }
 }
