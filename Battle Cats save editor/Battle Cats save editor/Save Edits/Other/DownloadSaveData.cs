@@ -14,11 +14,9 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static byte[] ReadFully(Stream input)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                input.CopyTo(ms);
-                return ms.ToArray();
-            }
+            using MemoryStream ms = new MemoryStream();
+            input.CopyTo(ms);
+            return ms.ToArray();
         }
         public static string GetRandomHexNumber(int digits)
         {
