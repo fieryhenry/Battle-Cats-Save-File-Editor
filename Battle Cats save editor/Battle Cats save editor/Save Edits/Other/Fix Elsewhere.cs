@@ -10,142 +10,92 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class FixElsewhere
     {
+        public static Tuple<int, bool> GetTokenPos(string path)
+        {
+            List<byte> allData = File.ReadAllBytes(path).ToList();
+            byte[] condtions2 = { 0x78, 0x63, 0x01 };
+            int start_pos = Editor.Search(path, condtions2, false, allData.Count - 800)[0];
+            int new_pos = 0;
+
+            for (int i = start_pos; i < start_pos + 100; i++)
+            {
+                if (allData[i + 11] == 0x28)
+                {
+                    new_pos = i + 15;
+                    break;
+                }
+            }
+            if (new_pos == 0)
+            {
+                allData[start_pos + 11] = 0x28;
+                allData.InsertRange(start_pos + 14, new byte[40]);
+                File.WriteAllBytes(path, allData.ToArray());
+                return Tuple.Create(start_pos + 15, false);
+            }
+            return Tuple.Create(new_pos, true);
+        }
+        public static byte[] GetToken(string path)
+        {
+            List<byte> allData = File.ReadAllBytes(path).ToList();
+            Tuple<int, bool> result = GetTokenPos(path);
+            int pos = result.Item1;
+            bool has_token = result.Item2;
+            byte[] token_bytes = new byte[40];
+            if (has_token)
+            {
+                token_bytes = allData.GetRange(pos, 40).ToArray();
+            }
+            return token_bytes;
+        }
+        public static void SetToken(string path, byte[] token_bytes)
+        {
+            int pos = GetTokenPos(path).Item1;
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            stream.Position = pos;
+            stream.Write(token_bytes, 0, 40);
+        }
         public static void Elsewhere(string path)
         {
+            string inquiry_code_first = NewInquiryCode.GetIQ(path);
+            byte[] token_first_b = GetToken(path);
+
             Console.WriteLine("Please select a working save that doesn't have 'Save is used elsewhere' and has never had it in the past\nPress enter to select that save");
             Console.ReadLine();
             var FD = new OpenFileDialog
             {
-                Multiselect = true,
                 Filter = "working battle cats save(*.*)|*.*"
             };
             string path2 = "";
             if (FD.ShowDialog() == DialogResult.OK)
             {
-                string[] fileToOpen = FD.FileNames;
-                path2 = Path.Combine(fileToOpen[0]);
+                path2 = FD.FileName;
             }
             else
             {
                 Editor.ColouredText("\nPlease select your save\n\n");
-                Editor.SelSave();
+                Elsewhere(path);
             }
-            byte[] condtions1 = { 0x2d, 0x00, 0x00, 0x00, 0x2e };
-            // Search for rough inquiry code position in second save
-            int pos1 = Editor.Search(path2, condtions1)[0];
-            if (pos1 == 0)
+            string inquiry_code_second = NewInquiryCode.GetIQ(path2);
+            byte[] token_second_b = GetToken(path2);
+
+            NewInquiryCode.SetIQ(path, inquiry_code_second);
+            SetToken(path, token_second_b);
+
+            string token_first = Encoding.ASCII.GetString(token_first_b);
+            string token_second = Encoding.ASCII.GetString(token_second_b);
+
+            if (token_first_b[0] == 0)
             {
-                Editor.Error();
+                token_first = "None";
+            }
+            if (token_second_b[0] == 0)
+            {
+                token_second = "None";
             }
 
-            using var stream1 = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream1.Length;
-            byte[] allData = new byte[length];
-            stream1.Read(allData, 0, length);
-
-            byte[] codeBytes = new byte[36];
-            byte[] codeBytes2 = new byte[9];
-            byte[] iqExtra = new byte[11];
-            byte[] lastKey = new byte[45];
-            int[] found = new int[6];
-            stream1.Close();
-
-            // Search for token position in second save
-            byte[] condtions2 = { 0x78, 0x63, 0x01};
-            int pos2 = Editor.Search(path2, condtions2, false, allData.Length - 800)[0];
-            if (pos2 == 0)
-            {
-                Editor.Error();
-            }
-
-            using var stream = new FileStream(path2, FileMode.Open, FileAccess.ReadWrite);
-
-            // Search for inquiry code position from rough position in second save
-            for (int j = 1900; j < 2108; j++)
-            {
-                if (allData[pos1 - j] == 9 && allData[pos1 - j + 1] == 0 && allData[pos1 - j + 2] == 0 && allData[pos1 - j + 3] == 0 && allData[pos1 - j - 1] == 0 && allData[pos1 - j + 23] == 0x2c)
-                {
-                    found[0] = 1;
-                    // Save it in an array
-                    Array.Copy(allData, pos1 - j + 4, iqExtra, 0, 11);
-                    break;
-                }
-            }
-            // Check for token
-            for (int i = pos2 + 9; i < pos2 + 100; i++)
-            {
-                if (allData[i] >= 48 && allData[i + 1] >= 48 && allData[i + 2] >= 48 && allData[i + 3] >= 48)
-                {
-                    pos2 = i;
-                    found[1] = 1;
-                    break;
-                }
-            }
-            // Save token to array
-            Array.Copy(allData, pos2, lastKey, 0, 45);
-
-            if (found.Sum() < 2)
-            {
-                Editor.Error();
-            }
-            // Search for rough inquiry code in first save
-            int pos3 = Editor.Search(path, condtions1)[0];
-            if (pos3 == 0)
-            {
-                Editor.Error();
-            }
-            found[2] = 1;
-            stream.Close();
-            using var stream3 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            length = (int)stream3.Length;
-            allData = new byte[length];
-            stream3.Read(allData, 0, length);
-
-            stream3.Close();
-            // Search for token position in first save
-            int pos4 = Editor.Search(path, condtions2, false, allData.Length - 800)[0];
-            if (pos4 == 0)
-            {
-                Editor.Error();
-            }
-            found[3] = 1;
-
-            using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            // Search for inquiry code position starting from rough position
-            for (int j = 1900; j < 2108; j++)
-            {
-                if (allData[pos3 - j] == 9 && allData[pos3 - j + 1] == 0 && allData[pos3 - j + 2] == 0 && allData[pos3 - j + 3] == 0 && allData[pos3 - j - 1] == 0 && allData[pos3 - j + 23] == 0x2c)
-                {
-                    found[4] = 1;
-                    stream2.Position = pos3 - j + 4;
-                    // Set inquiry code in first save to inquiry code in second save
-                    stream2.Write(iqExtra, 0, 11);
-                    break;
-                }
-            }
-            for (int i = pos4 + 9; i < pos4 + 100; i++)
-            {
-                if (allData[i] >= 48 && allData[i + 1] >= 48 && allData[i + 2] >= 48 && allData[i + 3] >= 48)
-                {
-                    pos4 = i;
-                    break;
-                }
-            }
-            stream2.Position = pos4;
-            // Set token in first save to token in second save
-            stream2.Write(lastKey, 0, 45);
-            found[5] = 1;
-
-            if (found.Sum() < 4)
-            {
-                Editor.Error();
-            }
-            else
-            {
-                Console.WriteLine("Success");
-            }
+            Editor.ColouredText($"&Replaced inquiry code: &{inquiry_code_first}& with &{inquiry_code_second}&\n");
+            Editor.ColouredText($"&Replaced token: &{token_first}& with &{token_second}&\n");
         }
     }
 }
