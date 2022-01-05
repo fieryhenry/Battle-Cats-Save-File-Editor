@@ -10,65 +10,53 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class PatchSaveFile
     {
-        public static string GetMD5SumBC(string path, string game_ver)
-        {
-            if (game_ver == "jp")
-            {
-                game_ver = "";
-            }
-            List<byte> allData = File.ReadAllBytes(path).ToList();
-
-            List<byte> game_version_bytes = Encoding.ASCII.GetBytes($"battlecats{game_ver}").ToList();
-            MD5 md5 = MD5.Create();
-
-            List<byte> toUse = allData;
-
-            toUse.RemoveRange(toUse.Count - 32, 32);
-            game_version_bytes.AddRange(toUse);
-            List<byte> hash_data = game_version_bytes;
-
-            byte[] hash = md5.ComputeHash(hash_data.ToArray());
-            string hash_str = Editor.ByteArrayToString(hash);
-
-            return hash_str.ToLower();
-
-        }
-        public static string DetectGameVersion(string path)
-        {
-            string[] gameVersions =
-            {
-                "jp", "en", "kr"
-            };
-            List<byte> allData = File.ReadAllBytes(path).ToList();
-
-            byte[] curr_hash = allData.GetRange(allData.Count - 32, 32).ToArray();
-            string curr_hash_str = Encoding.ASCII.GetString(curr_hash);
-
-            foreach (string game_version in gameVersions)
-            {
-                string hash_str = GetMD5SumBC(path, game_version);
-                if (hash_str == curr_hash_str)
-                {
-                    return game_version;
-                }
-            }
-            return "";
-        }
-        public static void patchSaveFile(string path)
+        public static string patchSaveFile(string choice, string path)
         {
             string name = Path.GetFileName(path);
             if (name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so") || name.EndsWith(".csv"))
             {
-                return;
+                return "";
             }
-            string hash = GetMD5SumBC(path, Editor.gameVer);
 
-            int len = File.ReadAllBytes(path).Length;
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            stream.Position = len - 32;
-            stream.Write(Encoding.ASCII.GetBytes(hash), 0, hash.Length);
-            Editor.ColouredText($"&Patched save data for game version: &{Editor.gameVer}&\n");
+            int length = (int)stream.Length;
+            byte[] allData = new byte[length];
+            stream.Read(allData, 0, length);
+
+            byte[] toBeUsed = new byte[allData.Length - 32];
+            for (int i = 0; i < allData.Length - 32; i++)
+                toBeUsed[i] = allData[i];
+            byte[] bytes = Encoding.ASCII.GetBytes("battlecats");
+            if (choice != "jp")
+            {
+                bytes = Encoding.ASCII.GetBytes("battlecats" + choice);
+            }
+            int test = 32 - bytes.Length;
+
+            byte[] Usable = new byte[allData.Length - test];
+            bytes.CopyTo(Usable, 0);
+            toBeUsed.CopyTo(Usable, bytes.Length);
+
+
+            var md5 = MD5.Create();
+
+            byte[] Data = new byte[16];
+            Data = md5.ComputeHash(Usable);
+
+            string hex = Editor.ByteArrayToString(Data);
+            Console.WriteLine("Data patched");
+
+            string EncyptedHex = Editor.ByteArrayToString(Data);
+
+            hex = hex.ToLower();
+
+            byte[] stuffs = Encoding.ASCII.GetBytes(hex);
+
+            stream.Position = allData.Length - 32;
+            stream.Write(stuffs, 0, stuffs.Length);
+            return choice;
         }
+
     }
 }

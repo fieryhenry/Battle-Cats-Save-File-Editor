@@ -31,7 +31,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             stream.Close();
 
-            int[] occurrence = Editor.GetPositionsFromYear(path, year);
+            int[] occurrence = Editor.OccurrenceE(path, year);
 
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             try
@@ -61,7 +61,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             stream.Close();
 
-            int[] occurrence = Editor.GetPositionsFromYear(path, year);
+            int[] occurrence = Editor.OccurrenceE(path, year);
 
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             try
