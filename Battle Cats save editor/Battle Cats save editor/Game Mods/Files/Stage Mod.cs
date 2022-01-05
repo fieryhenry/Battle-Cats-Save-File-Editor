@@ -10,8 +10,49 @@ namespace Battle_Cats_save_editor.Game_Mods
 {
     public class StageMod
     {
+        public static List<int> AddEnemyIDs(List<List<int>> EnemySlots)
+        {
+            List<int> enemyIDs = new();
+            for (int i = 0; i < EnemySlots.Count; i++)
+            {
+                if (EnemySlots[i][0] != 0)
+                {
+                    enemyIDs.Add(EnemySlots[i][0]);
+                }
+            }
+            return enemyIDs;
+        }
         public static void Stagecsv()
         {
+            List<string> editOptionsS = new()
+            {
+                "Basic stage properties",
+                "Enemy Slots",
+                "Castle ID"
+            };
+            List<string> stageInfoS = new()
+            {
+                "Stage Width",
+                "Base health",
+                "Minimum spawn frame",
+                "Maximum spawn frame",
+                "Background type",
+                "Maximum enemies",
+            };
+            List<string> enemyInfoS = new()
+            {
+                "Enemy ID",
+                "Amount to spawn in total",
+                "First spawn frame",
+                "Time between spawns in frames min",
+                "Time between spawns in frames max",
+                "Spawn when base health has reached %",
+                "Front z-layer",
+                "Back z-layer",
+                "Boss flag",
+                "Strength multiplier",
+            };
+
             OpenFileDialog fd = new()
             {
                 Filter = "files (stage*.csv)|stage*.csv",
@@ -23,239 +64,111 @@ namespace Battle_Cats_save_editor.Game_Mods
                 Editor.Options();
             }
             string path = fd.FileName;
-            string[] csvData = File.ReadAllLines(path);
 
-            string stageID = string.Join("", csvData[0].Split(','));
-            int hasID = 2;
-            int hasID2 = 1;
-            Console.WriteLine(csvData[0].Split(',').Length);
-            // Check if stage csv contains a stage id
-            if (csvData[0].Split(',').Length > 7)
+            List<List<int>> AllstageData = FileHandler.ReadCSV(path);
+            List<int> StageID = new();
+
+            int startPos = 0;
+            if (AllstageData[0].Count < 9)
             {
-                hasID = 1;
-                hasID2 = 0;
-                stageID = "None";
+                startPos = 1;
+                StageID = AllstageData[0];
             }
-            int index = stageID.IndexOf('/');
-
-            // Remove comments from file
-            string stageIDTrim = stageID;
-            try
+            List<int> StageInfo = AllstageData[startPos];
+            List<List<int>> EnemyInfo = AllstageData.GetRange(startPos + 1, AllstageData.Count - (startPos + 1));
+            bool SuccessStageID = int.TryParse(string.Join("", StageID), out _);
+            if (EnemyInfo[0].Count == 9)
             {
-                stageIDTrim = stageID.Remove(index);
-            }
-            catch
-            {
-
-            }
-            // Store main data about the stage, e.g base health, stage width, max enemies
-            string[] baseData = csvData[hasID2].Split(',');
-
-            string[] BaseStrings =
-            {
-                "Stage Width", "Base health", "Minimum spawn frame", "Maximum spawn frame", "Background type", "Maximum enemies",
-            };
-            string BaseCol = "";
-            for (int i = 0; i < BaseStrings.Length; i++)
-            {
-                BaseCol += $"&{BaseStrings[i]}:& {baseData[i]}\n";
-            }
-            string[] EnemyData = new string[csvData.Length - hasID];
-
-            string[] EnemyStrings =
-            {
-                "Enemy ID", "Amount to spawn in total", "First spawn frame", "Time between spawns in frames min",
-                "Time between spawns in frames max", "Spawn when base health has reached %", "Front z-layer", "Back z-layer", "Boss flag",
-                "Strength multiplier"
-            };
-            int fail = 0;
-            List<List<string>> EnemySlotData = new();
-            // Loop through enemy slots
-            for (int i = 0; i < csvData.Length - hasID; i++)
-            {
-                // Set enemy data i to enemy slot i
-                EnemyData[i] = csvData[i + hasID];
-                // Split data into an array
-                string[] allData = EnemyData[i].Split(',');
-                // Turn data into list
-                List<string> LsData = allData.ToList();
-                // Check if this is the end of the enemy slots
-                if (LsData.Count < 5)
+                try
                 {
-                    fail = i;
-                    break;
+                    enemyInfoS.RemoveAt(9);
                 }
-                // Add enemy slot data to list
-                EnemySlotData.Add(LsData);
-            }
-
-            Editor.ColouredText($"Stage ID:&{stageIDTrim}\n{BaseCol}");
-            for (int i = 0; i < EnemySlotData.Count; i++)
-            {
-                Editor.ColouredText($"\n&Enemy Slot &{i + 1}&:\n");
-                for (int j = 0; j < EnemySlotData[i].Count; j++)
+                catch
                 {
-                    if (EnemySlotData[i][0] == "0")
-                    {
-                        Editor.ColouredText("Empty\n");
-                        break;
-                    }
-                    if (j == 1 && EnemySlotData[i][j] == "0")
-                    {
-                        EnemySlotData[i][j] = "unlimited";
-                    }
-                    try
-                    {
-                        Editor.ColouredText($"&{EnemyStrings[j]}:&{EnemySlotData[i][j]}&\n");
-                    }
-                    catch
-                    {
 
-                    }
                 }
             }
-            Editor.ColouredText("&What do you want to edit?(1 &stage data&, 2 &enemy spawning data&):\n");
+            List<int> enemyIDs = AddEnemyIDs(EnemyInfo);
+            if (!SuccessStageID)
+            {
+                editOptionsS.RemoveAt(2);
+            } 
+
+            Editor.ColouredText($"&What do you want to edit?:\n&{Editor.CreateOptionsList<string>(editOptionsS.ToArray())}");
             int answer = (int)Editor.Inputed();
-            string complete = "";
-            // Stage data
+            if (answer > 2 + Convert.ToInt32(SuccessStageID) || answer < 0)
+            {
+                Console.WriteLine("Please enter a recognised number");
+                Stagecsv();
+            }
             if (answer == 1)
             {
-                Console.WriteLine("What do you want to edit?(you can enter multiple ids separated by spaces to edit multiple at once):");
-                for (int i = 0; i < BaseStrings.Length; i++)
+                Editor.ColouredText($"&What do you want to edit?:\n&{Editor.CreateOptionsList(stageInfoS.ToArray(), StageInfo.ToArray())}");
+                string[] input = Console.ReadLine().Split(' ');
+                foreach (string toEditS in input)
                 {
-                    Editor.ColouredText($"&{i + 1}. &{BaseStrings[i]}&\n");
+                    int toEdit = int.Parse(toEditS);
+                    Editor.ColouredText($"&What do you want to set &{stageInfoS[toEdit - 1]}& to?:\n");
+                    int val = (int)Editor.Inputed();
+                    StageInfo[toEdit - 1] = val;
                 }
-                string[] response = Console.ReadLine().Split(' ');
-                for (int j = 0; j < response.Length; j++)
-                {
-                    int id = int.Parse(response[j]);
-                    Editor.ColouredText($"&What do you want to set &{BaseStrings[id - 1]}& to?:\n");
-                    string val = Console.ReadLine();
-                    baseData[id - 1] = val;
-                }
-                for (int i = 0; i < baseData.Length; i++)
-                {
-                    if (i == baseData.Length - 1 && hasID == 1)
-                    {
-                        // If it's the final item, don't add a comma
-                        complete += $"{baseData[i]}";
-                    }
-                    else
-                    {
-                        complete += $"{baseData[i]},";
-                    }
-                }
-                // Set base data to edited base data
-                csvData[hasID2] = complete;
             }
-            // Enemy data
             else if (answer == 2)
             {
-                Console.WriteLine("What enemy slot do you want to edit?(you can enter multiple slots separated by spaces to edit multiple at once):");
-                for (int i = 0; i < EnemySlotData.Count; i++)
+                List<string> slots = new();
+                foreach (int enemy_id in enemyIDs)
                 {
-                    Editor.ColouredText($"{i + 1}. &Enemy id:& {EnemySlotData[i][0]}&\n");
+                    slots.Add($"Enemy id: &{enemy_id}&");
                 }
-                string[] response = Console.ReadLine().Split(' ');
-                for (int i = 0; i < response.Length; i++)
+                Editor.ColouredText($"&What slot do you want to edit?(To add new slots, just enter a number greater than {enemyIDs.Count}(You can edit multiple slots at once by entering multiple ids sperated by spaces:\n&{Editor.CreateOptionsList<int>(slots.ToArray())}");
+                string[] input = Console.ReadLine().Split(' ');
+                foreach (string slotNumS in input)
                 {
-                    int slot = int.Parse(response[i]);
-                    Editor.ColouredText($"&What do you want to edit in slot &{slot}&?(you can enter multiple slots separated by spaces to edit multiple at once):\n");
-                    for (int j = 0; j < EnemyStrings.Length; j++)
+                    enemyIDs = AddEnemyIDs(EnemyInfo);
+                    int slotNum = int.Parse(slotNumS);
+                    if (slotNum > enemyIDs.Count +1)
                     {
-                        Editor.ColouredText($"&{j + 1}.& {EnemyStrings[j]}&\n");
+                        slotNum = enemyIDs.Count +1;
                     }
-                    string[] response2 = Console.ReadLine().Split(' ');
-                    for (int j = 0; j < response2.Length; j++)
+                    if (slotNum > EnemyInfo.Count)
                     {
-                        int toEdit = int.Parse(response2[j]);
-                        Editor.ColouredText($"&What do you want to set &{EnemyStrings[toEdit - 1]}& to?:\n");
-                        string val = Console.ReadLine();
-                        Console.WriteLine(slot);
-                        EnemySlotData[slot - 1][toEdit - 1] = val;
+                        List<int> toAddExtra = Enumerable.Repeat(0, EnemyInfo[slotNum - 2].Count).ToList();
+                        toAddExtra[7] = 9;
+                        EnemyInfo.Add(toAddExtra);
+                        enemyIDs.Add(0);
                     }
-                }
-                for (int i = 0; i < EnemySlotData.Count; i++)
-                {
-                    for (int j = 0; j < EnemySlotData[i].Count; j++)
+                    Editor.ColouredText($"&What do you want to edit?:(You can edit multiple values by entering multiple numbers separated by spaces\n&{Editor.CreateOptionsList<int>(enemyInfoS.ToArray(), EnemyInfo[slotNum -1].ToArray())}");
+                    input = Console.ReadLine().Split(' ');
+                    foreach (string attribute in input)
                     {
-                        if (EnemySlotData[i][j] == "unlimited")
+                        int id = int.Parse(attribute);
+                        if (id == 2)
                         {
-                            EnemySlotData[i][j] = "0";
-                        }
-                        if (j == EnemySlotData[i].Count - 1)
-                        {
-                            // If it's the final item, don't add a comma
-                            complete += $"{EnemySlotData[i][j]}";
+                            Editor.ColouredText($"&What do you want to set &{enemyInfoS[id - 1]}& to?(&0& = &unlimited& spawn amount):\n");
                         }
                         else
                         {
-                            complete += $"{EnemySlotData[i][j]},";
+                            Editor.ColouredText($"&What do you want to set &{enemyInfoS[id - 1]}& to?:\n");
                         }
+                        int val = (int)Editor.Inputed();
+                        EnemyInfo[slotNum -1][id -1] = val;
                     }
-                    complete += "\n";
                 }
+                
             }
-            else
+            else if (answer == 3)
             {
-                Console.WriteLine("Please enter either 1 or 2");
-                Stagecsv();
+                Editor.ColouredText($"&Castle ID : &{string.Join("", StageID)}&\nWhat do you want to set the castle id to?:\n");
+                StageID = Editor.ConvertCharArrayToIntArray(Console.ReadLine().ToArray()).ToList();              
             }
-            string Final = "";
-            // If csv has a stage id
-            if (hasID == 2)
+            List<List<int>> finalData = new();
+            if (SuccessStageID)
             {
-                Final += csvData[0] + "\n";
+                finalData.Add(StageID);
             }
-            // If base data was modified
-            if (answer == 1)
-            {
-                // Add edited base data to final string
-                Final += complete + "\n";
-                // Add enemy data to final string
-                for (int i = 0; i < EnemyData.Length; i++)
-                {
-                    Final += EnemyData[i] + "\n";
-                }
-            }
-            else
-            {
-                // Add base data to final string
-                Final += csvData[hasID2] + "\n";
-                // Add enemy data to final string
-                Final += complete;
-            }
-            // Removing trailing newlines from file to make sure file only has 1 newline
-            Final = Final.Trim('\n');
-            Final += "\n";
-            // If no other data exists at the end of the enemy slots, skip the next for loop and add a newline
-            if (fail == 0)
-            {
-                fail = 50;
-                Final += "\n";
-            }
-            // If other data exists at the end of the enemy slots, add it to the final string
-            for (int i = fail + hasID; i < csvData.Length - 1; i++)
-            {
-                Final += csvData[i] + "\n";
-            }
-            // Write final string to the file
-            File.WriteAllText(path, Final);
-            Console.WriteLine("\nData: \n" + Final + "\n");
-
-            // Make sure file length is divisible by 16, so encryption works
-            List<byte> ls = File.ReadAllBytes(path).ToList();
-            int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
-            rem *= 16;
-            rem -= ls.Count;
-            // Add data to end of file so file length is divisible by 16
-            for (int i = 0; i < rem && rem != 16; i++)
-            {
-                ls.Add((byte)rem);
-            }
-            // Write finished data to file
-            File.WriteAllBytes(path, ls.ToArray());
+            finalData.Add(StageInfo);
+            finalData.AddRange(EnemyInfo);
+            FileHandler.WriteCSV(finalData, path, true);
         }
-
     }
 }

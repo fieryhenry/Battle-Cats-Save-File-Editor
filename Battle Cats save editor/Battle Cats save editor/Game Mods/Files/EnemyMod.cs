@@ -20,21 +20,10 @@ namespace Battle_Cats_save_editor.Game_Mods
             if (fd.ShowDialog() != DialogResult.OK)
             {
                 Console.WriteLine("Please select .csv files");
-                Editor.Options();
+                EnemyCSV();
             }
             string path = fd.FileName;
-            List<string> csvData = File.ReadAllLines(path).ToList();
-
-            List<List<string>> enemy_data = new();
-            foreach (string line in csvData)
-            {
-                string[] split = line.Split(',');
-                if (split.Length > 15)
-                {
-                    enemy_data.Add(line.Split(',').ToList());
-                }
-            }
-
+            List<List<int>> enemy_data = FileHandler.ReadCSV(path);
             string[] values =
             {
                 "HP", "Knockback amount", "Movement Speed", "Attack Power", "Time between attacks", "Attack range", "Money Drop",
@@ -73,33 +62,9 @@ namespace Battle_Cats_save_editor.Game_Mods
                     int traitID = int.Parse(answer[i]);
                     Editor.ColouredText($"&What value do you want to set &{values[traitID]}& to? (for flags, 1 = on, 0 = off):");
                     int value = (int)Editor.Inputed();
-                    enemy_data[Enemyid][traitID] = value.ToString();
+                    enemy_data[Enemyid][traitID] = value;
                 }
-                string final = "";
-                for (int i = 0; i < enemy_data.Count; i++)
-                {
-                    string line = "";
-                    for (int j = 0; j < enemy_data[i].Count; j++)
-                    {
-                        line += $"{enemy_data[i][j]},";
-                    }
-                    line = line.TrimEnd(',');
-                    final += $"{line}\r\n";
-                }
-                File.WriteAllText(path, final);
-
-                byte[] allBytes = File.ReadAllBytes(path);
-
-                // Make sure file length is divisible by 16, so it encrypts properly
-                List<byte> ls = allBytes.ToList();
-                int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
-                rem *= 16;
-                rem -= ls.Count;
-                for (int i = 0; i < rem && rem != 16; i++)
-                {
-                    ls.Add((byte)rem);
-                }
-                File.WriteAllBytes(path, ls.ToArray());
+                FileHandler.WriteCSV(enemy_data, path, true);
             }
             Editor.ColouredText($"&Finished, wrote data to: &{path}&\n");
         }
