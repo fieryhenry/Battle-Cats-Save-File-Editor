@@ -10,19 +10,110 @@ namespace Battle_Cats_save_editor.Game_Mods
 {
     public class MD5Libnative
     {
-        public static void MD5Lib()
+        public static string[] GetStrNullSep(string path, int[] positions)
         {
-            Console.WriteLine("Please select an so file");
-            OpenFileDialog fd = new()
+            List<byte> allData = File.ReadAllBytes(path).ToList();
+
+            string[] strs = new string[positions.Length];
+            for (int i = 0; i < positions.Length; i++)
             {
-                Filter = "files (*.so)|*.so"
-            };
-            if (fd.ShowDialog() != DialogResult.OK)
-            {
-                Console.WriteLine("Please select .so files");
-                Editor.Options();
+                int startpos = 0;
+                for (int j = 0; j < 64; j++)
+                {
+                    if (allData[positions[i] - j] == 0)
+                    {
+                        startpos = positions[i] - j + 1;
+                        break;
+                    }
+                }
+                int endpos = positions[i] + 5;
+
+                List<byte> bytes = allData.GetRange(startpos, endpos - startpos);
+
+                strs[i] = Encoding.ASCII.GetString(bytes.ToArray());
             }
-            string path = fd.FileName;
+            return strs;
+        }
+        public static string[] GetOrder(string path)
+        {
+            int len = File.ReadAllBytes(path).Length;
+
+            byte[] conditions_list = { 0x2e, 0x6c, 0x69, 0x73, 0x74, 0x00 };
+            byte[] conditions_pack = { 0x2e, 0x70, 0x61, 0x63, 0x6b, 0x00 };
+            Console.WriteLine("Getting pack and list positions, please wait...");
+            int[] poses = Editor.Search(path, conditions_list, endpoint: len - 200000, startpoint: 700000, stop_after: 128);
+            int[] poses2 = Editor.Search(path, conditions_pack, endpoint: len - 200000, startpoint: 700000, stop_after: 128);
+            List<string> file_str = GetStrNullSep(path, poses).ToList();
+            file_str.AddRange(GetStrNullSep(path, poses2).ToList());
+
+            List<string> local_files = new();
+            List<string> server_files = new();
+
+            List<string> full_order = new();
+
+            foreach (string file in file_str)
+            {
+                bool isPack = false;
+                if (file.ToLower().Contains("pack"))
+                {
+                    isPack = true;
+                }
+                string[] split_str = file.Split('_');
+
+                if (file.ToLower().Contains("local"))
+                {
+                    if (split_str.Length  == 2)
+                    {
+                        if (file.ToLower().Contains("unit") || file.ToLower().Contains("number"))
+                        {
+                            continue;
+                        }
+                    }
+                    local_files.Add(file);
+                }
+                else if (file.ToLower().Contains("server"))
+                {
+                    if (isPack)
+                    {
+                        continue;
+                    }
+                    if (split_str.Length == 4 && !split_str[3].ToLower().Contains("en"))
+                    {
+                        continue;
+                    }
+                    server_files.Add(file);
+                }
+            }
+            full_order.AddRange(local_files);
+            full_order.AddRange(server_files);
+
+            return full_order.ToArray();
+        }
+        public static void MD5Lib(string path_orig)
+        {
+            string path = "";
+
+            if (path_orig.EndsWith(".so"))
+            {
+                path = path_orig;
+            }
+            else
+            {
+                Console.WriteLine("Please select an so file");
+                OpenFileDialog fd = new()
+                {
+                    Filter = "files (*.so)|*.so"
+                };
+                if (fd.ShowDialog() != DialogResult.OK)
+                {
+                    Console.WriteLine("Please select .so files");
+                    Editor.Options();
+                }
+                path = fd.FileName;
+            }
+
+
+            string[] order = GetOrder(path);
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -32,7 +123,6 @@ namespace Battle_Cats_save_editor.Game_Mods
 
             List<KeyValuePair<string, byte[]>> listsHash = new();
 
-            string[] order = { "DataLocal.list", "ImageDataLocal.list", "ImageLocal.list", "MapLocal.list", "NumberLocal.list", "resLocal.list", "UnitLocal.list", "ImageDataLocal_fr.list", "ImageLocal_fr.list", "MapLocal_fr.list", "resLocal_fr.list", "ImageDataLocal_it.list", "ImageLocal_it.list", "MapLocal_it.list", "resLocal_it.list", "ImageDataLocal_de.list", "ImageLocal_de.list", "MapLocal_de.list", "resLocal_de.list", "ImageDataLocal_es.list", "ImageLocal_es.list", "MapLocal_es.list", "resLocal_es.list", "DataLocal.pack", "ImageDataLocal.pack", "ImageLocal.pack", "MapLocal.pack", "NumberLocal.pack", "resLocal.pack", "UnitLocal.pack", "ImageDataLocal_fr.pack", "ImageLocal_fr.pack", "MapLocal_fr.pack", "resLocal_fr.pack", "ImageDataLocal_it.pack", "ImageLocal_it.pack", "MapLocal_it.pack", "resLocal_it.pack", "ImageDataLocal_de.pack", "ImageLocal_de.pack", "MapLocal_de.pack", "resLocal_de.pack", "ImageDataLocal_es.pack", "ImageLocal_es.pack", "MapLocal_es.pack", "resLocal_es.pack", "ImageServer_101000_00_en.list", "MapServer_101000_00_en.list", "NumberServer_101000_00_en.list", "UnitServer_101000_00_en.list", "ImageServer_100900_00_en.list", "MapServer_100900_00_en.list", "NumberServer_100900_00_en.list", "UnitServer_100900_00_en.list", "ImageServer_100800_00_en.list", "MapServer_100800_00_en.list", "NumberServer_100800_00_en.list", "UnitServer_100800_00_en.list", "ImageServer_100700_00_en.list", "MapServer_100700_00_en.list", "NumberServer_100700_00_en.list", "UnitServer_100700_00_en.list", "", "ImageServer_100600_01_en.list", "MapServer_100600_02_en.list", "NumberServer_100600_03_en.list", "UnitServer_100600_04_en.list", "LImageServer.list", "LMapServer.list", "LNumberServer.list", "LUnitServer.list", "KImageServer.list", "KMapServer.list", "KNumberServer.list", "KUnitServer.list", "JImageSever.list", "JMapServer.list", "JNumberServer.list", "JUnitServer.list", "IImageServer.list", "IMapServer.list", "INumberServer.list", "IUnitServer.list", "HImageServer.list", "HMapServer.list", "HNumberServer.list", "HUnitServer.list", "GImageServer.list", "GMapServer.list", "GNumberServer.list", "GUnitServer.list", "FImageServer.list", "FMapServer.list", "FNumberServer.list", "FUnitServer.list", "EImageServer.list", "EMapServer.list", "ENumberServer.list", "EUnitServer.list", "DImageServer.list", "DMapServer.list", "DNumberServer.list", "DUnitServer.list", "CImageServer.list", "CMapServer.list", "CNumberServer.list", "CUnitServer.list", "BNumberServer.list", "BUnitServer.list", "AMapServer.list", "ANumberServer.list", "AUnitServer.list", "ImageServer.list", "MapServer.list" };
             int prevIndex = 0;
             for (int i = 6000000; i < length - 10000; i++)
             {
@@ -87,7 +177,11 @@ namespace Battle_Cats_save_editor.Game_Mods
                 Console.WriteLine("Please select .pack/.list files");
                 Editor.Options();
             }
-            string[] paths = fd2.FileNames;
+            List<string> paths = fd2.FileNames.ToList();
+            List<string> fileNames = new();
+            List<string> hashes = new();
+            List<string> unchecked_files = new();
+            List<string> unchecked_hashes = new();
             foreach (string path2 in paths)
             {
                 string hash2 = Editor.CalculateMD5(path2);
@@ -98,6 +192,8 @@ namespace Battle_Cats_save_editor.Game_Mods
                     if (Path.GetFileName(path2) == listsHash[i].Key)
                     {
                         found = true;
+                        hashes.Add(hash2);
+                        fileNames.Add(Path.GetFileName(path2));
                         for (int j = prevIndex; j < length - 10000; j++)
                         {
                             if (allData[j] == listsHash[i].Value[0] && allData[j + 1] == listsHash[i].Value[1] && allData[j + 2] == listsHash[i].Value[2] && allData[j + 3] == listsHash[i].Value[3] && allData[j + 4] == listsHash[i].Value[4] && allData[j + 5] == listsHash[i].Value[5] && allData[j + 6] == listsHash[i].Value[6] && allData[j + 7] == listsHash[i].Value[7] && allData[j + 8] == listsHash[i].Value[8] && allData[j + 9] == listsHash[i].Value[9] && allData[j + 10] == listsHash[i].Value[10] && allData[j + 11] == listsHash[i].Value[11] && allData[j + 12] == listsHash[i].Value[12] && allData[j + 13] == listsHash[i].Value[13] && allData[j + 14] == listsHash[i].Value[14] && allData[j + 15] == listsHash[i].Value[15])
@@ -111,10 +207,12 @@ namespace Battle_Cats_save_editor.Game_Mods
                 }
                 if (!found)
                 {
-                    Console.WriteLine("The .pack/.list's md5 sum doesn't get checked(so is good to use without getting an error), or the file name is spelt wrong");
+                    unchecked_hashes.Add(hash2);
+                    unchecked_files.Add(Path.GetFileName(path2));
                 }
-                Console.WriteLine("Done!, you should now be able to put the lib file and the .pack/.lists into the game without data read error h01");
             }
+            Editor.ColouredText($"&Done, successfully changed checksum for files:\n&{Editor.CreateOptionsList(fileNames.ToArray(), hashes.ToArray(), false)}");
+            Editor.ColouredText($"&\nFiles that don't get checked:\n&{Editor.CreateOptionsList(unchecked_files.ToArray(), unchecked_hashes.ToArray(), false)}");
         }
 
     }
