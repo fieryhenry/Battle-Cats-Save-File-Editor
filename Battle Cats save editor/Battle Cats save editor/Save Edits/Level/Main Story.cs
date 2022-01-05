@@ -35,12 +35,12 @@ namespace Battle_Cats_save_editor.SaveEdits
                     for (int i = 0; i < 48; i++)
                     {
                         stream.Position = startPos + (i * 4);
-                        stream.WriteByte(02);
+                        stream.WriteByte(1);
                     }
                     startPos += blockLen;
                 }
                 // Set total number of stages cleared
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     stream.Position = lvlCountPos + (i * 4);
                     stream.WriteByte(48);
@@ -59,7 +59,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                 for (int i = 0; i < 48; i++)
                 {
                     stream.Position = startPos + (i * 4);
-                    stream.WriteByte(03);
+                    stream.WriteByte(1);
                 }
                 // Set total number of stages cleared
                 stream.Position = lvlCountPos + ((choice - 1) * 4);

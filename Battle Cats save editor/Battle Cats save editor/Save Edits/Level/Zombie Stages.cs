@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             toSearch[236] = 0x01;
             choice[235] = 0x01;
-            int pos = Editor.ThirtySix(path)[0];
+            int pos = Editor.GetPlatinumTicketPos(path)[0];
 
             bool found = false;
             int StartPos = 0;

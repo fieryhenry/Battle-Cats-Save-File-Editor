@@ -26,7 +26,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             stream.Close();
 
-            int[] occurance = Editor.OccurrenceB(path);
+            int[] occurance = Editor.GetCatRelatedHackPositions(path);
 
             using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             bool found = false;
