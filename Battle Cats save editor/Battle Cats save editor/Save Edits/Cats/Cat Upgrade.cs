@@ -11,7 +11,7 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void CatUpgrades(string path)
         {
-            int[] occurrence = Editor.OccurrenceB(path);
+            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
             Editor.ColouredText("&What level do you want?:enter the &base& followed by a &+& then the &plus& level you want, e.g 50+80, 30+0, 10+30\nEnter the base followed by a plus with nothing else to leave the plus value as it is, e.g 50+, or 20+\nEnter " +
                 "a plus followed by the plus value to leave the base values as they are e.g +20, +50\n");
             string answer = Console.ReadLine();

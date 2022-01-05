@@ -11,7 +11,7 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void RemSpecifiCat(string path)
         {
-            int[] occurrence = Editor.OccurrenceB(path);
+            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
