@@ -24,8 +24,8 @@ namespace Battle_Cats_save_editor.SaveEdits
                 {
                     stream.Position = i - 4;
                     // Set total counter for bundle menus seen to 65535, stopping the game from opening any more
-                    stream.WriteByte(0xff);
-                    stream.WriteByte(0xff);
+                    byte[] data = { 0xff, 0xff, 0xff,};
+                    stream.Write(data, 0, 3);
                     found = true;
                     break;
                 }
