@@ -32,35 +32,12 @@ namespace Battle_Cats_save_editor.SaveEdits
             for (int i = 0; i < answer.Length; i++)
             {
                 int choice = int.Parse(answer[i]);
-                int max = 0;
+                int max = 30;
 
                 // Set max upgrade amount
-                switch (choice)
+                if (choice == 1)
                 {
-                    case 1:
-                        max = 20;
-                        break;
-                    case 2:
-                        max = 30;
-                        break;
-                    case 3:
-                        max = 30;
-                        break;
-                    case 4:
-                        max = 30;
-                        break;
-                    case 5:
-                        max = 20;
-                        break;
-                    case 6:
-                        max = 25;
-                        break;
-                    case 7:
-                        max = 30;
-                        break;
-                    case 8:
-                        max = 30;
-                        break;
+                    max = 20;
                 }
                 // Position for the cat cannon is unlocked flag
                 int unlockPos = pos + (16 * (choice - 1));

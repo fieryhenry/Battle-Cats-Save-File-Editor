@@ -9,73 +9,71 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class GamatotoHelper
     {
+        public static int total_helper_types = 5;
+        public static int[] SortHelpers(int[] helpers)
+        {
+            int[] sorted_helpers = new int[total_helper_types];
+            for (int i = 0; i < helpers.Length; i++)
+            {
+                if (helpers[i] <= 53) sorted_helpers[0]++;
+                else if (helpers[i] <= 83) sorted_helpers[1]++;
+                else if (helpers[i] <= 108) sorted_helpers[2]++;
+                else if (helpers[i] <= 128) sorted_helpers[3]++;
+                else if (helpers[i] <= 148) sorted_helpers[4]++;
+            }
+            return sorted_helpers;
+        }
+        public static int[] UnsortHelpers(int[] sorted_helpers)
+        {
+            List<int> unsorted_helpers = new();
+            for (int i = 0; i < sorted_helpers.Length; i++)
+            {
+                for (int j = 0; j < sorted_helpers[i]; j++)
+                {
+                    if (i == 0) unsorted_helpers.Add(1 + j);
+                    else if (i == 1) unsorted_helpers.Add(54 + j);
+                    else if (i == 2) unsorted_helpers.Add(84 + j);
+                    else if (i == 3) unsorted_helpers.Add(109 + j);
+                    else if (i == 4) unsorted_helpers.Add(129 + j);
+                }
+            }
+            return unsorted_helpers.ToArray();
+        }
+        public static int[] GetHelpers(string path)
+        {
+            int pos = Editor.GetPlatinumTicketPos(path)[0] - 1022;
+            List<int> helpers = Editor.GetItemData(path, 25, 4, pos).ToList();
+            helpers.RemoveAll(i => i == -1);
+
+            return SortHelpers(helpers.ToArray());
+        }
+        public static void SetHelpers(string path, int[] helpers)
+        {
+            helpers = UnsortHelpers(helpers);
+            int pos = Editor.GetPlatinumTicketPos(path)[0] - 1022;
+            Editor.SetItemData(path, helpers, 4, pos);
+        }
         public static void GamHelp(string path)
         {
-            Editor.ColouredText("What helpers do you want?&\n&Type numbers separated by spaces\nThe different helper ids are as follows:&\nIntern &1 - 53&\nLacky &54 - 83&\nUnderling &84 - 108&\nAssistant &109 - 128&\nLegend &129 - 148&\ne.g entering " +
-                "&3 69 120 86 110 &would set your helpers to &1& intern, &1& lackey, &2& assistants, &1& underling\nThe ids must be different to eachother, the max helpers you can have is &10\n");
+            int[] helpers = GetHelpers(path);
+            string[] helper_names =
+            {
+                "Interns", "Lackys", "Underlings", "Assistants", "Legends"
+            };
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(helper_names, helpers, false)}Total &: {helpers.Sum()}&\n");
+            Editor.ColouredText($"&What do you want to edit? {Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(helper_names)}");
             string[] answer = Console.ReadLine().Split(' ');
-            int[] answerInt = new int[answer.Length];
-            try
-            {
-                // Convert ids into ints
-                answerInt = Array.ConvertAll(answer, s => int.Parse(s));
-            }
-            catch (Exception e)
-            {
-                Editor.ColouredText(e.Message + "\n", ConsoleColor.White, ConsoleColor.Red);
-                GamHelp(path);
-            }
-            for (int i = 0; i < answerInt.Length; i++)
-            {
-                if (answerInt[i] < 1)
-                {
-                    Editor.ColouredText("Error: you can't have an id below 1\n", ConsoleColor.White, ConsoleColor.Red);
-                    GamHelp(path);
-                }
-                if (answerInt[i] > 148)
-                {
-                    Editor.ColouredText("Error: you can't have an id above 148\n", ConsoleColor.White, ConsoleColor.Red);
-                    GamHelp(path);
-                }
-            }
-            // Turn ids into byte array
-            byte[] bytes = answerInt.SelectMany(BitConverter.GetBytes).ToArray();
 
-            int pos = Editor.ThirtySix(path)[0];
-            bool found = false;
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            foreach (string input in answer)
+            {
+                int choice = int.Parse(input) - 1;
+                Editor.ColouredText($"&What do you want to set the amount of &{helper_names[choice]}& to? (max of 10 helpers total to allow gamatoto to an expedition):\n");
+                int val = (int)Editor.Inputed();
+                helpers[choice] = val;
+            }
+            SetHelpers(path, helpers);
+            Editor.ColouredText($"&Set gamatoto helpers to:\n&{Editor.CreateOptionsList(helper_names, helpers, false)}Total &: {helpers.Sum()}&\n");
 
-            if (pos > 0)
-            {
-                found = true;
-            }
-            stream.Position = pos - 1025;
-            stream.Write(bytes, 0, bytes.Length);
-            if (found)
-            {
-                // Format string to output what was edited
-                Console.WriteLine("Success");
-                int count = 0;
-                if (answerInt.Length < 5)
-                {
-                    count = 5;
-                }
-                else
-                {
-                    count = answerInt.Length;
-                }
-                int[] helpNums = new int[count];
-                for (int i = 0; i < answerInt.Length; i++)
-                {
-                    if (answerInt[i] <= 53) helpNums[0]++;
-                    else if (answerInt[i] <= 83) helpNums[1]++;
-                    else if (answerInt[i] <= 108) helpNums[2]++;
-                    else if (answerInt[i] <= 128) helpNums[3]++;
-                    else helpNums[4]++;
-                }
-                Console.WriteLine("\nSet helpers to:\n {0} intern(s)\n {1} lackey(s)\n {2} underling(s)\n {3} assistant(s)\n {4} legend(s)", helpNums[0], helpNums[1], helpNums[2], helpNums[3], helpNums[4]);
-            }
-            if (!found) Editor.Error();
         }
     }
 }

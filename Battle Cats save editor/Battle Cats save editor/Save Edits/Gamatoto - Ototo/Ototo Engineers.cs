@@ -11,27 +11,38 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void Engineers(string path)
         {
+            int engineers = GetEngineers(path);
+
+            Editor.ColouredText($"&You currently have &{engineers}& engineers\n");
             Console.WriteLine("How many engineers do you want? (max 5)");
-            int engineers = (int)Editor.Inputed();
+            engineers = (int)Editor.Inputed();
             if (engineers > 5) engineers = 5;
             else if (engineers < 0) engineers = 0;
-            byte engi = Convert.ToByte(engineers);
+
+            SetEngineers(path, engineers);
+
+            Editor.ColouredText($"&Set current amount of ototo engineers to &{engineers}&\n");
+        }
+        public static int GetEngineers(string path)
+        {
+            int pos = Editor.GetOtotoPos(path) - 1;
+
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
+            stream.Position = pos;
+            byte[] engineers = new byte[2];
+            stream.Read(engineers, 0, 2);
+            return BitConverter.ToInt16(engineers, 0);
+        }
+        public static void SetEngineers(string path, int engineers)
+        {
+            int pos = Editor.GetOtotoPos(path) - 1;
 
-            for (int i = 0; i < allData.Length; i++)
-            {
-                if (allData[i] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 8 && allData[i + 4] == 0 && allData[i + 5] == 0 && allData[i + 6] == 0 && allData[i + 7] == 0 && allData[i + 8] == 0 && allData[i + 9] == 0 && allData[i + 10] == 0 && allData[i + 11] == 2 && allData[i + 12] == 0 && allData[i + 13] == 0 && allData[i + 14] == 0 && allData[i + 15] == 3 && allData[i + 16] == 0 && allData[i + 17] == 0 && allData[i + 18] == 0)
-                {
-                    stream.Position = i - 1;
-                    stream.WriteByte(engi);
-                    break;
-                }
-            }
-            Console.WriteLine($"Set current amount of ototo engineers to {engineers}");
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+
+            stream.Position = pos;
+            byte[] bytes = Editor.Endian(engineers);
+            stream.Write(bytes, 0, 2);
         }
     }
 }
