@@ -11,30 +11,28 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void leadership(string path)
         {
-            Console.WriteLine("How much leadership do you want(max 32767)");
-            int Leadership = (int)Editor.Inputed();
-            // Leadership is stored as a signed integer for some reason
-            if (Leadership > 32767) Leadership = 32767;
-
+            int leadership = GetLeadership(path);
+            leadership = Editor.AskSentances(leadership, "leadership", false, 10000);
+            SetLeadership(path, leadership);
+            Editor.AskSentances(leadership, "leadership", true);
+        }
+        public static int GetLeadership(string path)
+        {
             byte[] conditions = { 0x80, 0x38 };
             // Search for leadership position
-            int pos = Editor.Search(path, conditions)[0];
+            int pos = Editor.Search(path, conditions)[0] + 5;
             if (pos == 0)
             {
                 Editor.Error();
             }
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            Console.WriteLine("Scan Complete");
-            byte[] bytes = Editor.Endian(Leadership);
-
-            stream.Position = pos + 5;
-            stream.Write(bytes, 0, 2);
-            Console.WriteLine("Success");
+            return Editor.GetItemData(path, 1, 4, pos)[0];
+        }
+        public static void SetLeadership(string path, int leadership)
+        {
+            byte[] conditions = { 0x80, 0x38 };
+            // Search for leadership position
+            int pos = Editor.Search(path, conditions)[0] + 5;
+            Editor.SetItemData(path, new int[] { leadership }, 4, pos);
         }
     }
 }

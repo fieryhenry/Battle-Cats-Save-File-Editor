@@ -11,57 +11,73 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void Items(string path)
         {
-            Console.WriteLine("\nHow many of each item do you want?(max 3999)");
-            int Items = (int)Editor.Inputed();
-            if (Items > 3999) Items = 3999;
-            if (Items < 0) Items = 0;
-
+            int[] items = GetItems(path);
+            string[] itemTypes = {"Speed Ups", "Treasure Radars", "Rich Cats", "Cat CPUs", "Cat Jobs", "Sniper the Cats" };
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(itemTypes, items, false)}\n");
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(itemTypes)}&{itemTypes.Length+1}.& All at once\n");
+            string[] answer = Console.ReadLine().Split(' ');
+            for (int i = 0; i < answer.Length; i++)
+            {
+                int choice = int.Parse(answer[i]);
+                if (choice > 7)
+                {
+                    Console.WriteLine("Error, id must not be above 7");
+                    Items(path);
+                }
+                else if (choice == 7)
+                {
+                    Console.WriteLine("What do you want to set the value for all of your items to?(max 3999):");
+                    int val = (int)Editor.Inputed();
+                    if (val > 3999) val = 3999;
+                    if (val < 0) val = 0;
+                    items = Enumerable.Repeat(val, itemTypes.Length).ToArray();
+                    break;
+                }
+                else
+                {
+                    Editor.ColouredText($"&What do you want to set the value for &{itemTypes[choice-1]}& to?(max 3999):");
+                    int val = (int)Editor.Inputed();
+                    if (val > 3999) val = 3999;
+                    if (val < 0) val = 0;
+                    items[choice - 1] = val;
+                }
+            }
+            SetItems(path, items);
+            Console.WriteLine("Successfully set battle items");
+        }
+        public static int GetItemPos(string path)
+        {
             byte[] year = new byte[2];
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            byte[] allData = File.ReadAllBytes(path);
 
+            year[0] = allData[15];
+            year[1] = allData[16];
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            byte[] bytes = Editor.Endian(Items);
-            int[] occurrence = new int[100];
-
-            try
+            if (year[0] != 0x07)
             {
-                year[0] = allData[15];
-                year[1] = allData[16];
+                year[0] = allData[19];
+                year[1] = allData[20];
+            }
+            int[] occurrence = Editor.GetPositionsFromYear(path, year);
 
-                if (year[0] != 0x07)
-                {
-                    year[0] = allData[19];
-                    year[1] = allData[20];
-                }
-                stream.Close();
-                occurrence = Editor.OccurrenceE(path, year);
-            }
-            catch
+            if (occurrence[2] < 200)
             {
-                stream.Close();
+                Editor.Error();
             }
-            using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            try
-            {
-                stream2.Position = occurrence[2] - 224;
-                for (int i = occurrence[2] - 224; i < occurrence[2] - 203; i += 4)
-                {
-                    stream2.Position = i;
-                    stream2.WriteByte(bytes[0]);
-                    stream2.WriteByte(bytes[1]);
-                }
-            }
-            catch
-            {
-                Editor.ColouredText("You either haven't unlocked battle items yet, or the editor is bugged - if that's true please contact me on discord/the discord server in #bug-reports so I can fix it", ConsoleColor.Red, ConsoleColor.White);
-            }
-
-            stream2.Close();
+            int pos = occurrence[2] - 224;
+            return pos;
+        }
+        public static int[] GetItems(string path)
+        {
+            int itemNum = 6;
+            int pos = GetItemPos(path);
+            int[] items = Editor.GetItemData(path, itemNum, 4, pos);
+            return items;
+        }
+        public static void SetItems(string path, int[] items)
+        {
+            int pos = GetItemPos(path);
+            Editor.SetItemData(path, items, 4, pos);
         }
     }
 }

@@ -11,39 +11,34 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void LegendTicket(string path)
         {
-            using var stream1 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            int legendTickets = GetLegendTicket(path);
+            legendTickets = Editor.AskSentances(legendTickets, "legend tickets", false, 4);
 
-            int length = (int)stream1.Length;
-            byte[] allData = new byte[length];
-            stream1.Read(allData, 0, length);
-
-            stream1.Close();
+            SetLegendTicket(path, legendTickets);
+            Editor.AskSentances(legendTickets, "legend tickets", true);
+        }
+        public static int GetLegendTicketPos(string path)
+        {
+            byte[] allData = File.ReadAllBytes(path);
 
             // Search for legend ticket position
             byte[] condtions2 = { 0x00, 0x78, 0x63, 0x01, 0x00 };
-            int pos = Editor.Search(path, condtions2, false, allData.Length - 800)[0];
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            if (pos <= 0)
+            int pos = Editor.Search(path, condtions2, false, allData.Length - 800)[0] + 5;
+            if (pos < 1000)
             {
                 Editor.Error();
             }
-            byte[] ticketB = new byte[4];
-            stream.Position = pos + 5;
-            stream.Read(ticketB, 0, 4);
-
-            int tickets = BitConverter.ToInt16(ticketB, 0);
-            Console.WriteLine($"You have {tickets} legend tickets");
-            Console.WriteLine("How many legend tickets do you want? (max 4)");
-            tickets = (int)Editor.Inputed();
-            if (tickets > 4) tickets = 4;
-            else if (tickets < 0) tickets = 0;
-            byte[] bytes = Editor.Endian(tickets);
-
-            stream.Position = pos + 5;
-            stream.Write(bytes, 0, 4);
-            Console.WriteLine($"Set legend tickets to {tickets}");
+            return pos;
+        }
+        public static int GetLegendTicket(string path)
+        {
+            int pos = GetLegendTicketPos(path);
+            return Editor.GetItemData(path, 1, 4, pos)[0];
+        }
+        public static void SetLegendTicket(string path, int legendticket)
+        {
+            int pos = GetLegendTicketPos(path);
+            Editor.SetItemData(path, new int[] { legendticket }, 4, pos);
         }
     }
 }

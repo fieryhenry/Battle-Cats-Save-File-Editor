@@ -11,22 +11,20 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void PlatinumTickets(string path)
         {
-            Console.WriteLine("How many Platinum Cat Tickets do you want(max 9)");
-            int platCatTickets = (int)Editor.Inputed();
-            if (platCatTickets > 9) platCatTickets = 9;
-            int pos = Editor.ThirtySix(path)[1];
-            byte[] bytes = Editor.Endian(platCatTickets);
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            bool found = false;
-            if (pos > 0)
-            {
-                found = true;
-            }
-            stream.Position = pos + 8;
-            stream.Write(bytes, 0, 4);
-            if (found) Console.WriteLine("Success");
-            if (!found) Editor.Error();
+            int platinumTickets = GetPlatinumTickets(path);
+            platinumTickets = Editor.AskSentances(platinumTickets, "platinum tickets", false, 9);
+            SetPlatinumTickets(path, platinumTickets);
+            Editor.AskSentances(platinumTickets, "platinum tickets", true);
+        }
+        public static int GetPlatinumTickets(string path)
+        {
+            int pos = Editor.GetPlatinumTicketPos(path)[1] + 8;
+            return Editor.GetItemData(path, 1, 4, pos)[0];
+        }
+        public static void SetPlatinumTickets(string path, int platinumTickets)
+        {
+            int pos = Editor.GetPlatinumTicketPos(path)[1] + 8;
+            Editor.SetItemData(path, new int[] { platinumTickets }, 4, pos);
         }
     }
 }

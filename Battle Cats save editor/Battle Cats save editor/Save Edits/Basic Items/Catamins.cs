@@ -11,30 +11,46 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void Catamin(string path)
         {
-            Console.WriteLine("How many Catimins of each type do you want(max 65535)");
-            int platCatTickets = (int)Editor.Inputed();
+            int[] catamins = GetCatamins(path);
 
-            byte[] bytes = Editor.Endian(platCatTickets);
+            string[] catamin_types =
+            {
+                "Catamin A", "Catamin B", "Catamin C"
+            };
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(catamin_types, catamins, false)}");
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(catamin_types)}");
+            string[] answer = Console.ReadLine().Split(' ');
+            foreach (string choice in answer)
+            {
+                int choice_id = int.Parse(choice) -1;
+                Editor.ColouredText($"&How many &{catamin_types[choice_id]}s& do you want?:\n");
+                int val = (int)Editor.Inputed();
+                catamins[choice_id] = val;
+                SetCatamins(path, catamins);
+            }
+            Editor.ColouredText($"&Successfully set catamins to:\n&{Editor.CreateOptionsList(catamin_types, catamins, false)}");
+        }
+        public static int[] GetCatamins(string path)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[8];
+            pos += (Editor.catAmount * 4) + 32;
 
-            int[] occurrence = Editor.OccurrenceB(path);
+            int catamin_types = 3;
+            int[] catamins = Editor.GetItemData(path, catamin_types, 4, pos);
 
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            bool found = false;
-            int pos = occurrence[8] + (Editor.catAmount * 4) + 32;
-            if (pos > 0)
+            if (pos < 100)
             {
-                found = true;
-                stream.Position = pos;
+                Editor.Error();
             }
-            for (int i = 0; i < 3; i++)
-            {
-                stream.Write(bytes, 0, 4);
-            }
-            if (found)
-            {
-                Console.WriteLine("Success");
-            }
-            if (!found) Editor.Error();
+
+            return catamins;
+        }
+        public static void SetCatamins(string path, int[] catamins)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[8];
+            pos += (Editor.catAmount * 4) + 32;
+
+            Editor.SetItemData(path, catamins, 4, pos);
         }
     }
 }

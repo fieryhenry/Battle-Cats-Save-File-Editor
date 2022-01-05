@@ -11,16 +11,13 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void xp(string path)
         {
-
-            Console.WriteLine("How much XP do you want?(max 99999999)");
-            int XP = (int)Editor.Inputed();
-            if (XP > 99999999) XP = 99999999;
-            else if (XP < 0) XP = 0;
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            Console.WriteLine("Set XP to " + XP);
-
-            byte[] bytes = Editor.Endian(XP);
+            int XP = GetXP(path);
+            XP = Editor.AskSentances(XP, "XP", false, 99999999);
+            SetXP(path, XP);
+            Editor.AskSentances(XP, "XP", true);
+        }
+        public static int GetXPPos()
+        {
             int startPos = 76;
 
             // If using jp, xp is stored 1 offset less
@@ -28,8 +25,15 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 startPos = 75;
             }
-            stream.Position = startPos;
-            stream.Write(bytes, 0, 4);
+            return startPos;
+        }
+        public static int GetXP(string path)
+        {
+            return Editor.GetItemData(path, 1, 4, GetXPPos())[0];
+        }
+        public static void SetXP(string path, int XP)
+        {
+            Editor.SetItemData(path, new int[] { XP }, 4, GetXPPos());
         }
     }
 }

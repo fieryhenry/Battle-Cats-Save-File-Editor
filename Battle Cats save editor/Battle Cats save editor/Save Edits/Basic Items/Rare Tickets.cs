@@ -9,28 +9,22 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class RareTickets
     {
-        public static void CatTicketRare(string path)
+        public static void RareCatTickets(string path)
         {
-            Console.WriteLine("How many Rare Cat Tickets do you want(max 299)");
-            int catTickets = (int)Editor.Inputed();
-            if (catTickets > 299) catTickets = 299;
-            else if (catTickets < 0) catTickets = 0;
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            Console.WriteLine("Scan Complete");
-            byte[] bytes = Editor.Endian(catTickets);
-
-            stream.Close();
-
-            int[] occurrence = Editor.OccurrenceB(path);
-
-            using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            stream2.Position = occurrence[3] - 4;
-            stream2.Write(bytes, 0, 2);
+            int rareCatTickets = GetRareCatTicket(path);
+            rareCatTickets = Editor.AskSentances(rareCatTickets, "rare cat tickets", false, 299);
+            SetRareCatTicket(path, rareCatTickets);
+            Editor.AskSentances(rareCatTickets, "rare cat tickets", true);
+        }
+        public static int GetRareCatTicket(string path)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[3] - 4;
+            return Editor.GetItemData(path, 1, 4, pos)[0];
+        }
+        public static void SetRareCatTicket(string path, int rareCatTicket)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[3] - 4;
+            Editor.SetItemData(path, new int[] { rareCatTicket }, 4, pos);
         }
     }
 }

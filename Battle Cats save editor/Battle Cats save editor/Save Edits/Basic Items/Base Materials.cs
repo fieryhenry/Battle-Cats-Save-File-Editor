@@ -11,67 +11,52 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void BaseMats(string path)
         {
-            Console.WriteLine("How many Base Materials do you want(max 65535)");
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            string[] types = { "Bricks", "Feathers", "Coal", "Sprockets", "Gold", "Meteorites", "Beast Bones", "Ammonites" };
+            int[] baseMaterials = GetBaseMats(path);
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-            int pos = 0;
-            for (int i = 0; i < allData.Length; i++)
-            {
-                if (allData[i] == 0 && allData[i + 1] == 0 && allData[i + 2] == 0 && allData[i + 3] == 8 && allData[i + 4] == 0 && allData[i + 5] == 0 && allData[i + 6] == 0 && allData[i + 7] == 0 && allData[i + 8] == 0 && allData[i + 9] == 0 && allData[i + 10] == 0 && allData[i + 11] == 2 && allData[i + 12] == 0 && allData[i + 13] == 0 && allData[i + 14] == 0 && allData[i + 15] == 3 && allData[i + 16] == 0 && allData[i + 17] == 0 && allData[i + 18] == 0)
-                {
-                    pos = i - 46;
-                    break;
-                }
-            }
-            if (pos < 200)
-            {
-                Editor.Error();
-            }
-            string[] types = { "Brick", "Feather", "Coal", "Sprocket", "Gold", "Meteorite", "Beast Bone", "Ammonite" };
-            Editor.ColouredText("&What base material type do you want to edit, you can enter multiple ids separated by spaces&\n&1.& " +
-                "Bricks\n&2.& Feathers\n&3.& Coal\n&4.& Sprockets\n&5.& Gold\n&6.& Meteorite\n&7.& Beast Bones\n&8.& Ammonite\n&9.& All materials at once\n");
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(types, baseMaterials, false)}");
+
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(types)}&{types.Length+1}. &All at once&\n");
             string[] answer = Console.ReadLine().Split(' ');
+            int[] baseMaterialsAmounts = baseMaterials;
             for (int i = 0; i < answer.Length; i++)
             {
-                int id = int.Parse(answer[i]);
-                if (id == 9)
+                int choice = int.Parse(answer[i]);
+                if (choice > 9)
                 {
-                    Console.WriteLine("How much of each material do you want?(max 65535)");
-                    int platCatTickets = (int)Editor.Inputed();
-
-                    if (platCatTickets > 65535) platCatTickets = 65535;
-                    else if (platCatTickets < 0) platCatTickets = 0;
-
-                    byte[] bytes = Editor.Endian(platCatTickets);
-
-                    for (int j = 0; j < 8; j++)
-                    {
-                        stream.Position = pos + (j * 4);
-                        stream.Write(bytes, 0, 4);
-                        Editor.ColouredText($"&Set current amount of &{types[j]}& to &{platCatTickets}&\n");
-                    }
+                    Console.WriteLine("Answer must be between 1 and 10");
+                    BaseMats(path);
+                }
+                else if (choice == 9)
+                {
+                    Console.WriteLine("How many of each base material do you want?");
+                    int amount = (int)Editor.Inputed();
+                    baseMaterialsAmounts = Enumerable.Repeat(amount, types.Length).ToArray();
+                    break;
                 }
                 else
                 {
-                    id -= 1;
-
-                    Console.WriteLine($"How much {types[id]} do you want?(max 65535)");
-                    int platCatTickets = (int)Editor.Inputed();
-
-                    if (platCatTickets > 65535) platCatTickets = 65535;
-                    else if (platCatTickets < 0) platCatTickets = 0;
-
-                    byte[] bytes = Editor.Endian(platCatTickets);
-
-                    stream.Position = pos + (id * 4);
-                    stream.Write(bytes, 0, 4);
-
-                    Editor.ColouredText($"&Set current amount of &{types[id]}& to &{platCatTickets}&\n");
+                    Editor.ColouredText($"&How many &{types[choice - 1]}& do you want?\n");
+                    int amount = (int)Editor.Inputed();
+                    baseMaterialsAmounts[choice - 1] = amount;
                 }
             }
+            SetBaseMats(path, baseMaterialsAmounts);
+            Console.WriteLine("Successfuly gave base materials");
+            
+        }
+        public static int[] GetBaseMats(string path)
+        {
+            int pos = Editor.GetOtotoPos(path) - 46;
+            int types = 8;
+
+            int[] materials = Editor.GetItemData(path, types, 4, pos);
+            return materials;
+        }
+        public static void SetBaseMats(string path, int[] amounts)
+        {
+            int pos = Editor.GetOtotoPos(path) - 46;
+            Editor.SetItemData(path, amounts, 4, pos);
         }
     }
 }

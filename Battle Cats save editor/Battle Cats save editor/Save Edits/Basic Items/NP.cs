@@ -11,33 +11,28 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void np(string path)
         {
-            Console.WriteLine("How much NP do you want(max 65535)");
-            int CatFood = (int)Editor.Inputed();
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            bool found = false;
-
-            Console.WriteLine("Scan Complete");
-            byte[] bytes = Editor.Endian(CatFood);
-
-            for (int j = 0; j < length - 12; j++)
+            int np = GetNP(path);
+            np = Editor.AskSentances(np, "NP", false, 10000);
+            SetNP(path, np);
+            Editor.AskSentances(np, "NP", true);
+        }
+        public static int GetNP(string path)
+        {
+            byte[] conditions = { 0x80, 0x38 };
+            // Search for np position
+            int pos = Editor.Search(path, conditions)[0] + - 5;
+            if (pos == 0)
             {
-                if (allData[j] == Convert.ToByte(128) && allData[j + 1] == Convert.ToByte(56) && allData[j + 2] == Convert.ToByte(01) && allData[j + 3] == Convert.ToByte(00))
-                {
-                    stream.Position = j - 5;
-                    stream.WriteByte(bytes[0]);
-                    stream.Position = j - 4;
-                    stream.WriteByte(bytes[1]);
-                    Console.WriteLine("Success");
-                    found = true;
-                }
-
+                Editor.Error();
             }
-            if (!found) Editor.Error();
+            return Editor.GetItemData(path, 1, 4, pos)[0];
+        }
+        public static void SetNP(string path, int np)
+        {
+            byte[] conditions = { 0x80, 0x38 };
+            // Search for np position
+            int pos = Editor.Search(path, conditions)[0] + - 5;
+            Editor.SetItemData(path, new int[] { np }, 4, pos);
         }
     }
 }

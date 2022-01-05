@@ -11,31 +11,53 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void Catseyes(string path)
         {
-            Console.WriteLine("How many catseyes of each type do you want(max 65535)");
-            int platCatTickets = (int)Editor.Inputed();
+            int[] catseyes = GetCatseyes(path);
+            string[] CatseyeTypes =
+            {
+                "Special Catseyes", "Rare Catseyes", "Super Rare Catseyes", "Uber Super Rare Catseyes", "Legend Catseyes"
+            };
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(CatseyeTypes, catseyes, false)}");
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(CatseyeTypes)}&{CatseyeTypes.Length+1}.& All at once\n");
+            string[] answer = Console.ReadLine().Split(' ');
+            foreach (string choice in answer)
+            {
+                int catseyeID = int.Parse(choice) -1;
+                if (catseyeID == CatseyeTypes.Length)
+                {
+                    Editor.ColouredText($"&What do you want to set your catseyes to?:\n");
+                    int val = (int)Editor.Inputed();
+                    catseyes = Enumerable.Repeat(val, CatseyeTypes.Length).ToArray();
+                }
+                else
+                {
+                    Editor.ColouredText($"&What do you want to set your &{CatseyeTypes[catseyeID]}& to?:\n");
+                    int val = (int)Editor.Inputed();
+                    catseyes[catseyeID] = val;
+                }
+            }
+            SetCatseyes(path, catseyes);
+            Editor.ColouredText($"&Successfully set catseyes to:\n&{Editor.CreateOptionsList(CatseyeTypes, catseyes, false)}");
+        }
+        public static int[] GetCatseyes(string path)
+        {
+            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
 
-            byte[] bytes = Editor.Endian(platCatTickets);
-
-            int[] occurrence = Editor.OccurrenceB(path);
-
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            bool found = false;
             int pos = occurrence[8] + (Editor.catAmount * 4) + 8;
-            if (pos > 0)
+            if (pos < 100)
             {
-                found = true;
-                stream.Position = pos;
+                Editor.Error();
             }
-            for (int i = 0; i < 5; i++)
-            {
-                stream.Write(bytes, 0, 4);
-            }
-            if (found)
-            {
-                Console.WriteLine("Success");
-            }
-            if (!found) Editor.Error();
+            int catseyeAmount = 5;
+            int[] catseyes = Editor.GetItemData(path, catseyeAmount, 4, pos);
 
+            return catseyes;
+        }
+        public static void SetCatseyes(string path, int[] catseyes)
+        {
+            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
+
+            int pos = occurrence[8] + (Editor.catAmount * 4) + 8;
+            Editor.SetItemData(path, catseyes, 4, pos);
         }
     }
 }

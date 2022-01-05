@@ -11,104 +11,65 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void CatFruit(string path)
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            List<string> fruits = new() { "Purple Seeds", "Red Seeds", "Blue Seeds", "Green Seeds", "Yellow Seeds", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seeds", "Elder Fruit", "Epic Seeds", "Gold Fruit", "Aku Seeds", "Aku Fruit", "Gold Seeds" };
+            int[] catfruits = GetCatFruit(path);
 
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-            stream.Close();
-
-            int[] occurrence = Editor.OccurrenceB(path);
-
-            using var stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            int catFruitNums = 18;
-            try
+            fruits.RemoveRange(catfruits.Length, fruits.Count - catfruits.Length);
+            
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(fruits.ToArray(), catfruits, false)}Total &:& {catfruits.Sum()}\n");
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(fruits.ToArray())}&{catfruits.Length + 1}.& All at once\n");
+            string[] answer = Console.ReadLine().Split(' ');
+            foreach (string choice in answer)
             {
-                stream2.Position = occurrence[7] - (catFruitNums * 4);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Console.WriteLine("You either can't evolve cats or the tool is bugged and if the tool is bugged then:\ntell me on discord\nThank you");
-                Editor.Options();
-            }
-            byte[] catfruit = new byte[4];
-            int[] FruitCat = new int[catFruitNums];
-            string[] fruits = { "Purple Seed", "Red Seed", "Blue Seed", "Green Seed", "Yellow Seed", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seed", "Elder Fruit", "Epic Seed", "Gold Fruit", "Aku Seed", "Aku Fruit", "Gold Seed" };
-
-            int j = 0;
-            for (int i = occurrence[7] - (catFruitNums * 4); i < occurrence[7] - 3; i += 4)
-            {
-                catfruit[0] = allData[i];
-                catfruit[1] = allData[i + 1];
-                FruitCat[j] = BitConverter.ToInt32(catfruit, 0);
-                j++;
-            }
-            Editor.ColouredText("&Total catfruit/seeds: &" + FruitCat.Sum() + "\n");
-            Editor.ColouredText("&Do you want to edit all the cat fruits individually(&1&) or all at once? (&2&), (&1& or &2&)\n");
-            string input = Console.ReadLine();
-
-            if (input == "2")
-            {
-                Editor.ColouredText("&How many do you want?(max &28&)\n");
-                int num = (int)Editor.Inputed();
-                if (num > 32) num = 32;
-                else if (num < 0) num = 0;
-
-                byte[] bytes2 = Editor.Endian(num);
-
-                for (int i = 0; i < catFruitNums; i++)
+                int catfruit_id = Convert.ToInt32(choice) -1;
+                if (catfruit_id == catfruits.Length)
                 {
-                    int choice2 = i;
-                    stream2.Position = occurrence[7] - (catFruitNums * 4) + ((choice2) * 4);
-                    stream2.WriteByte(bytes2[0]);
-                    stream2.WriteByte(bytes2[1]);
-                    Editor.ColouredText("&Set &" + fruits[choice2] + "& to &" + num + "\n");
+                    Editor.ColouredText($"&What do you want to set all of your catfruits / catfruit seeds to?:\n");
+                    int val = (int)Editor.Inputed();
+                    catfruits = Enumerable.Repeat(val, catfruits.Length).ToArray();
                 }
-
-            }
-            else if (input == "1")
-            {
-                Console.WriteLine("Enter a number to edit that type of catfruit, enter multiple numbers separated by spaces to change multiple at a time");
-                for (int i = 0; i < fruits.Length; i++)
+                else
                 {
-                    Editor.ColouredText("&" + (i + 1) + ".& " + fruits[i] + "&:& " + FruitCat[i] + "\n");
-                }
-                string[] enteredIDs = Console.ReadLine().Split(' ');
-                for (int i = 0; i < enteredIDs.Length; i++)
-                {
-                    bool skip = false;
-                    int choice = 0;
-                    try
-                    {
-                        choice = int.Parse(enteredIDs[i]);
-                    }
-                    catch
-                    {
-                        skip = true;
-                    }
-                    if (!skip)
-                    {
-                        if (choice > catFruitNums) choice = catFruitNums;
-                        else if (choice < 1) choice = 1;
-
-                        Editor.ColouredText("&How many &" + fruits[choice - 1] + "s& do you want (max &256&)\n");
-                        int amount = (int)Editor.Inputed();
-                        if (amount > 256) amount = 256;
-                        else if (amount < 0) amount = 0;
-
-                        byte[] bytes = Editor.Endian(amount);
-
-                        stream2.Position = occurrence[7] - (catFruitNums * 4) + ((choice - 1) * 4);
-                        stream2.WriteByte(bytes[0]);
-                        stream2.WriteByte(bytes[1]);
-                    }
+                    Editor.ColouredText($"&What do you want to set &{fruits[catfruit_id]}& to?:\n");
+                    int val = (int)Editor.Inputed();
+                    catfruits[catfruit_id] = val;
                 }
             }
+            SetCatFruit(path, catfruits);
+            Editor.ColouredText($"&Successfully set catfruits to:\n&{Editor.CreateOptionsList(fruits.ToArray(), catfruits, false)}Total &:& {catfruits.Sum()}\n");
+        }
+        public static Tuple<int, int> GetCatFruitPos(string path)
+        {
+            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
 
-            Editor.ColouredText("&Have you finished editing cat fruits?(&yes&/&no&)\n");
-            string answer = Console.ReadLine();
-            stream2.Close();
-            if (answer.ToLower() == "no") CatFruit(path);
+            byte[] allData = File.ReadAllBytes(path);
+
+
+            int pos = occurrence[6] + Editor.catAmount + 4;
+            if (allData[pos] != 0x34)
+            {
+                Editor.Error();
+            }
+            int catfruit_types = allData[pos + 44];
+            pos += 48;
+            if (pos < 100)
+            {
+                Editor.Error();
+            }
+            return Tuple.Create(pos, catfruit_types);
+        }
+        public static int[] GetCatFruit(string path)
+        {
+            int catfruit_types = GetCatFruitPos(path).Item2;
+            int pos = GetCatFruitPos(path).Item1;
+
+            int[] catfruits = Editor.GetItemData(path, catfruit_types, 4, pos);
+            return catfruits;
+        }
+        public static void SetCatFruit(string path, int[] catfruits)
+        {
+            int pos = GetCatFruitPos(path).Item1;
+            Editor.SetItemData(path, catfruits, 4, pos);
         }
     }
 }
