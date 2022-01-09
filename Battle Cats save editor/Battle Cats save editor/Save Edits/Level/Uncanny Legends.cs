@@ -53,12 +53,19 @@ namespace Battle_Cats_save_editor.SaveEdits
         }
         public static Tuple<int, int, int> GetStagePos(string path)
         {
+            byte[] allData = File.ReadAllBytes(path);
+
             byte[] conditions_1 = { 0, 0, 0, 0x45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0x47, 0, 0, 0, 0x28, 0, 0, 0, 0x0C, };
+            
+            byte[] mult = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 1, 0, 0, 0, 0,};
 
-            int pos_1 = Editor.Search(path, conditions_1)[0] + 671;
-            int pos_2 = pos_1 + 640;
-            int pos_3 = pos_2 + 7680;
+            int pos = Editor.Search(path, conditions_1, mult: mult)[0];
+            uncanny_amount = allData[pos + 19];
+            int pos_1 = pos + (uncanny_amount * 16) + 31;
+            int pos_2 = pos_1 + uncanny_amount * 16;
+            int pos_3 = pos_2 + uncanny_amount * 16 * 12;
 
             return Tuple.Create(pos_1, pos_2, pos_3);
         }
@@ -93,7 +100,6 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             List<int> stage_clear_num = Enumerable.Repeat(0, (stages.Count * total_stages_per_chapter) + 1).ToList();
             List<int> unlock_next_chapter = Enumerable.Repeat(0, allStages.Count).ToList();
-            int count = 0;
             for (int i = 0; i < stages.Count / 4; i++)
             {
                 if (stages[i] > 0)
@@ -102,8 +108,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     {
                         for (int k = 0; k < total_stages_per_chapter; k++)
                         {
-                            count++;
-                            stage_clear_num[(i * 48) + j + (k*4)] = count;
+                            stage_clear_num[(i * 48) + j + (k*4)] = 1;
                         }
                     }
                     unlock_next_chapter[i] = 3;
