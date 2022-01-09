@@ -13,6 +13,11 @@ namespace Battle_Cats_save_editor
 {
 	public class Editor
 	{
+		public static int catAmount = 0;
+		public static string main_path;
+		public static string gameVer;
+		public static string version = "2.39.0";
+		public static string multipleVals = "(You can enter multiple numbers sperated by spaces to edit multiple at once)";
 		[STAThread]
 		private static void Main()
 		{
@@ -1336,15 +1341,5 @@ namespace Battle_Cats_save_editor
 			}
 			return thirdFormData;
 		}
-
-		public static int catAmount = 0;
-
-		public static string main_path;
-
-		public static string gameVer;
-
-		public static string version = "2.38.1";
-
-		public static string multipleVals = "(You can enter multiple numbers sperated by spaces to edit multiple at once)";
 	}
 }
