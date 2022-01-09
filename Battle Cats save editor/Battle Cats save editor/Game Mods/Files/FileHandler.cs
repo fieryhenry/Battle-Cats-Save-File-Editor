@@ -52,10 +52,12 @@ namespace Battle_Cats_save_editor.Game_Mods
             File.WriteAllText(output_path, output);
             AddExtraBytes(output_path);
         }
-        public static void AddExtraBytes(string path)
+        public static byte[] AddExtraBytes(string path, bool overwrite = true, byte[] allBytes = null)
         {
-            byte[] allBytes = File.ReadAllBytes(path);
-
+            if (allBytes == null)
+            {
+                allBytes = File.ReadAllBytes(path);
+            }
             // Make sure file length is divisible by 16, so it encrypts properly
             List<byte> ls = allBytes.ToList();
             int rem = (int)Math.Ceiling((decimal)ls.Count / 16);
@@ -65,7 +67,11 @@ namespace Battle_Cats_save_editor.Game_Mods
             {
                 ls.Add((byte)rem);
             }
-            File.WriteAllBytes(path, ls.ToArray());
+            if (overwrite)
+            {
+                File.WriteAllBytes(path, ls.ToArray());
+            }
+            return ls.ToArray();
         }
     }
 }
