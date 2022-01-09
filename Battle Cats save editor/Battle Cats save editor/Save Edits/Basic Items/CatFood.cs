@@ -20,12 +20,9 @@ namespace Battle_Cats_save_editor.SaveEdits
             int CatFood = GetCatFood(path);
             Console.WriteLine($"You have {CatFood} cat food");
 
-            Console.WriteLine("How much cat food do you want?(max 45000, but I recommend below 20k, to be safe");
+            Console.WriteLine("How much cat food do you want?(max 45000, but I recommend below 20k, to be safer)");
 
-            CatFood = (int)Editor.Inputed();
-            if (CatFood > 45000) CatFood = 45000;
-            else if (CatFood < 0) CatFood = 0;
-
+            CatFood = Editor.MaxMinCheck((int)Editor.Inputed(), 45000);
             SetCatFood(path, CatFood);
             Console.WriteLine("Set Cat food to " + CatFood);
         }
@@ -37,7 +34,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             stream.Position = 7;
             stream.Read(catfoodB, 0, 4);
 
-            int CatFood = BitConverter.ToInt16(catfoodB, 0);
+            int CatFood = BitConverter.ToInt32(catfoodB, 0);
 
             return CatFood;
         }
@@ -48,7 +45,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             byte[] bytes = Editor.Endian(amount);
 
             stream.Position = 7;
-            stream.Write(bytes, 0, 2);
+            stream.Write(bytes, 0, 4);
         }
     }
 }
