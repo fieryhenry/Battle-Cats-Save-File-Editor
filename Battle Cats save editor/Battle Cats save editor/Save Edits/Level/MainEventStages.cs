@@ -95,14 +95,19 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static int total_stages_per_chapter = 8;
         public static List<Tuple<string, int>> GetEventData()
         {
-            string[] data = Editor.MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Map%20Names/All_day_event.tsv")).Split('\n');
+            string[] data = Editor.MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Map%20Names/map_list.tsv")).Split('\n');
             string[] map_stage = Editor.MakeRequest(WebRequest.Create("https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Map%20Names/MapStageLimitMessage.csv")).Split('\n');
 
             List<Tuple<string, int>> event_data = new();
 
             foreach (string stage in data)
             {
-                string[] stage_data = stage.Split("	".ToCharArray());
+                string stage_stripped = stage.Replace("&", "and");
+                if (stage_stripped.Length == 0)
+                {
+                    continue;
+                }
+                string[] stage_data = stage_stripped.Split('\t');
                 string name = stage_data[0];
                 int id = int.Parse(stage_data[1]) - 699;
 
