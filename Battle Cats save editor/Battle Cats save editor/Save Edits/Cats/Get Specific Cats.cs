@@ -20,6 +20,11 @@ namespace Battle_Cats_save_editor.SaveEdits
             for (int i = 0; i < catIds.Length; i++)
             {
                 int catID = int.Parse(catIds[i]);
+                if (catID >= Editor.catAmount)
+                {
+                    Console.WriteLine($"Error, cat : {catID} doesn't exist in the current game version");
+                    continue;
+                }
                 int startPos = occurrence[0] + 4;
                 stream.Position = startPos + catID * 4;
                 stream.WriteByte(01);
