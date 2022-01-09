@@ -76,7 +76,7 @@ I have created an updated tutorial video that goes you through the steps of gett
 22. Close rank up bundle / offer menu<br>
 23. Game Modding Menu<br>
   23.1 Decrypt .list and .pack files<br>
-  23.2 Encypt a folder of game files and turn them into encrypted .pakc and .list files<br>
+  23.2 Encypt a folder of game files and turn them into encrypted .pack and .list files<br>
   23.3 Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)<br>
   23.4 Enter the game file parsing/editing menu - contains things like editing the unit*.csv files<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.1 Edit unit*.csv (cat data)<br>
