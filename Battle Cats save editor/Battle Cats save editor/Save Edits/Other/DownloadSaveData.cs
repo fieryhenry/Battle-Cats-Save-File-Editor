@@ -106,28 +106,17 @@ namespace Battle_Cats_save_editor.SaveEdits
                 Console.WriteLine("Error, your transfer code or confirmation codes are incorrect or are no longer valid, please try again");
                 Download_Save_Data();
             }
-
-            try
+            if (saveData.Length < 2000)
             {
-                string saveData_test = Encoding.ASCII.GetString(saveData);
-                int statusCode = JsonSerializer.Deserialize<responseJson>(saveData_test).statusCode;
-                if (statusCode > 0)
-                {
-                    Console.WriteLine("Error, your transfer code or confirmation codes are incorrect or are no longer valid, please try again");
-                    Download_Save_Data();
-                }
-            }
-            catch
-            {
-
-            }
-
+                Console.WriteLine("Error, your transfer code or confirmation codes are incorrect or are no longer valid, please try again");
+                Download_Save_Data();
+            }      
             var FD = new SaveFileDialog
             {
                 Filter = "battle cats save(*.*)|*.*",
                 Title = "Save save file"
             };
-            string path = "";
+            string path;
             if (FD.ShowDialog() == DialogResult.OK)
             {
                 path = FD.FileName;
