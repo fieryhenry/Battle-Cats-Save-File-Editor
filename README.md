@@ -11,7 +11,7 @@ Beeven and csehydrogen's open source code, which helped me figure out how to pat
 # How to use
 ## Warning: <b>Before editing anything, please make sure to create a backup of the save file somewhere, in case things go wrong</b>
 
-This got way more complicated due to added security to the transfer system, you now need to have a rooted device - either emulator or real and extract the save that way. 
+This got way more complicated due to added security to the transfer system, you now need to have a rooted device - either an emulator or a real device and extract the save that way. 
 
 Download the tool https://github.com/fieryhenry/Battle-Cats-Save-File-Editor/releases (get Battle Cats Save File Editor.zip, not the exe)
 
@@ -58,23 +58,28 @@ I have created an updated tutorial video that goes you through the steps of gett
 17. Cat Evolves<br>
   17.1 Evolve all cats<br>
   17.2 Evolve specific cats<br>
-18. Cat Talents
+18. Cat Talents<br>
 19. Clear Levels / Outbreaks / Timed Score<br>
   19.1 Clear Main Story Chapters<br>
   19.2 Clear Stories of Legend Subchapters<br>
-  19.3 Clear Zombie Stages / Outbreaks<br>
-  19.4 Clear Aku Realm<br>
-  19.5 Set Into The Future Timed Scores<br>
+  19.3 Clear Uncanny Legends Subchapters<br>
+  19.4 Clear Other Event Stages<br>
+  19.5 Clear Zombie Stages / Outbreaks<br>
+  19.6 Clear Aku Realm<br>
+  19.7 Set Into The Future Timed Scores<br>
+  19.8 Clear Heavenly Tower<br>
+  19.9 Clear Infernal Tower<br>
 20. Inquiry Code / Elsewhere Fix / Unban<br>
   20.1 Change Inquiry Code<br>
   20.2 Fix save is used elsewhere error - whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that)<br>
-21. Close rank up bundle / offer menu
-22. Game Modding Menu<br>
-  22.1 Decrypt .list and .pack files<br>
-  22.2 Encypt a folder of game files and turn them into encrypted .pakc and .list files<br>
-  22.3 Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)<br>
-  22.4 Enter the game file parsing/editing menu - contains things like editing the unit*.csv files<br>
+21. Get Restart Pack<br>
+22. Close rank up bundle / offer menu<br>
+23. Game Modding Menu<br>
+  23.1 Decrypt .list and .pack files<br>
+  23.2 Encypt a folder of game files and turn them into encrypted .pakc and .list files<br>
+  23.3 Update the md5 sum in the libnative file for modified .list and .pack files (required to do before putting the .pack and .list files into the game, otherwise you get dataread error h01)<br>
+  23.4 Enter the game file parsing/editing menu - contains things like editing the unit*.csv files<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.1 Edit unit*.csv (cat data)<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit stage*.csv (stage data)<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22.4.2 Edit t_unit.csv (enemy data)<br>
-23. Calculate checksum of save file
+24. Calculate checksum of save file
