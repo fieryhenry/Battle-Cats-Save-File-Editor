@@ -17,13 +17,12 @@ namespace Battle_Cats_save_editor
 		public static string main_path;
 		public static string gameVer;
 		public static string version = "2.39.0";
-		public static string multipleVals = "(You can enter multiple numbers sperated by spaces to edit multiple at once)";
+		public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
 		[STAThread]
 		private static void Main()
 		{
-			bool debug = false;
-			bool flag = !debug;
-			if (flag)
+			bool error_catching = true;
+			if (error_catching)
 			{
 				AppDomain.CurrentDomain.UnhandledException += delegate (object sender, UnhandledExceptionEventArgs eventArgs)
 				{
@@ -807,7 +806,7 @@ namespace Battle_Cats_save_editor
 				"Go back",
 				"Edit unit*.csv (cat data)",
 				"Edit stage*.csv (level data)",
-				"Edit t_unit.csv (enemy data)"
+				"Edit t_unit.csv (enemy data)",
 			};
 			string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
 			for (int i = 1; i < Features.Length; i++)
@@ -829,6 +828,9 @@ namespace Battle_Cats_save_editor
 					break;
 				case 3:
 					EnemyMod.EnemyCSV();
+					break;
+				case 4:
+					FileHandler.AddExtraBytes(path);
 					break;
 				default:
 					Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
@@ -939,6 +941,10 @@ namespace Battle_Cats_save_editor
 					stop_count = 0;
 				}
 			}
+			if (values.Count == 0)
+            {
+				values.Add(0);
+            }
 			return values.ToArray();
 		}
 
