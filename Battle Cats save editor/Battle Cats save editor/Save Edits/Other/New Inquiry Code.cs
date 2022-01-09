@@ -18,7 +18,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             for (int j = 1900; j < 2108; j++)
             {
-                if (allData[pos - j] == 09)
+                if (allData[pos - j] == 09 && allData[pos - j -1] == 0 && allData[pos - j + 1] == 0)
                 {
                     return pos - j + 4;
                 }

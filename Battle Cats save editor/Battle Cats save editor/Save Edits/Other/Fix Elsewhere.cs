@@ -13,13 +13,13 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static Tuple<int, bool> GetTokenPos(string path)
         {
             List<byte> allData = File.ReadAllBytes(path).ToList();
-            byte[] condtions2 = { 0x78, 0x63, 0x01 };
+            byte[] condtions2 = { 0x00, 0x78, 0x63, 0x01, 0x00};
             int start_pos = Editor.Search(path, condtions2, false, allData.Count - 800)[0];
             int new_pos = 0;
 
             for (int i = start_pos; i < start_pos + 100; i++)
             {
-                if (allData[i + 11] == 0x28)
+                if (allData[i + 11] == 0x28 && allData[i+12] == 0 && allData[i+13] == 0)
                 {
                     new_pos = i + 15;
                     break;
