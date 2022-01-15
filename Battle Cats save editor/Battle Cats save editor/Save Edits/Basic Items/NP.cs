@@ -18,20 +18,12 @@ namespace Battle_Cats_save_editor.SaveEdits
         }
         public static int GetNP(string path)
         {
-            byte[] conditions = { 0x80, 0x38 };
-            // Search for np position
-            int pos = Editor.Search(path, conditions)[0] + - 5;
-            if (pos == 0)
-            {
-                Editor.Error();
-            }
+            int pos = Leadership.GetLeadershipPos(path) - 5;
             return Editor.GetItemData(path, 1, 4, pos)[0];
         }
         public static void SetNP(string path, int np)
         {
-            byte[] conditions = { 0x80, 0x38 };
-            // Search for np position
-            int pos = Editor.Search(path, conditions)[0] + - 5;
+            int pos = Leadership.GetLeadershipPos(path) - 5;
             Editor.SetItemData(path, new int[] { np }, 4, pos);
         }
     }
