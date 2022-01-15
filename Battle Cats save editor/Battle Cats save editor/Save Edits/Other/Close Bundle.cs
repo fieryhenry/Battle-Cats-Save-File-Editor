@@ -7,7 +7,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 	{
 		public static void Bundle(string path)
 		{
-			using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite))
+			using (FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite))
 			{
 				int length = (int)stream.Length;
 				byte[] allData = new byte[length];

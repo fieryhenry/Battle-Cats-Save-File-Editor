@@ -36,7 +36,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             int[] ids = Enumerable.Range(0, Editor.catAmount).ToArray();
             int[] plusLevels = Enumerable.Repeat(plusLevel, Editor.catAmount).ToArray();
             int[] baseLevels = Enumerable.Repeat(baselevel, Editor.catAmount).ToArray();
-            Editor.UpgradeCats(path, ids, plusLevels, baseLevels, leave);
+            CatHandler.UpgradeCats(path, ids, plusLevels, baseLevels, leave);
             
             Console.WriteLine($"Upgraded all cats to level {answer}");
             // Close rank up bundle menu offer thing popping up 100s of times

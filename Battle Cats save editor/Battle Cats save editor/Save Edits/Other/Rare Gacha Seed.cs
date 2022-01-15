@@ -8,7 +8,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 		public static void Seed(string path)
 		{
             GetSeed(path);
-            using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            using FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite);
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
@@ -28,7 +28,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             };
             stream.Close();
             int[] occurrence = Editor.GetPositionsFromYear(path, year);
-            using FileStream stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            using FileStream stream2 = new(path, FileMode.Open, FileAccess.ReadWrite);
             try
             {
                 stream2.Position = occurrence[4] - 21;
@@ -46,7 +46,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
 		public static void GetSeed(string path)
 		{
-            using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            using FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite);
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
@@ -57,7 +57,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             };
             stream.Close();
             int[] occurrence = Editor.GetPositionsFromYear(path, year);
-            using FileStream stream2 = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            using FileStream stream2 = new(path, FileMode.Open, FileAccess.ReadWrite);
             try
             {
                 stream2.Position = occurrence[4] - 21;

@@ -60,7 +60,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     plusLevels[i] = plusLevel;
                 }
             }
-            Editor.UpgradeCats(path, idInt.ToArray(), plusLevels, baseLevels);
+            CatHandler.UpgradeCats(path, idInt.ToArray(), plusLevels, baseLevels);
 
             for (int i = 0; i < idInt.Count; i++)
             {

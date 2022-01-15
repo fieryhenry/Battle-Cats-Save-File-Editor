@@ -16,8 +16,8 @@ namespace Battle_Cats_save_editor.SaveEdits
 			{
 				game_ver = "";
 			}
-			List<byte> allData = File.ReadAllBytes(path).ToList<byte>();
-			List<byte> game_version_bytes = Encoding.ASCII.GetBytes("battlecats" + game_ver).ToList<byte>();
+			List<byte> allData = File.ReadAllBytes(path).ToList();
+			List<byte> game_version_bytes = Encoding.ASCII.GetBytes("battlecats" + game_ver).ToList();
 			MD5 md5 = MD5.Create();
 			List<byte> toUse = allData;
 			toUse.RemoveRange(toUse.Count - 32, 32);
@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 				"kr",
 				"tw"
 			};
-			List<byte> allData = File.ReadAllBytes(path).ToList<byte>();
+			List<byte> allData = File.ReadAllBytes(path).ToList();
 			byte[] curr_hash = allData.GetRange(allData.Count - 32, 32).ToArray();
 			string curr_hash_str = Encoding.ASCII.GetString(curr_hash);
 			foreach (string game_version in gameVersions)
@@ -60,7 +60,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 			{
 				string hash = GetMD5SumBC(path, Editor.gameVer);
 				int len = File.ReadAllBytes(path).Length;
-                using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+                using FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite);
                 stream.Position = len - 32;
                 stream.Write(Encoding.ASCII.GetBytes(hash), 0, hash.Length);
                 Editor.ColouredText("&Patched save data for game version: &" + Editor.gameVer + "&\n", ConsoleColor.White, ConsoleColor.DarkYellow);

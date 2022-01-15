@@ -9,6 +9,32 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class EvolveCats
     {
+        public static void Evolves(string path)
+        {
+            string[] Features = new string[]
+            {
+                "Go back",
+                "Evolve all cats",
+                "Evolve specific cats"
+            };
+            string toOutput = $"&What would you like to edit?&\n{Editor.CreateOptionsList<string>(Features, first:"Go back")}&";
+            Editor.ColouredText(toOutput);
+            switch ((int)Editor.Inputed())
+            {
+                case 0:
+                    Editor.Options();
+                    break;
+                case 1:
+                    Evolve(path);
+                    break;
+                case 2:
+                    EvolvesSpecific.EvolveSpecific(path);
+                    break;
+                default:
+                    Console.WriteLine($"Please enter a number between 0 and {Features.Length}");
+                    break;
+            }
+        }
         public static void Evolve(string path)
         {
             int pos1 = Editor.GetEvolvePos(path);

@@ -14,7 +14,7 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static byte[] ReadFully(Stream input)
         {
-            using MemoryStream ms = new MemoryStream();
+            using MemoryStream ms = new();
             input.CopyTo(ms);
             return ms.ToArray();
         }
@@ -53,36 +53,36 @@ namespace Battle_Cats_save_editor.SaveEdits
             }
             game_version = string.Join("", game_version_parts);
 
-            client client = new client
+            client client = new()
             {
                 countryCode = Editor.gameVer,
                 version = game_version,
             };
-            device device = new device
+            device device = new()
             {
                 model = "SM-G973N"
             };
-            os os = new os
+            os os = new()
             {
                 type = "android",
                 version = "7.1.2"
             };
 
-            clientInfo clientInfo = new clientInfo
+            clientInfo clientInfo = new()
             {
                 client = client,
                 device = device,
                 os = os,
             };
 
-            jsonData data = new jsonData
+            jsonData data = new()
             {
                 clientInfo = clientInfo,
                 nonce = GetRandomHexNumber(32).ToLower(),
                 pin = confirmation_code
             };
             string json = JsonSerializer.Serialize(data);
-            ASCIIEncoding encoding = new ASCIIEncoding();
+            ASCIIEncoding encoding = new();
             byte[] byte1 = encoding.GetBytes(json);
 
             WebRequest webRequest = WebRequest.Create($"https://nyanko-save.ponosgames.com/v1/transfers/{transfer_code}/reception");

@@ -9,6 +9,37 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class AllTalent
     {
+        public static void Talent(string path)
+        {
+            string[] Features = new string[]
+            {
+                "Go back",
+                "Talent upgrade all cats",
+                "Talent upgrade specific cats"
+            };
+            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
+            for (int i = 1; i < Features.Length; i++)
+            {
+                toOutput += string.Format("&{0}.& ", i);
+                toOutput = toOutput + Features[i] + "\n";
+            }
+            Editor.ColouredText(toOutput);
+            switch ((int)Editor.Inputed())
+            {
+                case 0:
+                    Editor.Options();
+                    break;
+                case 1:
+                    AllTalent.AllTalents(path);
+                    break;
+                case 2:
+                    SpecificTalent.SpecificTalents(path);
+                    break;
+                default:
+                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
+                    break;
+            }
+        }
         public static void AllTalents(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);

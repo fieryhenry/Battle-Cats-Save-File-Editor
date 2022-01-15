@@ -137,7 +137,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                         EnemyInfo.Add(toAddExtra);
                         enemyIDs.Add(0);
                     }
-                    Editor.ColouredText($"&What do you want to edit?:(You can edit multiple values by entering multiple numbers separated by spaces\n&{Editor.CreateOptionsList<int>(enemyInfoS.ToArray(), EnemyInfo[slotNum -1].ToArray())}");
+                    Editor.ColouredText($"&What do you want to edit?:(You can edit multiple values by entering multiple numbers separated by spaces\n&{Editor.CreateOptionsList(enemyInfoS.ToArray(), EnemyInfo[slotNum -1].ToArray())}");
                     input = Console.ReadLine().Split(' ');
                     foreach (string attribute in input)
                     {

@@ -68,9 +68,11 @@
     <Compile Include="Game Mods\Packs\DecryptPack.cs" />
     <Compile Include="Save Edits\Basic Items\Platinum Shards.cs" />
     <Compile Include="Save Edits\Cats\All Talent.cs" />
+    <Compile Include="Save Edits\Cats\CatHandler.cs" />
     <Compile Include="Save Edits\Cats\Upgrade Current.cs" />
     <Compile Include="Save Edits\Level\Heavenly Tower.cs" />
     <Compile Include="Save Edits\Level\Infernal Tower.cs" />
+    <Compile Include="Save Edits\Level\LevelSelect.cs" />
     <Compile Include="Save Edits\Level\MainEventStages.cs" />
     <Compile Include="Save Edits\Level\Uncanny Legends.cs" />
     <Compile Include="Save Edits\Other\DownloadSaveData.cs" />
