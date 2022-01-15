@@ -230,10 +230,10 @@ namespace Battle_Cats_save_editor
             string toOutput = "";
             for (int i = 0; i < options.Length; i++)
             {
-                if (extravalues != null)
+                if (extravalues != null && skipZero)
                 {
                     int val = Convert.ToInt32(extravalues[i]);
-                    if (skipZero && val == 0)
+                    if (val == 0)
                     {
                         continue;
                     }
