@@ -73,7 +73,8 @@
                 48,
                 52
             ],
-            "max" : 10
+            "max" : 10,
+            "max_other" : 5
         },
         {
             "ability_id": 14,
