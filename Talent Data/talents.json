@@ -74,14 +74,21 @@
                 52
             ],
             "max" : 10,
-            "max_other" : 5
+            "max_other_cro" : [
+                {
+                    "46" : 5,
+                    "149" : 1,
+                    "161" : 1,
+                    "170" : 10
+                }
+            ]
         },
         {
             "ability_id": 14,
             "text_ids": [
                 14
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 15,
@@ -96,7 +103,7 @@
             "text_ids": [
                 16
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 17,
@@ -166,7 +173,7 @@
             "text_ids": [
                 25
             ],
-            "max" : 1 
+            "max" : 1
         },
         {
             "ability_id": 30,
@@ -201,28 +208,28 @@
             "text_ids": [
                 37
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 38,
             "text_ids": [
                 38
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 39,
             "text_ids": [
                 39
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 40,
             "text_ids": [
                 40
             ],
-            "max" : 0
+            "max" : 1
         },
         {
             "ability_id": 44,
@@ -243,8 +250,7 @@
             "text_ids": [
                 55
             ],
-            "max" : 5,
-            "max_other" : 1
+            "max" : 1,
         },
         {
             "ability_id": 47,
@@ -286,8 +292,7 @@
             "text_ids": [
                 64
             ],
-            "max" : 1,
-            "max_other" : 10
+            "max" : 10
         },
         {
             "ability_id": 53,
