@@ -1,0 +1,339 @@
+{
+    "Skills": [
+        {
+            "ability_id": 1,
+            "text_ids": [
+                1,
+                42
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 2,
+            "text_ids": [
+                2,
+                43,
+                76
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 3,
+            "text_ids": [
+                3,
+                72,
+                44,
+                63
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 6,
+            "text_ids": [
+                6
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 7,
+            "text_ids": [
+                7
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 8,
+            "text_ids": [
+                73,
+                45,
+                8,
+                75
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 10,
+            "text_ids": [
+                10,
+                46
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 11,
+            "text_ids": [
+                11,
+                47
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 13,
+            "text_ids": [
+                48,
+                52
+            ],
+            "max" : 10,
+            "max_other_cro" : [
+                {
+                    "46" : 5,
+                    "149" : 1,
+                    "161" : 1,
+                    "170" : 10
+                }
+            ]
+        },
+        {
+            "ability_id": 14,
+            "text_ids": [
+                14
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 15,
+            "text_ids": [
+                15,
+                49
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 16,
+            "text_ids": [
+                16
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 17,
+            "text_ids": [
+                17
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 18,
+            "text_ids": [
+                18
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 19,
+            "text_ids": [
+                19
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 20,
+            "text_ids": [
+                20
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 21,
+            "text_ids": [
+                21
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 22,
+            "text_ids": [
+                22
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 25,
+            "text_ids": [
+                31
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 26,
+            "text_ids": [
+                32
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 27,
+            "text_ids": [
+                29
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 29,
+            "text_ids": [
+                25
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 30,
+            "text_ids": [
+                26
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 31,
+            "text_ids": [
+                28
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 32,
+            "text_ids": [
+                27
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 35,
+            "text_ids": [
+                35
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 37,
+            "text_ids": [
+                37
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 38,
+            "text_ids": [
+                38
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 39,
+            "text_ids": [
+                39
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 40,
+            "text_ids": [
+                40
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 44,
+            "text_ids": [
+                53
+            ],
+            "max" : 1            
+        },
+        {
+            "ability_id": 45,
+            "text_ids": [
+                54
+            ],
+            "max" : 1
+        },
+        {
+            "ability_id": 46,
+            "text_ids": [
+                55
+            ],
+            "max" : 1,
+        },
+        {
+            "ability_id": 47,
+            "text_ids": [
+                56
+            ],
+            "max" : 1 
+        },
+        {
+            "ability_id": 48,
+            "text_ids": [
+                57
+            ],
+            "max" : 1 
+        },
+        {
+            "ability_id": 49,
+            "text_ids": [
+                58
+            ],
+            "max" : 1 
+        },
+        {
+            "ability_id": 50,
+            "text_ids": [
+                59
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 51,
+            "text_ids": [
+                60
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 52,
+            "text_ids": [
+                64
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 53,
+            "text_ids": [
+                65
+            ],
+            "max" : 1 
+        },
+        {
+            "ability_id": 54,
+            "text_ids": [
+                66
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 55,
+            "text_ids": [
+                67
+            ],
+            "max" : 1 
+        },
+        {
+            "ability_id": 56,
+            "text_ids": [
+                68
+            ],
+            "max" : 10
+        },
+        {
+            "ability_id": 57,
+            "text_ids": [
+                77
+            ]
+        },
+        {
+            "ability_id": 58,
+            "text_ids": [
+                78
+            ],
+            "max" : 10
+        }
+    ]
+}
