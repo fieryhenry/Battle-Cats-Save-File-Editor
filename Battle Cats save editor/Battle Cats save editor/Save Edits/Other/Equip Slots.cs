@@ -9,26 +9,34 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class EquipSlots
     {
+        public static int GetSlotPos(string path)
+        {
+            byte[] conditions = { 0x2c, 0x01, 0x00, 0x00 };
+            int pos = Editor.Search(path, conditions, false, 0)[1];
+            return pos -5;
+        }
+        public static int GetEquipSlots(string path)
+        {
+            int pos = GetSlotPos(path);
+            int slots = Editor.GetItemData(path, 1, 1, pos)[0];
+            return slots;
+        }
+        public static void SetEquipSlots(string path, int slots)
+        {
+            int pos = GetSlotPos(path);
+            Editor.SetItemData(path, new int[] { slots }, 1, pos);
+        }
         public static void Slots(string path)
         {
+            int slots = GetEquipSlots(path);
+            Editor.ColouredText($"&You have &{slots}& equip slots\n");
             Console.WriteLine("How many slots do you want to have unlocked?(max 15):");
-            int slots = (int)Editor.Inputed();
-            if (slots > 15) slots = 15;
-            else if (slots < 0) slots = 0;
 
-            byte[] conditions = { 0x2c, 0x01, 0x00, 0x00 };
-            // Search for slot position
-            int pos = Editor.Search(path, conditions, false, 0)[1];
+            slots = (int)Editor.Inputed();
+            slots = Editor.MaxMinCheck(slots, 15);
 
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            stream.Position = pos - 5;
-            stream.WriteByte((byte)slots);
-            Console.WriteLine("Set unlocked slot amount to " + slots);
+            SetEquipSlots(path, slots);
+            Editor.ColouredText($"&Set equip slots to &{slots}&\n");
         }
     }
 }
