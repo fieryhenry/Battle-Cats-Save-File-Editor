@@ -13,8 +13,21 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             int platshards = GetPlatShards(path);
             platshards = Editor.AskSentances(platshards, "platinum shards");
-            SetPlatShards(path, platshards);
-            Editor.AskSentances(platshards, "platinum shards", true);
+            string answer = "yes";
+            if (platshards > 99)
+            {
+                Editor.ColouredText($"&This will give you &{Math.Floor(Convert.ToDecimal(platshards / 10))}& platinum tickets and &{platshards % 10}& platinum shards, the max is &9& platinum tickets for transfering, countinue? (&yes& / &no&):\n");
+                answer = Console.ReadLine();
+            }
+            if (answer == "yes")
+            {
+                SetPlatShards(path, platshards);
+                Editor.AskSentances(platshards, "platinum shards", true);
+            }
+            else
+            {
+                Console.WriteLine("Platinum shards not set");
+            }
         }
         public static int GetPlatShardsPos(string path)
         {
