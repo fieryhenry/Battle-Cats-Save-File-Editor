@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 "Go back",
                 "Change Inquiry code",
-                "Fix save is used elsewhere error - whilst selecting a save that has the error(the one you select when you open the editor) select a new save that has never had the save is used elsewhere bug ever(you can re-install the game to get a save like that)"
+                "Fix save is used elsewhere error (or unban account) - whilst selecting a save that has the error / ban (the one you select when you open the editor) select a new save that doesn't have the \"save is used elsewhere\" bug / is not banned (you can re-install the game to get a save like that)"
             };
             string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
             for (int i = 1; i < Features.Length; i++)

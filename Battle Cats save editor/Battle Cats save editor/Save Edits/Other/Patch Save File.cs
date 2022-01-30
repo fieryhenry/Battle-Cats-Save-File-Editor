@@ -52,18 +52,20 @@ namespace Battle_Cats_save_editor.SaveEdits
 			return "";
 		}
 
-		public static void patchSaveFile(string path)
+		public static void patchSaveFile(string path, string game_version = null)
 		{
 			string name = Path.GetFileName(path);
 			bool flag = name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so") || name.EndsWith(".csv");
 			if (!flag)
 			{
-				string hash = GetMD5SumBC(path, Editor.gameVer);
+				string game_ver = Editor.gameVer;
+				if (game_version != null) game_ver = game_version;
+				string hash = GetMD5SumBC(path, game_ver);
 				int len = File.ReadAllBytes(path).Length;
                 using FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite);
                 stream.Position = len - 32;
                 stream.Write(Encoding.ASCII.GetBytes(hash), 0, hash.Length);
-                Editor.ColouredText("&Patched save data for game version: &" + Editor.gameVer + "&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
+                Editor.ColouredText("&Patched save data for game version: &" + game_ver + "&\n", ConsoleColor.White, ConsoleColor.DarkYellow);
             }
 		}
 	}
