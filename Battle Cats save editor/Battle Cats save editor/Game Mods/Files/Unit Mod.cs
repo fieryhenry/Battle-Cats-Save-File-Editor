@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                 Editor.Options();
             }
             string path = fd.FileName;
-            List<List<int>> unitData = FileHandler.ReadCSV(path);
+            List<List<int>> unitData = FileHandler.ReadIntCSV(path);
 
             for (int i = 0; i < unitData.Count; i++)
             {

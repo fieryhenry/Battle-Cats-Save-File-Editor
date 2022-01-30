@@ -65,7 +65,7 @@ namespace Battle_Cats_save_editor.Game_Mods
             }
             string path = fd.FileName;
 
-            List<List<int>> AllstageData = FileHandler.ReadCSV(path);
+            List<List<int>> AllstageData = FileHandler.ReadIntCSV(path);
             List<int> StageID = new();
 
             int startPos = 0;

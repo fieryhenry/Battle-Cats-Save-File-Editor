@@ -23,7 +23,7 @@ namespace Battle_Cats_save_editor.Game_Mods
                 EnemyCSV();
             }
             string path = fd.FileName;
-            List<List<int>> enemy_data = FileHandler.ReadCSV(path);
+            List<List<int>> enemy_data = FileHandler.ReadIntCSV(path);
             string[] values =
             {
                 "HP", "Knockback amount", "Movement Speed", "Attack Power", "Time between attacks", "Attack range", "Money Drop",

@@ -10,7 +10,22 @@ namespace Battle_Cats_save_editor.Game_Mods
 {
     public class FileHandler
     {
-        public static List<List<int>> ReadCSV(string path)
+        public static List<List<string>> ReadStringCSV(string path)
+        {
+            List<string> csvData = File.ReadAllLines(path).ToList();
+
+            List<List<string>> AllData = new();
+            foreach (string line in csvData)
+            {
+                List<string> split = line.Split(',').ToList();
+                if (split.Count > 1)
+                {
+                    AllData.Add(split);
+                }
+            }
+            return AllData;
+        }
+        public static List<List<int>> ReadIntCSV(string path)
         {
             List<string> csvData = File.ReadAllLines(path).ToList();
 
