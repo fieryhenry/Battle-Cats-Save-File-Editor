@@ -9,68 +9,45 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class EvolveCats
     {
-        public static void Evolves(string path)
+        public static int[] GetEvolveForms(string path)
         {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Evolve all cats",
-                "Evolve specific cats"
-            };
-            string toOutput = $"&What would you like to edit?&\n{Editor.CreateOptionsList<string>(Features, first:"Go back")}&";
-            Editor.ColouredText(toOutput);
-            switch ((int)Editor.Inputed())
-            {
-                case 0:
-                    Editor.Options();
-                    break;
-                case 1:
-                    Evolve(path);
-                    break;
-                case 2:
-                    EvolvesSpecific.EvolveSpecific(path);
-                    break;
-                default:
-                    Console.WriteLine($"Please enter a number between 0 and {Features.Length}");
-                    break;
-            }
+            int pos = Editor.GetEvolvePos(path) - 36;
+            int[] evolve_forms = Editor.GetItemData(path, Editor.GetCatAmount(path), 4, pos, false);
+            return evolve_forms;
+        }
+        public static void SetEvolveForms(string path, int[] forms)
+        {
+            int pos = Editor.GetEvolvePos(path) - 36;
+            Editor.SetItemData(path, forms, 4, pos, Editor.GetCatAmount(path));
         }
         public static void Evolve(string path)
         {
-            int pos1 = Editor.GetEvolvePos(path);
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-            stream.Position = pos1;
-
-            int[] form = Editor.EvolvedFormsGetter();
-            bool stop = false;
-            int t = 0;
-            int pos = (int)stream.Position;
-            while (stream.Position < pos + (Editor.catAmount * 4) - 37 && !stop)
+            List<int> forms = GetEvolveForms(path).ToList();
+            Editor.ColouredText("&Do you want to evolve all cats once (&1&), or individually (&2&)?:\n");
+            string answer = Console.ReadLine();
+            if (answer == "1")
             {
-                for (int i = 0; i < 24; i++)
-                {
-                    if (allData[stream.Position + i] != 0x01 && allData[stream.Position + i] != 0 && allData[stream.Position + i] != 0x02 && allData[stream.Position + i] != 0x03)
-                    {
-                        stop = true;
-                        break;
-                    }
-                }
-                try
-                {
-                    stream.WriteByte((byte)form[t]);
-                }
-                catch
-                {
-                    stream.WriteByte(0);
-                }
-                stream.Position += 3;
-                t++;
+                forms = new();
+                forms.AddRange(Enumerable.Repeat(0, 9));
+                forms.AddRange(Editor.EvolvedFormsGetter().ToList());
             }
-            Console.WriteLine("Successfully evolved all cats");
+            else
+            {
+                Editor.ColouredText($"&What cats do you want to edit?\nenter the cat release order of the cat:&https://battle-cats.fandom.com/wiki/Cat_Release_Order& {Editor.multipleVals}:\n");
+                string[] cats = Console.ReadLine().Split(' ');
+                foreach (string cat in cats)
+                {
+                    int cat_id = int.Parse(cat);
+                    if (cat_id > forms.Count)
+                    {
+                        Console.WriteLine($"Error, cat {cat_id} doesn't exist in your current game version");
+                        continue;
+                    }
+                    forms[cat_id] = 2;
+                }
+            }
+            SetEvolveForms(path, forms.ToArray());
+            Console.WriteLine("Successfully set evolve forms");
         }
     }
 }
