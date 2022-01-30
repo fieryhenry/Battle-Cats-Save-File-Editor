@@ -87,7 +87,10 @@ namespace Battle_Cats_save_editor.SaveEdits
                 else if (allData[i] == 0x2C && allData[i + 1] == 01 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i + 3] == 0 && allData[i - 2] == 0 && allData[i - 3] == 0)
                 {
                     unlock = i;
-                    break;
+                    if (levels != 0)
+                    {
+                        break;
+                    }
                 }
             }
             return Tuple.Create(levsBeaten, levels, unlock);

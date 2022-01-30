@@ -63,7 +63,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             int pos = Editor.Search(path, conditions_1, mult: mult)[0];
             uncanny_amount = allData[pos + 19];
-            int pos_1 = pos + (uncanny_amount * 16) + 27;
+            int pos_1 = pos + (uncanny_amount * 16) + 31;
             int pos_2 = pos_1 + (uncanny_amount * 16);
             int pos_3 = pos_2 + (uncanny_amount * 16 * 12);
 
