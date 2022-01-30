@@ -42,7 +42,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             int[] occurrence = Editor.GetCatRelatedHackPositions(path);
 
-            int pos = occurrence[8] + (Editor.catAmount * 4) + 8;
+            int pos = occurrence[8] + (Editor.GetCatAmount(path) * 4) + 8;
             if (pos < 100)
             {
                 Editor.Error();
@@ -56,7 +56,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             int[] occurrence = Editor.GetCatRelatedHackPositions(path);
 
-            int pos = occurrence[8] + (Editor.catAmount * 4) + 8;
+            int pos = occurrence[8] + (Editor.GetCatAmount(path) * 4) + 8;
             Editor.SetItemData(path, catseyes, 4, pos);
         }
     }

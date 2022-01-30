@@ -45,7 +45,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             byte[] allData = File.ReadAllBytes(path);
 
 
-            int pos = occurrence[6] + Editor.catAmount + 4;
+            int pos = occurrence[6] + Editor.GetCatAmount(path) + 4;
             if (allData[pos] != 0x34)
             {
                 Editor.Error();

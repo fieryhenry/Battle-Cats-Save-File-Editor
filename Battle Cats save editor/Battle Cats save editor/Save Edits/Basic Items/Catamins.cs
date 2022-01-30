@@ -33,7 +33,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static int[] GetCatamins(string path)
         {
             int pos = Editor.GetCatRelatedHackPositions(path)[8];
-            pos += (Editor.catAmount * 4) + 32;
+            pos += (Editor.GetCatAmount(path) * 4) + 32;
 
             int catamin_types = 3;
             int[] catamins = Editor.GetItemData(path, catamin_types, 4, pos);
@@ -48,7 +48,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static void SetCatamins(string path, int[] catamins)
         {
             int pos = Editor.GetCatRelatedHackPositions(path)[8];
-            pos += (Editor.catAmount * 4) + 32;
+            pos += (Editor.GetCatAmount(path) * 4) + 32;
 
             Editor.SetItemData(path, catamins, 4, pos);
         }
