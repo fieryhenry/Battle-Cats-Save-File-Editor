@@ -9,69 +9,89 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class MainStory
     {
+        public static Tuple<int, int> GetStagePos(string path)
+        {
+            int offset = Editor.GetGameVersionOffset(path);
+            int num_cleared = 946 + offset;
+            int stages_cleared = 906 + offset;
+            return Tuple.Create(num_cleared, stages_cleared);
+        }
+        static int total_chapters = 9;
+        static int total_stages = 48;
+        public static Tuple<List<int>, List<List<int>>> GetStageData(string path)
+        {
+            Tuple<int, int> poses = GetStagePos(path);
+            int num_cleared = poses.Item1;
+            int stages_cleared = poses.Item2;
+
+            List<int> total_stages_cleared = Editor.GetItemData(path, total_chapters + 1, 4, stages_cleared, false).ToList();
+            List<int> total_stages_cleared_trimmed = new();
+            List<List<int>> total_data = new();
+
+            for (int i = 0; i < total_chapters; i++)
+            {
+                int offset = 0;
+                int index = 0;
+
+                if (i > 2)
+                {
+                    offset = (total_chapters * 4) + 12;
+                    index = 1;
+                }
+
+                int pos = num_cleared + i * ((total_stages * 4) + 12) + offset;
+                List<int> num_cleared_chap_data = Editor.GetItemData(path, total_stages, 4, pos, false).ToList();
+                total_data.Add(num_cleared_chap_data);
+
+                int total_stages_done = total_stages_cleared[i + index];
+                total_stages_cleared_trimmed.Add(total_stages_done);
+            }
+            return Tuple.Create(total_stages_cleared_trimmed, total_data);
+        }
+        public static void SetStageData(string path, Tuple<List<int>, List<List<int>>> stage_data)
+        {
+            Tuple<int, int> poses = GetStagePos(path);
+            int num_cleared = poses.Item1;
+            int stages_cleared = poses.Item2;
+
+            for (int i = 0; i < stage_data.Item1.Count; i++)
+            {
+                int offset = 0;
+                int index = 0;
+
+                if (i > 2)
+                {
+                    offset = (total_stages * 4) + 12;
+                    index = 1;
+                }
+
+                int pos = num_cleared + i * ((total_stages * 4) + 12) + offset;
+                Editor.SetItemData(path, stage_data.Item2[i].ToArray(), 4, pos);
+                Editor.SetItemData(path, new int[] { stage_data.Item1[i] }, 4, stages_cleared + ((i + index) * 4));
+            }
+        }
         public static void Stage(string path)
         {
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            int length = (int)stream.Length;
-            byte[] allData = new byte[length];
-            stream.Read(allData, 0, length);
-
-            Editor.ColouredText("What chapters do you want to complete?(1-9)\n1.&Empire of cats chapter 1&\n2.&Empire of cats chapter 2&\n3.&Empire of cats chapter 3&\n4.&Into the future chapter 1&\n5.&Into the future chapter 2&\n6.&Into the future chapter 3&\n7.&Cats of the cosmos chapter 1&" +
-                "\n8.&Cats of the cosmos chapter 2&\n9.&Cats of the cosmos chapter 3&\n10.&All chapters&\n", ConsoleColor.White, ConsoleColor.Cyan);
-            int choice = (int)Editor.Inputed();
-            // Starting position of stage cleared flags
-            int startPos = 946;
-            // Length of each chapter's stage cleared flags, 16 0x00 bytes separate each chapter
-            int blockLen = (47 * 4) + 16;
-            // Position of total number of stages cleared
-            int lvlCountPos = 906;
-            // All chapters
-            if (choice == 10)
+            Tuple<List<int>, List<List<int>>> stage_data = GetStageData(path);
+            Editor.ColouredText($"&What chapter do you want to clear?{Editor.multipleVals}\n&{Editor.CreateOptionsList<string>(AllTreasures.chapters)}{AllTreasures.chapters.Length + 1}. &All at once\n");
+            string[] response = Console.ReadLine().Split(' ');
+            foreach (string chapter in response)
             {
-                // Set stages to be cleared
-                for (int j = 0; j < 10; j++)
+                int chapter_id = int.Parse(chapter) - 1;
+                if (chapter_id == AllTreasures.chapters.Length)
                 {
-                    for (int i = 0; i < 48; i++)
-                    {
-                        stream.Position = startPos + (i * 4);
-                        stream.WriteByte(1);
-                    }
-                    startPos += blockLen;
+                    List<int> total_stage_data = Enumerable.Repeat(total_stages, total_chapters).ToList();
+                    List<List<int>> level_data = Enumerable.Repeat(Enumerable.Repeat(1, total_stages).ToList(), total_chapters).ToList();
+                    stage_data = Tuple.Create(total_stage_data, level_data);
                 }
-                // Set total number of stages cleared
-                for (int i = 0; i < 10; i++)
+                else
                 {
-                    stream.Position = lvlCountPos + (i * 4);
-                    stream.WriteByte(48);
+                    stage_data.Item1[chapter_id] = total_stages;
+                    stage_data.Item2[chapter_id] = Enumerable.Repeat(1, total_stages).ToList();
                 }
             }
-            // Specific chapter
-            else if (choice < 10)
-            {
-                if (choice > 3)
-                {
-                    choice++;
-                }
-                // Set start point to correct chapter
-                startPos += (choice - 1) * blockLen;
-                // Set stages to be cleared
-                for (int i = 0; i < 48; i++)
-                {
-                    stream.Position = startPos + (i * 4);
-                    stream.WriteByte(1);
-                }
-                // Set total number of stages cleared
-                stream.Position = lvlCountPos + ((choice - 1) * 4);
-                stream.WriteByte(48);
-            }
-            else
-            {
-                Console.WriteLine("Please enter a recognised number");
-                stream.Close();
-                Stage(path);
-            }
-
+            SetStageData(path, stage_data);
+            Console.WriteLine("Successfully cleared chapters");
         }
     }
 }
