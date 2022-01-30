@@ -12,7 +12,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static int TotalUpgrades = 10;
         public static Tuple<List<int>, List<int>> GetBlueUpgrades(string path)
         {
-            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.catAmount * 4);
+            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.GetCatAmount(path) * 4);
             int[] Levels = Editor.GetItemData(path, (TotalUpgrades + 1) * 2, 2, pos + 4);
             List<int> plusLevels = new();
             List<int> baseLevels = new();
@@ -37,7 +37,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         }
         public static void SetBlueUpgrades(string path, Tuple<List<int>, List<int>> upgrades)
         {
-            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.catAmount * 4);
+            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.GetCatAmount(path) * 4);
             upgrades.Item1.Insert(1, 1);
             upgrades.Item2.Insert(1, 0);
 

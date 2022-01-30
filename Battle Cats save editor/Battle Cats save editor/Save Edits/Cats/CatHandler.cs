@@ -16,7 +16,8 @@ namespace Battle_Cats_save_editor.SaveEdits
             int pos = occurrence[1] + 1;
             for (int i = 0; i < catIDs.Length; i++)
             {
-                stream.Position = pos + catIDs[i] * 4 + 3;
+                if (catIDs[i] == 0) continue;
+                stream.Position = pos + (i * 4) + 3;
                 if (ignore != 2)
                 {
                     stream.WriteByte((byte)plusLevels[i]);
@@ -35,7 +36,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             int[] occurrence = Editor.GetCatRelatedHackPositions(path);
             int startPos = occurrence[0] + 4;
-            return Editor.GetItemData(path, Editor.catAmount, 4, startPos);
+            return Editor.GetItemData(path, Editor.GetCatAmount(path), 4, startPos);
         }
     }
 }

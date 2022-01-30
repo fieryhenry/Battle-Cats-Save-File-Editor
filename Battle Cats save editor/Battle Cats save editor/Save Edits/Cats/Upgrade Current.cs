@@ -36,8 +36,8 @@ namespace Battle_Cats_save_editor.SaveEdits
             {
                 leave = 2;
             }
-            int[] plusLevels = Enumerable.Repeat(plusLevel, Editor.catAmount).ToArray();
-            int[] baseLevels = Enumerable.Repeat(baselevel, Editor.catAmount).ToArray();
+            int[] plusLevels = Enumerable.Repeat(plusLevel, Editor.GetCatAmount(path)).ToArray();
+            int[] baseLevels = Enumerable.Repeat(baselevel, Editor.GetCatAmount(path)).ToArray();
             CatHandler.UpgradeCats(path, idInt, plusLevels, baseLevels, leave);
             Console.WriteLine("Success");
             CloseBundle.Bundle(path);

@@ -18,7 +18,7 @@ namespace Battle_Cats_save_editor.SaveEdits
             string input = "no";
             foreach (int catId in allIds)
             {
-                if (catId >= Editor.catAmount)
+                if (catId >= Editor.GetCatAmount(path))
                 {
                     Console.WriteLine($"Error cat : {catId} doesn't exist in the current game version");
                 }
