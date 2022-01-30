@@ -13,10 +13,9 @@ namespace Battle_Cats_save_editor
 {
     public class Editor
     {
-        public static int catAmount = 0;
         public static string main_path;
         public static string gameVer;
-        public static string version = "2.39.3";
+        public static string version = "2.40.0";
         public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
         [STAThread]
         private static void Main()
@@ -57,7 +56,7 @@ namespace Battle_Cats_save_editor
             {
                 ColouredText("&What game version are you using? (e.g en, jp, kr)\n");
                 gameVer = Console.ReadLine();
-                DownloadSaveData.Download_Save_Data();
+                SendAndReceiveSaveData.Download_Save_Data();
                 Options();
             }
             gameVer = PatchSaveFile.DetectGameVersion(main_path);
@@ -145,52 +144,58 @@ namespace Battle_Cats_save_editor
                 ColouredText($"\nCould not complete backup&: \n{ex.Message}&\n\n", New: ConsoleColor.Red);
             }
         }
+        public static List<string> TopLevelFeatures = new()
+        {
+            "Select New Save",
+            "Cat Food",
+            "XP",
+            "Tickets / Platinum Shards",
+            "Leadership",
+            "NP",
+            "Treasures",
+            "Battle Items",
+            "Catseyes",
+            "Cat Fruits / Seeds",
+            "Talent Orbs",
+            "Gamatoto",
+            "Ototo",
+            "Gacha Seed",
+            "Equip Slots",
+            "Gain / Remove Cats",
+            "Cat / Stat Upgrades",
+            "Cat Evolves",
+            "Cat Talents",
+            "Clear Levels / Outbreaks / Timed Score",
+            "Inquiry Code / Elsewhere Fix / Unban",
+            "Get Restart Pack",
+            "Close the rank up bundle / offer menu",
+            "Game Modding menu",
+            "Calculate checksum of save file"
+        };
+        public static int GetCatAmount(string path)
+        {
+            byte[] CatNumber = { GetCatNumber(path), 2 };
+            int catAmount = BitConverter.ToInt16(CatNumber, 0);
+            return catAmount;
+        }
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
+        }
         public static void Options()
         {
             ColouredText("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files,and how to edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n\n&", New: ConsoleColor.Green);
-            string[] Features = new string[]
-            {
-                "Select a new save",
-                "Cat Food",
-                "XP",
-                "Tickets / Platinum Shards",
-                "Leadership",
-                "NP",
-                "Treasures",
-                "Battle Items",
-                "Catseyes",
-                "Cat Fruits / Seeds",
-                "Talent Orbs",
-                "Gamatoto",
-                "Ototo",
-                "Gacha Seed",
-                "Equip Slots",
-                "Gain / Remove Cats",
-                "Cat / Stat Upgrades",
-                "Cat Evolves",
-                "Cat Talents",
-                "Clear Levels / Outbreaks / Timed Score",
-                "Inquiry Code / Elsewhere Fix / Unban",
-                "Get Restart Pack",
-                "Close the rank up bundle / offer menu",
-                "Game Modding menu",
-                "Calculate checksum of save file"
-            };
             if (gameVer != "en")
             {
                 ColouredText("Warning: if you are using a non en save, many features won't work, or they might corrupt your save data, so make sure you create a copy of your saves!\n", ConsoleColor.White, ConsoleColor.Red);
             }
-            ColouredText($"&What would you like to do?&\n{CreateOptionsList<string>(Features, first: "Select a new save")}&");
-            byte[] CatNumber = new byte[20];
-            CatNumber[0] = GetCatNumber(main_path);
-            CatNumber[1] = 2;
-            catAmount = BitConverter.ToInt32(CatNumber, 0);
+            ColouredText($"&What would you like to do?&\n{CreateOptionsList<string>(TopLevelFeatures.ToArray(), first: "Select New Save")}&");
             switch ((int)Inputed())
             {
-                case 0: SelSave(); Options(); break;
+                case 0: SelSave(); CreateBackup(); Options(); break;
                 case 1: CatFood.catFood(main_path); break;
                 case 2: XP.xp(main_path); break;
-                case 3: Tickets(main_path); break;
+                case 3: NormalTickets.Tickets(main_path); break;
                 case 4: Leadership.leadership(main_path); break;
                 case 5: NP.np(main_path); break;
                 case 6: Treasures(main_path); break;
@@ -204,7 +209,7 @@ namespace Battle_Cats_save_editor
                 case 14: EquipSlots.Slots(main_path); break;
                 case 15: GetCats(main_path); break;
                 case 16: Upgrades(main_path); break;
-                case 17: EvolveCats.Evolves(main_path); break;
+                case 17: EvolveCats.Evolve(main_path); break;
                 case 18: AllTalent.Talent(main_path); break;
                 case 19: LevelSelect.Levels(main_path); break;
                 case 20: NewInquiryCode.Inquiry(main_path); break;
@@ -219,13 +224,30 @@ namespace Battle_Cats_save_editor
             Console.ReadLine();
             Options();
         }
+        public static int GetGameVersionOffset(string path)
+        {
+            byte[] data = File.ReadAllBytes(path);
+            int offset;
+            // jp
+            if (data[132] == 0x0f) offset = -1;
+            // en
+            else if (data[133] == 0x0f) offset = 0;
+            else
+            {
+                // jp
+                if (gameVer == "jp") offset = -1;
+                // en
+                else offset = 0;
+            }
+            return offset;
+        }
 
         public static int[] ConvertCharArrayToIntArray(char[] input)
         {
             return Array.ConvertAll(input, (char x) => int.Parse(string.Format("{0}", x)));
         }
 
-        public static string CreateOptionsList<T>(string[] options, T[] extravalues = null, bool numerical = true, bool skipZero = false, string first = null)
+        public static string CreateOptionsList<T>(string[] options, T[] extravalues = null, bool numerical = true, bool skipZero = false, string first = null, bool color = true)
         {
             string toOutput = "";
             for (int i = 0; i < options.Length; i++)
@@ -273,7 +295,14 @@ namespace Battle_Cats_save_editor
                 toOutput += "\n";
 
             }
-            return toOutput;
+            if (color)
+            {
+                return toOutput;
+            }
+            else
+            {
+                return toOutput.Replace("&", "");
+            }
         }
 
         private static void Upgrades(string path)
@@ -388,50 +417,6 @@ namespace Battle_Cats_save_editor
             }
         }
 
-        private static void Tickets(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Normal Tickets",
-                "Rare Tickets",
-                "Platinum Tickets",
-                "Legend Tickets",
-                "Platinum Shards (using this instead of platinum tickets reduces the chance of a ban)"
-            };
-            string toOutput = "Warning: editing these at all has a risk of getting your save banned\n&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    NormalTickets.CatTicket(path);
-                    break;
-                case 2:
-                    RareTickets.RareCatTickets(path);
-                    break;
-                case 3:
-                    PlatTickets.PlatinumTickets(path);
-                    break;
-                case 4:
-                    LegendTickets.LegendTicket(path);
-                    break;
-                case 5:
-                    PlatinumShards.PlatShards(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
         private static void Gamatoto(string path)
         {
             string[] Features = new string[]
@@ -527,10 +512,10 @@ namespace Battle_Cats_save_editor
                     Options();
                     break;
                 case 1:
-                    DecryptPack.Decrypt("b484857901742afc");
+                    DecryptPack.Decrypt();
                     break;
                 case 2:
-                    EncryptPack.EncryptData("b484857901742afc");
+                    EncryptPack.EncryptData();
                     break;
                 case 3:
                     MD5Libnative.MD5Lib(path);
@@ -542,6 +527,17 @@ namespace Battle_Cats_save_editor
                     Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
                     break;
             }
+        }
+        public static void ClearCurrentConsoleLine()
+        {
+            int currentLineCursor = Console.CursorTop;
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, currentLineCursor);
+        }
+        public static double ConvertBytesToMegabytes(long bytes)
+        {
+            return Math.Round((bytes / 1024f) / 1024f, 2);
         }
 
         private static void GameFileParsing(string path)
@@ -775,25 +771,33 @@ namespace Battle_Cats_save_editor
             return val;
         }
 
-        public static int[] GetItemData(string path, int amount, int separator, int startPos)
+        public static int[] GetItemData(string path, int amount, int separator, int startPos, bool warning = true)
         {
-            byte[] allData = File.ReadAllBytes(path);
+            List<byte> allData = File.ReadAllBytes(path).ToList();
             int[] items = new int[amount];
             for (int i = 0; i < amount; i++)
             {
-                byte[] items_ba = allData.Skip(startPos + i * separator).Take(separator).ToArray();
+                byte[] items_ba = allData.GetRange(startPos + i * separator, separator).ToArray();
                 int item;
                 if (separator > 2)
                 {
                     item = BitConverter.ToInt32(items_ba, 0);
                 }
+                else if (separator == 1)
+                {
+                    item = items_ba[0];
+                }
                 else
                 {
                     item = BitConverter.ToInt16(items_ba, 0);
+
                 }
                 items[i] = item;
             }
-            Console.WriteLine("Note: If any of these numbers are incorrect, then don't edit them, as it could corrupt your save. If this is the case please report it on discord");
+            if (warning)
+            {
+                Console.WriteLine("Note: If any of these numbers are incorrect, then don't edit them, as it could corrupt your save. If this is the case please report it on discord");
+            }
             return items;
         }
 
@@ -815,13 +819,16 @@ namespace Battle_Cats_save_editor
             return orig_list;
         }
 
-        public static void SetItemData(string path, int[] items, int separator, int startPos)
+        public static void SetItemData(string path, int[] items, int separator, int startPos, int force_length = 0)
         {
             using FileStream stream = new(path, FileMode.Open, FileAccess.ReadWrite);
             int length = (int)stream.Length;
             byte[] allData = new byte[length];
             stream.Read(allData, 0, length);
-            for (int i = 0; i < items.Length; i++)
+            int len = items.Length;
+            if (force_length > 0) len = force_length;
+            if (len > items.Length) len = items.Length;
+            for (int i = 0; i < len; i++)
             {
                 byte[] item = Endian(items[i]);
                 stream.Position = startPos + i * separator;
@@ -872,7 +879,7 @@ namespace Battle_Cats_save_editor
         public static int[] GetPositionsFromYear(string path, byte[] Currentyear)
         {
             byte[] conditions = { Currentyear[0], Currentyear[1], 0, 0 };
-            return Search(path, conditions);
+            return Search(path, conditions, startpoint: 500);
         }
 
         public static Dictionary<int, Tuple<string, int>> GetSkillData()
