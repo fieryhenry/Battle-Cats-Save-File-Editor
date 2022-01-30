@@ -47,24 +47,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         }
         public static int GetItemPos(string path)
         {
-            byte[] year = new byte[2];
-            byte[] allData = File.ReadAllBytes(path);
-
-            year[0] = allData[15];
-            year[1] = allData[16];
-
-            if (year[0] != 0x07)
-            {
-                year[0] = allData[19];
-                year[1] = allData[20];
-            }
-            int[] occurrence = Editor.GetPositionsFromYear(path, year);
-
-            if (occurrence[2] < 200)
-            {
-                Editor.Error();
-            }
-            int pos = occurrence[2] - 224;
+            int pos = Editor.GetCatRelatedHackPositions(path)[2] + (Editor.GetCatAmount(path) * 4) + 124;
             return pos;
         }
         public static int[] GetItems(string path)
