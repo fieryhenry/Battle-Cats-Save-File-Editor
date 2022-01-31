@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
     {
         public static string main_path;
         public static string gameVer;
-        public static string version = "2.40.0";
+        public static string version = "2.40.1";
         public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
         [STAThread]
         private static void Main()
@@ -27,7 +27,7 @@ namespace Battle_Cats_save_editor
                 {
                     Console.WriteLine("An error has occurred\nPlease report this in #bug-reports:\n");
                     Console.WriteLine(eventArgs.ExceptionObject.ToString() + "\n");
-                    PatchSaveFile.patchSaveFile(main_path);
+                    PatchSaveFile.PatchSaveData(main_path);
                     Console.WriteLine("\nPress enter to exit");
                     Console.ReadLine();
                     Environment.Exit(0);
@@ -219,7 +219,7 @@ namespace Battle_Cats_save_editor
                 case 24: break;
                 default: Console.WriteLine("Please input a number that is recognised"); break;
             }
-            PatchSaveFile.patchSaveFile(main_path);
+            PatchSaveFile.PatchSaveData(main_path);
             ColouredText("Press enter to continue\n");
             Console.ReadLine();
             Options();

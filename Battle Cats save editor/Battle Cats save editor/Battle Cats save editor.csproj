@@ -75,7 +75,7 @@
     <Compile Include="Save Edits\Level\LevelSelect.cs" />
     <Compile Include="Save Edits\Level\MainEventStages.cs" />
     <Compile Include="Save Edits\Level\Uncanny Legends.cs" />
-    <Compile Include="Save Edits\Other\SendAndReceiveSaveData.cs" />
+    <Compile Include="Save Edits\Other\GetSaveData.cs" />
     <Compile Include="Save Edits\Other\Patch Save File.cs" />
     <Compile Include="Save Edits\Gamatoto - Ototo\Ototo Engineers.cs" />
     <Compile Include="Save Edits\Other\Rare Gacha Seed.cs" />
