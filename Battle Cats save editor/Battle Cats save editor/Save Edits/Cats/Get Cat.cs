@@ -24,7 +24,6 @@ namespace Battle_Cats_save_editor.SaveEdits
                 ids++;
             }
             Console.WriteLine("Gave all cats");
-
         }
     }
 }
