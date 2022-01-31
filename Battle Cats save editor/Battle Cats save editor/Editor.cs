@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using Battle_Cats_save_editor.Game_Mods;
@@ -74,6 +75,8 @@ namespace Battle_Cats_save_editor
         public static string MakeRequest(WebRequest request)
         {
             request.Headers.Add("time-stamp", DateTime.Now.Ticks.ToString());
+            HttpRequestCachePolicy noCachePolicy = new(HttpRequestCacheLevel.NoCacheNoStore);
+            request.CachePolicy = noCachePolicy;
             WebResponse response = request.GetResponse();
             string result;
             using (Stream dataStream = response.GetResponseStream())
