@@ -37,6 +37,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 				"kr",
 				"tw"
 			};
+			string file_name = Path.GetFileName(path);
 			List<byte> allData = File.ReadAllBytes(path).ToList();
 			byte[] curr_hash = allData.GetRange(allData.Count - 32, 32).ToArray();
 			string curr_hash_str = Encoding.ASCII.GetString(curr_hash);
@@ -49,13 +50,22 @@ namespace Battle_Cats_save_editor.SaveEdits
 					return game_version;
 				}
 			}
+			if (IsBlacklisted(file_name))
+			{
+				return "Invalid Save File";
+            }
 			return "";
 		}
+		public static bool IsBlacklisted(string file_name)
+        {
+			bool flag = file_name.EndsWith(".pack") || file_name.EndsWith(".list") || file_name.EndsWith(".so") || file_name.EndsWith(".csv");
+			return flag;
+		}
 
-		public static void patchSaveFile(string path, string game_version = null)
+		public static void PatchSaveData(string path, string game_version = null)
 		{
 			string name = Path.GetFileName(path);
-			bool flag = name.EndsWith(".pack") || name.EndsWith(".list") || name.EndsWith(".so") || name.EndsWith(".csv");
+			bool flag = IsBlacklisted(name);
 			if (!flag)
 			{
 				string game_ver = Editor.gameVer;
