@@ -11,13 +11,14 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void SpecifiCat(string path)
         {
+            int cat_amount = Editor.GetCatAmount(path);
+
             int[] occurrence = Editor.GetCatRelatedHackPositions(path);
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
             Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
             string input = Console.ReadLine();
             string[] catIds = input.Split(' ');
-            int cat_amount = Editor.GetCatAmount(path);
             for (int i = 0; i < catIds.Length; i++)
             {
                 int catID = int.Parse(catIds[i]);

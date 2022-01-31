@@ -15,7 +15,7 @@ namespace Battle_Cats_save_editor
     {
         public static string main_path;
         public static string gameVer;
-        public static string version = "2.40.1";
+        public static string version = "2.40.1.1";
         public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
         [STAThread]
         private static void Main()
