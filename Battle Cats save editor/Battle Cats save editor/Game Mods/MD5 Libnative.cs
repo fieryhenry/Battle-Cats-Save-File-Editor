@@ -113,7 +113,7 @@ namespace Battle_Cats_save_editor.Game_Mods
             }
 
 
-            string[] order = GetOrder(path);
+            List<string> order = GetOrder(path).ToList();
 
             using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
 
@@ -141,6 +141,18 @@ namespace Battle_Cats_save_editor.Game_Mods
             int count = 0;
             int num = 0;
             int pos = 0;
+            if (order[0] == "ImageDataLocal.list")
+            {
+                for (int i = 0; i < order.Count; i++)
+                {
+                    if (order[i].Contains("ImageDataLocal."))
+                    {
+                        order[i] = order[i].Replace("ImageDataLocal", "DataLocal");
+                    }
+                }
+                order.Add("ImageServer.list");
+                order.Add("MapServer.list");
+            }
             for (int i = prevIndex; i < length; i++)
             {
                 num++;
