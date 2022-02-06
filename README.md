@@ -26,13 +26,13 @@ through the steps of getting the save from the game, editing it, putting
  it back in, and fixing save data is used elsewhere bug: [BC help vid Updated - YouTube](https://youtu.be/D6hPnJTlq-U)
 
 ### Scripts
-You must have your rooted emulator running and have turned on the settings which allow adb for these to work, or have your rooted device connected to your pc
+You must have your rooted emulator running and have turned on the settings which allow adb for these to work, or have your rooted device connected to your pc.<br>
+Run the scripts in command prompt/any other terminal, make sure to be in the same folder as the script itself, so cd into it, or shift+rightclick -> open powershell window here in file explorer and then type ./script_name.bat game_version, e.g ./adb_pull.bat en
 #### <u>Pull</u>
 Gets the save data from the game files.<br>
-Run the script with the argument of the game version that you want, e.g script.bat en<br>
 You can add a second agrument with the path to pull to, otherwise it will pull the save data to the current directory
 
-[Download](https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Batch%20Scripts/adb_pull.bat) (Right click -> save as)
+[Download](https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Batch%20Scripts/adb_pull.bat) (Right click -> save as -> change "text document" to "all files" under "save as type" drop down)
 
 ```batch
 @echo off
@@ -43,10 +43,9 @@ adb pull /data/data/jp.co.ponos.battlecats%game_version%/files/SAVE_DATA %2
 
 #### <u>Push</u>
 Puts the save data into the game files, closes and re-opens the game.<br>
-Run the script with the argument of the game version that you want, e.g script.bat en<br>
 You can add a second agrument with the path to push from, otherwise it will push the save data located in the current directory.
 
-[Download](https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Batch%20Scripts/adb_push.bat) (Right click -> save as)
+[Download](https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Batch%20Scripts/adb_push.bat) (Right click -> save as -> change "text document" to "all files" under "save as type" drop down)
 
 ```batch
 @echo off
