@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Battle_Cats_save_editor.SaveEdits.MainEventStages;
 
 namespace Battle_Cats_save_editor.SaveEdits
 {
     public class UncannyLegends
     {
-        public static int uncanny_amount = 40;
+        public static int uncanny_amount = 0;
         public static int total_stages_per_chapter = 12;
         public static int[] AskLevels(string[] subchapter_examples, int totalChapters, string custom_text = null)
         {
@@ -69,85 +70,51 @@ namespace Battle_Cats_save_editor.SaveEdits
 
             return Tuple.Create(pos_1, pos_2, pos_3);
         }
-        public static int[] GetStages(string path)
+        public static StageData GetSubchapterData(string path)
         {
-            int pos = GetStagePos(path).Item1;
-            int[] stages = Editor.GetItemData(path, uncanny_amount * 4, 4, pos);
+            StageData stageData = new();
+            int levsBeaten = GetStagePos(path).Item1;
+            int levelsCleared = GetStagePos(path).Item2;
+            int unlockNextChapter = GetStagePos(path).Item3;
+            
 
-            return stages;
-        }
-        public static void SetStage(string path, List<int> stages, List<int> stars)
-        {
-            int pos_1 = GetStagePos(path).Item1;
-            int pos_2 = GetStagePos(path).Item2;
-            int pos_3 = GetStagePos(path).Item3;
+            int[] levelsBeatenArray = Editor.GetItemData(path, uncanny_amount * 4, 4, levsBeaten, false);
+            int[] levelsClearedArray = Editor.GetItemData(path, uncanny_amount * 4 * total_stages_per_chapter, 4, levelsCleared, false);
+            int[] unlockNextChapterArray = Editor.GetItemData(path, uncanny_amount * 4, 4, unlockNextChapter, false);
 
-            List<int> allStages = Enumerable.Repeat(0, stages.Count * 4).ToList();
-            for (int i = 0; i < stages.Count; i++)
-            {
-                for (int j = 0; j < stars[i]; j++)
-                {
-                    int set = 0;
-                    if (stars[i] > 0)
-                    {
-                        set = total_stages_per_chapter;
-                    }
-                    allStages[(i * 4) + j] = set;
-                }
-            }
+            List<LevelsBeaten> levels_beaten_data = (List<LevelsBeaten>)GetStarData(levelsBeatenArray, "levelsbeaten", uncanny_amount, total_stages_per_chapter);
+            List<Levels> levels_data = (List<Levels>)GetStarData(levelsClearedArray, "levels", uncanny_amount, total_stages_per_chapter);
+            List<Unlock> unlock_data = (List<Unlock>)GetStarData(unlockNextChapterArray, "unlock", uncanny_amount, total_stages_per_chapter);
 
-            Editor.SetItemData(path, allStages.ToArray(), 4, pos_1);
+            stageData.levelsbeaten = levels_beaten_data;
+            stageData.levels = levels_data;
+            stageData.unlocks = unlock_data;
 
-            List<int> stage_clear_num = Enumerable.Repeat(0, (stages.Count * total_stages_per_chapter) + 1).ToList();
-            List<int> unlock_next_chapter = Enumerable.Repeat(0, allStages.Count / 4).ToList();
-            for (int i = 0; i < stages.Count / 4; i++)
-            {
-                if (stages[i] > 0)
-                {
-                    for (int j = 0; j < stars[i]; j++)
-                    {
-                        for (int k = 0; k < total_stages_per_chapter; k++)
-                        {
-                            stage_clear_num[(i * 48) + j + (k*4)] = 1;
-                        }
-                    }
-                    unlock_next_chapter[i] = 3;
-                }
-            }
-            stage_clear_num[stage_clear_num.Count - 1] = 0;
-            Editor.SetItemData(path, stage_clear_num.ToArray(), 4, pos_2);
-            Editor.SetItemData(path, unlock_next_chapter.ToArray(), 4, pos_3);
+            return stageData;
         }
         public static void Uncanny_Legends(string path)
         {
-            int[] stages = GetStages(path);
+            StageData data = GetSubchapterData(path);
 
             string[] subchapter_examples = { "A New Legend", "Here Be Dragons" };
 
             int[] chapters_to_edit = AskLevels(subchapter_examples, uncanny_amount);
+            data = AskEventStagesDecoder(path, data, chapters_to_edit);
+            SetSubchapterData(path, data);
+        }
+        public static void SetSubchapterData(string path, StageData stageData)
+        {
+            int levsBeaten = GetStagePos(path).Item1;
+            int levelsCleared = GetStagePos(path).Item2;
+            int unlockNextChapter = GetStagePos(path).Item3;
 
-            Editor.ColouredText("&Do you want to set all of the stars/crowns at the same time (&1&), or individually (&2&)?\n");
-            int choice = (int)Editor.Inputed();
-            List<int> stars = Enumerable.Repeat(0, stages.Length).ToList();
+            int[] levelsBeatenArray = DecodeStarData(stageData, "levelsbeaten");
+            int[] levelsClearedArray = DecodeStarData(stageData, "levels");
+            int[] unlockNextChapterArray = DecodeStarData(stageData, "unlock");
 
-            if (choice == 1)
-            {
-                Editor.ColouredText("&How many stars/crowns do you want to complete for each chapter (&1&-&4&)\n");
-                int star = (int)Editor.Inputed();
-                stars = Enumerable.Repeat(star, stages.Length).ToList();
-            }
-
-            for (int i = 0; i < chapters_to_edit.Length; i++)
-            {
-                if (choice == 2)
-                {
-                    Editor.ColouredText($"&How many stars/crowns do you want to complete for chapter &{chapters_to_edit[i]}&? (&1&-&4&)\n");
-                    int star = (int)Editor.Inputed();
-                    stars[i] = star;
-                }
-                stages[chapters_to_edit[i]] = total_stages_per_chapter;
-            }
-            SetStage(path, stages.ToList(), stars);
+            Editor.SetItemData(path, levelsBeatenArray, 4, levsBeaten);
+            Editor.SetItemData(path, levelsClearedArray, 4, levelsCleared);
+            Editor.SetItemData(path, unlockNextChapterArray, 4, unlockNextChapter);
         }
     }
 }

@@ -12,17 +12,8 @@ namespace Battle_Cats_save_editor.SaveEdits
         public static void Cats(string path)
         {
             int[] occurrence = Editor.GetCatRelatedHackPositions(path);
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-            int ids = 0;
-            for (int i = occurrence[0] + 4; i <= occurrence[1] - 4; i += 4)
-            {
-                if (ids != 542)
-                {
-                    stream.Position = i;
-                    stream.WriteByte(Convert.ToByte(01));
-                }
-                ids++;
-            }
+            int[] allCats = Enumerable.Repeat(1, Editor.GetCatAmount(path)).ToArray();
+            Editor.SetItemData(path, allCats, 4, occurrence[0] + 4);
             Console.WriteLine("Gave all cats");
         }
     }

@@ -58,21 +58,17 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Copy.cs" />
+    <Compile Include="FeatureHandler.cs" />
     <Compile Include="Editor.cs" />
-    <Compile Include="Game Mods\Files\EnemyMod.cs" />
-    <Compile Include="Game Mods\Files\Stage Mod.cs" />
-    <Compile Include="Game Mods\Files\FileHandler.cs" />
-    <Compile Include="Game Mods\Files\Unit Mod.cs" />
-    <Compile Include="Game Mods\MD5 Libnative.cs" />
-    <Compile Include="Game Mods\Packs\EncryptPack.cs" />
-    <Compile Include="Game Mods\Packs\DecryptPack.cs" />
     <Compile Include="Save Edits\Basic Items\Platinum Shards.cs" />
     <Compile Include="Save Edits\Cats\All Talent.cs" />
     <Compile Include="Save Edits\Cats\CatHandler.cs" />
+    <Compile Include="Save Edits\Cats\Devolve Cats.cs" />
+    <Compile Include="Save Edits\Cats\Evolve Current Cats.cs" />
     <Compile Include="Save Edits\Cats\Upgrade Current.cs" />
     <Compile Include="Save Edits\Level\Heavenly Tower.cs" />
     <Compile Include="Save Edits\Level\Infernal Tower.cs" />
-    <Compile Include="Save Edits\Level\LevelSelect.cs" />
     <Compile Include="Save Edits\Level\MainEventStages.cs" />
     <Compile Include="Save Edits\Level\Uncanny Legends.cs" />
     <Compile Include="Save Edits\Other\GetSaveData.cs" />
@@ -180,7 +176,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Battle-Cats-Save-File-Editor-Discord-Bot\packages\System.Runtime.CompilerServices.Unsafe.6.0.2-mauipre.1.22054.8\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.2-mauipre.1.22054.8\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Extensions, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>

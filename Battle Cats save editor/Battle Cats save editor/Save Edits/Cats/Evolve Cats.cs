@@ -9,6 +9,34 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class EvolveCats
     {
+        public static void EvolveAll(string path)
+        {
+            List<int> forms = new();
+            forms.AddRange(Enumerable.Repeat(0, 9));
+            forms.AddRange(Editor.EvolvedFormsGetter().ToList());
+
+            SetEvolveForms(path, forms.ToArray());
+            Console.WriteLine("Successfully set evolve forms");
+        }
+        public static void EvolveSpecific(string path)
+        {
+            List<int> forms = GetEvolveForms(path).ToList();
+
+            Editor.ColouredText($"&What cats do you want to edit?\nenter the cat release order of the cat:&https://battle-cats.fandom.com/wiki/Cat_Release_Order& {Editor.multipleVals}:\n");
+            string[] cats = Console.ReadLine().Split(' ');
+            foreach (string cat in cats)
+            {
+                int cat_id = int.Parse(cat);
+                if (cat_id > forms.Count)
+                {
+                    Console.WriteLine($"Error, cat {cat_id} doesn't exist in your current game version");
+                    continue;
+                }
+                forms[cat_id] = 2;
+            }
+            SetEvolveForms(path, forms.ToArray());
+            Console.WriteLine("Successfully set evolve forms");
+        }
         public static int[] GetEvolveForms(string path)
         {
             int pos = Editor.GetEvolvePos(path) - 36;
@@ -19,35 +47,6 @@ namespace Battle_Cats_save_editor.SaveEdits
         {
             int pos = Editor.GetEvolvePos(path) - 36;
             Editor.SetItemData(path, forms, 4, pos, Editor.GetCatAmount(path));
-        }
-        public static void Evolve(string path)
-        {
-            List<int> forms = GetEvolveForms(path).ToList();
-            Editor.ColouredText("&Do you want to evolve all cats once (&1&), or individually (&2&)?:\n");
-            string answer = Console.ReadLine();
-            if (answer == "1")
-            {
-                forms = new();
-                forms.AddRange(Enumerable.Repeat(0, 9));
-                forms.AddRange(Editor.EvolvedFormsGetter().ToList());
-            }
-            else
-            {
-                Editor.ColouredText($"&What cats do you want to edit?\nenter the cat release order of the cat:&https://battle-cats.fandom.com/wiki/Cat_Release_Order& {Editor.multipleVals}:\n");
-                string[] cats = Console.ReadLine().Split(' ');
-                foreach (string cat in cats)
-                {
-                    int cat_id = int.Parse(cat);
-                    if (cat_id > forms.Count)
-                    {
-                        Console.WriteLine($"Error, cat {cat_id} doesn't exist in your current game version");
-                        continue;
-                    }
-                    forms[cat_id] = 2;
-                }
-            }
-            SetEvolveForms(path, forms.ToArray());
-            Console.WriteLine("Successfully set evolve forms");
         }
     }
 }

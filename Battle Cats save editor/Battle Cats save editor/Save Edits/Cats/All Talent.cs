@@ -129,7 +129,7 @@ namespace Battle_Cats_save_editor.SaveEdits
                     if (cat_data.Key < 9) continue;
                     JToken talent_data = SearchWithAbilityID(talent_skill_data, talent.Item2);
                     if (talent_data == null) continue;
-                    int max = 0;
+                    int max;
                     if (talent_data["max"] == null) max = 1;
                     else
                     {
@@ -242,37 +242,6 @@ namespace Battle_Cats_save_editor.SaveEdits
             JObject talent_skill_data = JObject.Parse(talent_json);
 
             return talent_skill_data["Skills"];
-        }
-        public static void Talent(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Talent upgrade all cats",
-                "Talent upgrade specific cats"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            Editor.ColouredText(toOutput);
-            switch ((int)Editor.Inputed())
-            {
-                case 0:
-                    Editor.Options();
-                    break;
-                case 1:
-                    MaxTalents(path);
-                    break;
-                case 2:
-                    IndividualTalents(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
         }
     }
 }

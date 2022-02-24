@@ -9,6 +9,33 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class AkuRealm
     {
+        public static int GetAkuPos(string path)
+        {
+            byte[] akuConditions = { 0x31, 0x01 };
+            byte[] tenPointNineConditions = { 0x24, 0x8A, 0x01 };
+            byte[] allData = File.ReadAllBytes(path);
+            // Search for version 10.9 content
+            int verPos = Editor.Search(path, tenPointNineConditions, true, allData.Length - 16)[0];
+            // Search for aku realm position from 10.9 content
+            int pos = Editor.Search(path, akuConditions, true, verPos)[0];
+
+            if (verPos == 0 || pos == 0)
+            {
+                Editor.Error();
+            }
+            return pos +2;
+        }
+        public static int[] GetAku(string path)
+        {
+            int pos = GetAkuPos(path);
+            int[] aku_data = Editor.GetItemData(path, 49, 2, pos, false);
+            return aku_data;
+        }
+        public static void SetAku(string path, int[] aku_data)
+        {
+            int pos = GetAkuPos(path);
+            Editor.SetItemData(path, aku_data, 2, pos);
+        }
         public static void ClearAku(string path)
         {
             byte[] akuConditions = { 0x31, 0x01 };

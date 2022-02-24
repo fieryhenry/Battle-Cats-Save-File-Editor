@@ -11,20 +11,16 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void RemSpecifiCat(string path)
         {
-            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
-            string input = Console.ReadLine();
-            string[] catIds = input.Split(' ');
-            for (int i = 0; i < catIds.Length; i++)
+            int[] cat_data = GetSpecificCats.GetCats(path);
+            Console.WriteLine($"What is the cat ID?, ({Editor.multipleVals})");
+            string[] input = Console.ReadLine().Split(' ');
+            foreach (string cat in input)
             {
-                int catID = int.Parse(catIds[i]);
-                int startPos = occurrence[0] + 4;
-                stream.Position = startPos + catID * 4;
-                stream.WriteByte(0);
-                Editor.ColouredText("&Removed cat: &" + catID + "\n");
+                int id = int.Parse(cat);
+                cat_data[id] = 0;
             }
+            GetSpecificCats.SetCats(path, cat_data);
+            Console.WriteLine("Successfully removed cats");
         }
     }
 }

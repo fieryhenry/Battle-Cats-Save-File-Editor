@@ -9,30 +9,30 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class GetSpecificCats
     {
-        public static void SpecifiCat(string path)
+        public static int[] GetCats(string path)
         {
             int cat_amount = Editor.GetCatAmount(path);
-
-            int[] occurrence = Editor.GetCatRelatedHackPositions(path);
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
-
-            Console.WriteLine("What is the cat ID?, input multiple ids separated by spaces to add multiple cats at a time");
-            string input = Console.ReadLine();
-            string[] catIds = input.Split(' ');
-            for (int i = 0; i < catIds.Length; i++)
+            int pos = Editor.GetCatRelatedHackPositions(path)[0];
+            int[] cat_data = Editor.GetItemData(path, cat_amount, 4, pos, false);
+            return cat_data;
+        }
+        public static void SetCats(string path, int[] cat_data)
+        {
+            int pos = Editor.GetCatRelatedHackPositions(path)[0];
+            Editor.SetItemData(path, cat_data, 4, pos);
+        }
+        public static void SpecifiCat(string path)
+        {
+            int[] cat_data = GetCats(path);
+            Console.WriteLine($"What is the cat ID?, ({Editor.multipleVals})");
+            string[] input = Console.ReadLine().Split(' ');
+            foreach (string cat in input)
             {
-                int catID = int.Parse(catIds[i]);
-                if (catID >= cat_amount)
-                {
-                    Console.WriteLine($"Error, cat : {catID} doesn't exist in the current game version");
-                    continue;
-                }
-                int startPos = occurrence[0] + 4;
-                stream.Position = startPos + catID * 4;
-                stream.WriteByte(01);
-                Editor.ColouredText("&Gave cat: &" + catID + "\n");
+                int id = int.Parse(cat);
+                cat_data[id] = 1;
             }
-
+            SetCats(path, cat_data);
+            Console.WriteLine("Successfully gave cats");
         }
     }
 }

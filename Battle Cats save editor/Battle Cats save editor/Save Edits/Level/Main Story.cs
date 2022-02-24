@@ -35,7 +35,7 @@ namespace Battle_Cats_save_editor.SaveEdits
 
                 if (i > 2)
                 {
-                    offset = (total_chapters * 4) + 12;
+                    offset = (total_stages * 4) + 12;
                     index = 1;
                 }
 

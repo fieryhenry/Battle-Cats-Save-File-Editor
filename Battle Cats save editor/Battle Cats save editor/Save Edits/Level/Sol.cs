@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Battle_Cats_save_editor.SaveEdits.MainEventStages;
 
 namespace Battle_Cats_save_editor.SaveEdits
 {
@@ -11,9 +12,13 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void Sol(string path)
         {
-            int totalChapters = 49;
-            int[] chaptersToEdit = UncannyLegends.AskLevels(new string[] { "Legend Begins", "Passion Land" }, totalChapters);
-            MainEventStages.SetEventStages(path, chaptersToEdit);
+            int total_subchapters = 49;
+            StageData data = GetSubchapterData(path);
+
+            string[] examples = { "The Legend Begins", "Passion Land" };
+            int[] chaptersToEdit = UncannyLegends.AskLevels(examples, total_subchapters);
+            data = AskEventStagesDecoder(path, data, chaptersToEdit);
+            SetSubchapterData(path, data);
         }
     }
 }

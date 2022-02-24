@@ -138,12 +138,6 @@ namespace Battle_Cats_save_editor.SaveEdits
                 foreach (string set in user_sets)
                 {
                     int group_index = int.Parse(set) -1;
-
-                    if (group_index > AllTreasures.chapters.Length || group_index < 0)
-                    {
-                        Console.WriteLine($"Error, please enter a number between 1 and 10");
-                        continue;
-                    }
                     Editor.ColouredText($"&What treasure level do you want? for treasure set &{treasure_types_str[Convert.ToInt32(Math.Floor(Convert.ToDecimal(chapter_id / 3)))][group_index]}& (&0&=none, &1&=inferior, &2&=normal, &3&=superior):\n");
                     int treasure_level = (int)Editor.Inputed();
                     List<Tuple<int, int>> group_data = encoded_treasure_data[chapter_id][group_index];

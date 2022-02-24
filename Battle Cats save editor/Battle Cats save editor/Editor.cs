@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using Battle_Cats_save_editor.Game_Mods;
+using static Battle_Cats_save_editor.FeatureHandler;
 using Battle_Cats_save_editor.SaveEdits;
 
 namespace Battle_Cats_save_editor
@@ -16,7 +16,8 @@ namespace Battle_Cats_save_editor
     {
         public static string main_path;
         public static string gameVer;
-        public static string version = "2.40.1.1";
+        public static bool override_warning_message = false;
+        public static string version = "2.40.2";
         public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
         [STAThread]
         private static void Main()
@@ -36,7 +37,7 @@ namespace Battle_Cats_save_editor
             }
             CheckUpdate();
             SelSave();
-            CreateBackup();
+            CreateBackup(main_path);
             Options();
         }
 
@@ -71,7 +72,15 @@ namespace Battle_Cats_save_editor
                 ColouredText("&Detected game version: &" + gameVer + "&\n");
             }
         }
-
+        public static T[][] SplitArray<T>(T[] array, int separator)
+        {
+            int i = 0;
+            var query = from s in array
+                        let num = i++
+                        group s by num / separator into g
+                        select g.ToArray();
+            return query.ToArray();
+        }
         public static string MakeRequest(WebRequest request)
         {
             request.Headers.Add("time-stamp", DateTime.Now.Ticks.ToString());
@@ -134,47 +143,19 @@ namespace Battle_Cats_save_editor
                 }
             }
         }
-        public static void CreateBackup()
+        public static void CreateBackup(string path)
         {
             try
             {
-                byte[] save_data = File.ReadAllBytes(main_path);
-                File.WriteAllBytes(main_path + "_backup", save_data);
-                ColouredText($"\nBackup successfully created at: &{main_path + "_backup"}& \n\n", New: ConsoleColor.Green);
+                byte[] save_data = File.ReadAllBytes(path);
+                File.WriteAllBytes(path + "_backup", save_data);
+                ColouredText($"\nBackup successfully created at: &{path + "_backup"}& \n\n", New: ConsoleColor.Green);
             }
             catch (Exception ex)
             {
                 ColouredText($"\nCould not complete backup&: \n{ex.Message}&\n\n", New: ConsoleColor.Red);
             }
         }
-        public static List<string> TopLevelFeatures = new()
-        {
-            "Select New Save",
-            "Cat Food",
-            "XP",
-            "Tickets / Platinum Shards",
-            "Leadership",
-            "NP",
-            "Treasures",
-            "Battle Items",
-            "Catseyes",
-            "Cat Fruits / Seeds",
-            "Talent Orbs",
-            "Gamatoto",
-            "Ototo",
-            "Gacha Seed",
-            "Equip Slots",
-            "Gain / Remove Cats",
-            "Cat / Stat Upgrades",
-            "Cat Evolves",
-            "Cat Talents",
-            "Clear Levels / Outbreaks / Timed Score",
-            "Inquiry Code / Elsewhere Fix / Unban",
-            "Get Restart Pack",
-            "Close the rank up bundle / offer menu",
-            "Game Modding menu",
-            "Calculate checksum of save file"
-        };
         public static int GetCatAmount(string path)
         {
             byte[] CatNumber = { GetCatNumber(path), 2 };
@@ -184,48 +165,6 @@ namespace Battle_Cats_save_editor
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
-        }
-        public static void Options()
-        {
-            ColouredText("Thanks to: Lethal's editor for being a tool for me to use when figuring out how to patch save files,and how to edit cf/xp\nAnd thanks to beeven and csehydrogen's open source work, which I used to implement the save patching algorithm\n\n&", New: ConsoleColor.Green);
-            if (gameVer != "en")
-            {
-                ColouredText("Warning: if you are using a non en save, many features won't work, or they might corrupt your save data, so make sure you create a copy of your saves!\n", ConsoleColor.White, ConsoleColor.Red);
-            }
-            ColouredText($"&What would you like to do?&\n{CreateOptionsList<string>(TopLevelFeatures.ToArray(), first: "Select New Save")}&");
-            switch ((int)Inputed())
-            {
-                case 0: SelSave(); CreateBackup(); Options(); break;
-                case 1: CatFood.catFood(main_path); break;
-                case 2: XP.xp(main_path); break;
-                case 3: NormalTickets.Tickets(main_path); break;
-                case 4: Leadership.leadership(main_path); break;
-                case 5: NP.np(main_path); break;
-                case 6: Treasures(main_path); break;
-                case 7: BattleItems.Items(main_path); break;
-                case 8: Catseye.Catseyes(main_path); break;
-                case 9: CatFruits.CatFruit(main_path); break;
-                case 10: TalentOrbs.TalentOrb(main_path); break;
-                case 11: Gamatoto(main_path); break;
-                case 12: Ototo(main_path); break;
-                case 13: RareGachaSeed.Seed(main_path); break;
-                case 14: EquipSlots.Slots(main_path); break;
-                case 15: GetCats(main_path); break;
-                case 16: Upgrades(main_path); break;
-                case 17: EvolveCats.Evolve(main_path); break;
-                case 18: AllTalent.Talent(main_path); break;
-                case 19: LevelSelect.Levels(main_path); break;
-                case 20: NewInquiryCode.Inquiry(main_path); break;
-                case 21: RestartPack.GetRestartPack(main_path); break;
-                case 22: CloseBundle.Bundle(main_path); break;
-                case 23: GameModdingMenu(main_path); break;
-                case 24: break;
-                default: Console.WriteLine("Please input a number that is recognised"); break;
-            }
-            PatchSaveFile.PatchSaveData(main_path);
-            ColouredText("Press enter to continue\n");
-            Console.ReadLine();
-            Options();
         }
         public static int GetGameVersionOffset(string path)
         {
@@ -302,235 +241,9 @@ namespace Battle_Cats_save_editor
             {
                 return toOutput;
             }
-            else
-            {
-                return toOutput.Replace("&", "");
-            }
+            return toOutput.Replace("&", "");
         }
 
-        private static void Upgrades(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Upgrade all cats",
-                "Upgrade all cats that are currently unlocked",
-                "Upgrade specific cats",
-                "Upgrade Base / Special Skills (The ones that are blue)"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    CatUpgrade.CatUpgrades(path);
-                    break;
-                case 2:
-                    UpgradeCurrent.UpgradeCurrentCats(path);
-                    break;
-                case 3:
-                    SpecificUpgrade.SpecifUpgrade(path);
-                    break;
-                case 4:
-                    BlueUpgrade.Blue(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
-        private static void GetCats(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Get all cats",
-                "Get specific cats",
-                "Remove all cats",
-                "Remove specific cats"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    GetCat.Cats(path);
-                    break;
-                case 2:
-                    GetSpecificCats.SpecifiCat(path);
-                    break;
-                case 3:
-                    RemoveCats.RemCats(path);
-                    break;
-                case 4:
-                    RemoveSpecificCats.RemSpecifiCat(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
-        private static void Treasures(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "All Treasures In A Chapter / Chapters",
-                "Specific Treasure Types e.g Energy Drink, Void Fruit"
-            };
-            string toOutput = "&What do you want to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    AllTreasures.MaxTreasures(path);
-                    break;
-                case 2:
-                    SpecificTreasures.VerySpecificTreasures(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
-        private static void Gamatoto(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Catamins",
-                "Helpers",
-                "XP"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    Catamins.Catamin(path);
-                    break;
-                case 2:
-                    GamatotoHelper.GamHelp(path);
-                    break;
-                case 3:
-                    GamatotoXP.GamXP(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
-        private static void Ototo(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Base Materials",
-                "Engineers",
-                "Cat Cannon Upgrades"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    BaseMaterials.BaseMats(path);
-                    break;
-                case 2:
-                    OtotoEngineers.Engineers(path);
-                    break;
-                case 3:
-                    OtotoCatCannon.CatCannon(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
-
-        private static void GameModdingMenu(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Decrypt .list and .pack",
-                "Encrypt a folder of game files and turn them into encrypted .pack and .list files",
-                "Update the md5 sum of the modified .pack and .list files",
-                "Enter the game file editing menu"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    Options();
-                    break;
-                case 1:
-                    DecryptPack.Decrypt();
-                    break;
-                case 2:
-                    EncryptPack.EncryptData();
-                    break;
-                case 3:
-                    MD5Libnative.MD5Lib(path);
-                    break;
-                case 4:
-                    GameFileParsing(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
         public static void ClearCurrentConsoleLine()
         {
             int currentLineCursor = Console.CursorTop;
@@ -541,45 +254,6 @@ namespace Battle_Cats_save_editor
         public static double ConvertBytesToMegabytes(long bytes)
         {
             return Math.Round((bytes / 1024f) / 1024f, 2);
-        }
-
-        private static void GameFileParsing(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Edit unit*.csv (cat data)",
-                "Edit stage*.csv (level data)",
-                "Edit t_unit.csv (enemy data)",
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            ColouredText(toOutput);
-            switch ((int)Inputed())
-            {
-                case 0:
-                    GameModdingMenu(path);
-                    break;
-                case 1:
-                    UnitMod.Unitcsv();
-                    break;
-                case 2:
-                    StageMod.Stagecsv();
-                    break;
-                case 3:
-                    EnemyMod.EnemyCSV();
-                    break;
-                case 4:
-                    FileHandler.AddExtraBytes(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
         }
 
         public static string CalculateMD5(string path)
@@ -601,16 +275,14 @@ namespace Battle_Cats_save_editor
             {
                 endpoint = allData.Length - conditions.Length;
             }
-            int count = 0;
+
             int pos = 0;
             int num = 1;
             List<int> values = new();
-            int end = conditions.Length;
             int stop_count = 0;
             if (negative)
             {
                 num = -1;
-                int start = conditions.Length - 1;
             }
             for (int i = startpoint; i < endpoint; i += num)
             {
@@ -618,7 +290,7 @@ namespace Battle_Cats_save_editor
                 {
                     break;
                 }
-                count = 0;
+                int count = 0;
                 for (int j = 0; j < conditions.Length; j++)
                 {
                     if (negative)
@@ -776,6 +448,10 @@ namespace Battle_Cats_save_editor
 
         public static int[] GetItemData(string path, int amount, int separator, int startPos, bool warning = true)
         {
+            if (override_warning_message)
+            {
+                warning = false;
+            }
             List<byte> allData = File.ReadAllBytes(path).ToList();
             int[] items = new int[amount];
             for (int i = 0; i < amount; i++)
