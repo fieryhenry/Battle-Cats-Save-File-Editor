@@ -9,43 +9,16 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class NewInquiryCode
     {
-        public static void Inquiry(string path)
-        {
-            string[] Features = new string[]
-            {
-                "Go back",
-                "Change Inquiry code",
-                "Fix save is used elsewhere error (or unban account) - whilst selecting a save that has the error / ban (the one you select when you open the editor) select a new save that doesn't have the \"save is used elsewhere\" bug / is not banned (you can re-install the game to get a save like that)"
-            };
-            string toOutput = "&What would you like to edit?&\n0.& Go back\n&";
-            for (int i = 1; i < Features.Length; i++)
-            {
-                toOutput += string.Format("&{0}.& ", i);
-                toOutput = toOutput + Features[i] + "\n";
-            }
-            Editor.ColouredText(toOutput);
-            switch ((int)Editor.Inputed())
-            {
-                case 0:
-                    Editor.Options();
-                    break;
-                case 1:
-                    NewIQ(path);
-                    break;
-                case 2:
-                    FixElsewhere.Elsewhere(path);
-                    break;
-                default:
-                    Console.WriteLine(string.Format("Please enter a number between 0 and {0}", Features.Length));
-                    break;
-            }
-        }
         public static int GetIQPos(string path)
         {
             List<byte> allData = File.ReadAllBytes(path).ToList();
 
             byte[] conditions = { 0x2d, 0x00, 0x00, 0x00, 0x2e };
-            int pos = Editor.Search(path, conditions)[0];
+            int pos = Editor.Search(path, conditions, startpoint:1000)[0];
+            if (pos < 2000)
+            {
+                Editor.Error();
+            }
 
             for (int j = 1900; j < 2108; j++)
             {
