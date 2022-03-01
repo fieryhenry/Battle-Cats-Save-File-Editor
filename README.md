@@ -63,6 +63,27 @@ adb push %2SAVE_DATA /data/data/%PACKAGE_NAME%/files/SAVE_DATA
 adb shell am force-stop %PACKAGE_NAME%
 adb shell monkey -p %PACKAGE_NAME% -v 1
 ```
+#### <u>Wipe Save Data</u>
+
+Creates a fresh game ready for unban/fix elsewhere features
+
+Run the script with the argument of the game version that you want, e.g script.bat en
+
+You can add a second agrument with the path to push from, otherwise it will push the save data located in the current directory.
+
+[Download](https://raw.githubusercontent.com/fieryhenry/Battle-Cats-Save-File-Editor/main/Batch%20Scripts/wipe_save.bat) (Right click -> save as)
+
+```batch
+@echo off
+set game_version=%1
+if %1 == jp set game_version=
+set PACKAGE_NAME=jp.co.ponos.battlecats%game_version%
+adb shell rm /data/data/jp.co.ponos.battlecatsen/shared_prefs -r -f
+adb shell rm /data/data/jp.co.ponos.battlecatsen/files/*SAVE_DATA*
+
+adb shell am force-stop %PACKAGE_NAME%
+adb shell monkey -p %PACKAGE_NAME% -v 1
+```
 
 ## Features
 
