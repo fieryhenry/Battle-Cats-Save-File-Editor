@@ -17,7 +17,7 @@ namespace Battle_Cats_save_editor
         public static string main_path;
         public static string gameVer;
         public static bool override_warning_message = false;
-        public static string version = "2.41.0";
+        public static string version = "2.41.1";
         public static string multipleVals = "(You can enter multiple numbers seperated by spaces to edit multiple at once)";
         [STAThread]
         private static void Main()
@@ -80,6 +80,11 @@ namespace Battle_Cats_save_editor
                         group s by num / separator into g
                         select g.ToArray();
             return query.ToArray();
+        }
+        public static int GetGameVersion(string path)
+        {
+            byte[] all_data = File.ReadAllBytes(path);
+            return BitConverter.ToInt32(all_data, 0);
         }
         public static string MakeRequest(WebRequest request)
         {

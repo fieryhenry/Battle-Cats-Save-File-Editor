@@ -38,7 +38,7 @@ namespace Battle_Cats_save_editor.SaveEdits
         }
         public static string RandomString(int length)
         {
-            Random random = new Random();
+            Random random = new();
             const string chars = "0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());

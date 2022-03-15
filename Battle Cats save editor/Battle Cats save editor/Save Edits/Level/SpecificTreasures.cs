@@ -9,13 +9,13 @@ namespace Battle_Cats_save_editor.SaveEdits
 {
     public class SpecificTreasures
     {
-        static List<List<string>> treasure_types_str = new List<List<string>>()
+        static List<List<string>> treasure_types_str = new()
         {
             new List<string> {"Energy Drink", "Giant Safe", "Relativity Clock", "Philosopher's Stone", "Smart Material Wall", "Super Register", "Legendary Cat Shield", "Legendary Cat Sword", "Energy Core", "Turbo Machine", "Management Bible" },
             new List<string> {"Aqua Crystal", "Plasma Crystal", "Ancient Tablet", "Mysterious Force", "Cosmic Energy", "Void Fruit", "Blood Fruit", "Sky Fruit", "Heaven's Fruit", "Time Machine", "Future Tech" },
             new List<string> {"Stellar Garnet", "Phoebe Beryl", "Lunar Citrine", "Ganymede Topaz", "Callisto Amethyst", "Titanium Fruit", "Antimatter Fruit", "Enigma Fruit", "Dark Matter", "Neutrino", "Mystery Mask" }
         };
-        static List<List<List<int>>> treasure_levels = new List<List<List<int>>>()
+        static List<List<List<int>>> treasure_levels = new()
         {
             // EoC
             new List<List<int>>
