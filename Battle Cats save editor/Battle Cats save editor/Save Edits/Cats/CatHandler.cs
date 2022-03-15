@@ -53,7 +53,6 @@ namespace Battle_Cats_save_editor.SaveEdits
             int pos = occurrence[1] + 1;
             for (int i = 0; i < catIDs.Length; i++)
             {
-                if (catIDs[i] == 0) continue;
                 stream.Position = pos + (catIDs[i] * 4) + 3;
                 if (ignore != 2)
                 {
