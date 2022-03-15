@@ -11,32 +11,34 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static void CatFruit(string path)
         {
-            List<string> fruits = new() { "Purple Seeds", "Red Seeds", "Blue Seeds", "Green Seeds", "Yellow Seeds", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seeds", "Elder Fruit", "Epic Seeds", "Gold Fruit", "Aku Seeds", "Aku Fruit", "Gold Seeds" };
-            int[] catfruits = GetCatFruit(path);
-
-            fruits.RemoveRange(catfruits.Length, fruits.Count - catfruits.Length);
+            List<string> fruit_types = new() { "Purple Seeds", "Red Seeds", "Blue Seeds", "Green Seeds", "Yellow Seeds", "Purple Fruit", "Red Fruit", "Blue Fruit", "Green Fruit", "Yellow Fruit", "Epic Fruit", "Elder Seeds", "Elder Fruit", "Epic Seeds", "Gold Fruit", "Aku Seeds", "Aku Fruit", "Gold Seeds", "Pure Seeds", "Pure Fruit" };
+            int[] current_fruits = GetCatFruit(path);
+            if (current_fruits.Length < fruit_types.Count)
+            {
+                fruit_types.RemoveRange(current_fruits.Length, fruit_types.Count - current_fruits.Length);
+            }
             
-            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(fruits.ToArray(), catfruits, false)}Total &:& {catfruits.Sum()}\n");
-            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(fruits.ToArray())}&{catfruits.Length + 1}.& All at once\n");
+            Editor.ColouredText($"&You have:\n&{Editor.CreateOptionsList(fruit_types.ToArray(), current_fruits, false)}Total &:& {current_fruits.Sum()}\n");
+            Editor.ColouredText($"&What do you want to edit?{Editor.multipleVals}:\n&{Editor.CreateOptionsList<string>(fruit_types.ToArray())}&{fruit_types.Count + 1}.& All at once\n");
             string[] answer = Console.ReadLine().Split(' ');
             foreach (string choice in answer)
             {
                 int catfruit_id = Convert.ToInt32(choice) -1;
-                if (catfruit_id == catfruits.Length)
+                if (catfruit_id == fruit_types.Count)
                 {
                     Editor.ColouredText($"&What do you want to set all of your catfruits / catfruit seeds to?:\n");
                     int val = (int)Editor.Inputed();
-                    catfruits = Enumerable.Repeat(val, catfruits.Length).ToArray();
+                    current_fruits = Enumerable.Repeat(val, current_fruits.Length).ToArray();
                 }
                 else
                 {
-                    Editor.ColouredText($"&What do you want to set &{fruits[catfruit_id]}& to?:\n");
+                    Editor.ColouredText($"&What do you want to set &{fruit_types[catfruit_id]}& to?:\n");
                     int val = (int)Editor.Inputed();
-                    catfruits[catfruit_id] = val;
+                    current_fruits[catfruit_id] = val;
                 }
             }
-            SetCatFruit(path, catfruits);
-            Editor.ColouredText($"&Successfully set catfruits to:\n&{Editor.CreateOptionsList(fruits.ToArray(), catfruits, false)}Total &:& {catfruits.Sum()}\n");
+            SetCatFruit(path, current_fruits);
+            Editor.ColouredText($"&Successfully set catfruits to:\n&{Editor.CreateOptionsList(fruit_types.ToArray(), current_fruits, false)}Total &:& {current_fruits.Sum()}\n");
         }
         public static Tuple<int, int> GetCatFruitPos(string path)
         {
