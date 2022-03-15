@@ -11,14 +11,24 @@ namespace Battle_Cats_save_editor.SaveEdits
     {
         public static int GetSlotPos(string path)
         {
-            byte[] conditions = { 0x2c, 0x01, 0x00, 0x00 };
-            int pos = Editor.Search(path, conditions, false, 0)[1];
-            return pos -5;
+            int game_version = Editor.GetGameVersion(path);
+            byte[] conditions = { 0x90, 0x01, 0x00, 0x00 };
+            int index = 0;
+            if (game_version < 110300)
+            {
+                conditions = new byte[] { 0x2c, 0x01, 0x00, 0x00 };
+                index = 1;
+            }
+            return Editor.Search(path, conditions, false, 0)[index] -5;
         }
         public static int GetEquipSlots(string path)
         {
             int pos = GetSlotPos(path);
             int slots = Editor.GetItemData(path, 1, 1, pos)[0];
+            if (pos < 500)
+            {
+                Editor.Error();
+            }
             return slots;
         }
         public static void SetEquipSlots(string path, int slots)

@@ -129,6 +129,11 @@ namespace Battle_Cats_save_editor.SaveEdits
             int levelsCleared = GetEventStagePos(path).Item2;
             int unlockNextChapter = GetEventStagePos(path).Item3;
 
+            if (levsBeaten < 1000 || levelsCleared < 1000 || unlockNextChapter < 1000)
+            {
+                Editor.Error();
+            }
+
             int[] levelsBeatenArray = Editor.GetItemData(path, total_subchapters * 4, 1, levsBeaten, false);
             int[] levelsClearedArray = Editor.GetItemData(path, total_subchapters * 4 * levels_per_subchapter, 2, levelsCleared, false);
             int[] unlockNextChapterArray = Editor.GetItemData(path, total_subchapters * 4, 1, unlockNextChapter, false);
@@ -157,30 +162,23 @@ namespace Battle_Cats_save_editor.SaveEdits
             Editor.SetItemData(path, levelsClearedArray, 2, levelsCleared);
             Editor.SetItemData(path, unlockNextChapterArray, 1, unlockNextChapter);
         }
+        static int total_amount = 400;
         public static Tuple<int, int, int> GetEventStagePos(string path)
         {
-            int levsBeaten = 0;
-            int levels = 0;
-            int unlock = 0;
+            int game_version = Editor.GetGameVersion(path);
 
-            byte[] allData = File.ReadAllBytes(path);
-            for (int i = 0; i < allData.Length; i++)
-            {
-                if (allData[i] == 5 && allData[i + 1] == 0x2c && allData[i + 2] == 1 && allData[i + 3] == 4 && allData[i + 4] == 0x0c)
-                {
-                    levsBeaten = i + 6005;
-                    levels = i + 12005;
-                }
-                else if (allData[i] == 0x2C && allData[i + 1] == 01 && allData[i + 2] == 0 && allData[i - 1] == 0 && allData[i + 3] == 0 && allData[i - 2] == 0 && allData[i - 3] == 0)
-                {
-                    unlock = i - 6152;
-                    if (levels != 0)
-                    {
-                        break;
-                    }
-                }
-            }
-            return Tuple.Create(levsBeaten, levels, unlock);
+            if (game_version < 110300) total_amount = 300;
+
+            byte[] total_amount_b = BitConverter.GetBytes(total_amount);
+
+            byte[] conditions = { 0x05, total_amount_b[0], total_amount_b[1], 0x04, 0x0c };
+            int pos = Editor.Search(path, conditions)[0];
+
+            int base_length = (total_amount * 5 * 4);
+            int levsBeaten = pos + base_length;
+            int levels = levsBeaten + (base_length);
+            int unlock = levels + (base_length*12*2);
+            return Tuple.Create(levsBeaten+5, levels+5, unlock+5);
         }
         public static List<Tuple<string, int>> GetEventData()
         {
@@ -198,14 +196,14 @@ namespace Battle_Cats_save_editor.SaveEdits
                 }
                 string[] stage_data = stage_stripped.Split('\t');
                 string name = stage_data[0];
-                int id = int.Parse(stage_data[1]) - 699;
+                int id = int.Parse(stage_data[1]) - 599;
 
                 event_data.Add(Tuple.Create(name, id));
             }
             foreach (string map in map_stage)
             {
                 string[] stage_data = map.Split('|');
-                int id = int.Parse(stage_data[0]) - 100699;
+                int id = int.Parse(stage_data[0]) - 100599;
                 string name = stage_data[3].Trim('"');
 
                 event_data.Add(Tuple.Create(name, id));

@@ -76,7 +76,12 @@ namespace Battle_Cats_save_editor.SaveEdits
             int levsBeaten = GetStagePos(path).Item1;
             int levelsCleared = GetStagePos(path).Item2;
             int unlockNextChapter = GetStagePos(path).Item3;
-            
+
+            if (levsBeaten < 1000 || levelsCleared < 1000 || unlockNextChapter < 1000)
+            {
+                Editor.Error();
+            }
+
 
             int[] levelsBeatenArray = Editor.GetItemData(path, uncanny_amount * 4, 4, levsBeaten, false);
             int[] levelsClearedArray = Editor.GetItemData(path, uncanny_amount * 4 * total_stages_per_chapter, 4, levelsCleared, false);
