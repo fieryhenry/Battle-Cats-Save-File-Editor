@@ -1,5 +1,8 @@
 # Battle Cats Save File Editor
 
+### New python editor here: https://github.com/fieryhenry/BCSFE-Python
+---
+
 I have a discord server:https://discord.gg/DvmMgvn5ZB, it's the best way report bugs and you can leave your suggestions for new features to be implemented in the editor
 
 If you want to support my work and keep me motivated to continue to work
